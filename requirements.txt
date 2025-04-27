@@ -5,3 +5,6 @@ yfinance
 python-dotenv
 matplotlib
 scipy
+numpy
+plotly   # optional, if you want enhanced visualizations
+seaborn  # optional, for advanced styling

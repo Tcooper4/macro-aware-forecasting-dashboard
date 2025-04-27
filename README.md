@@ -1,35 +1,31 @@
 # 🧠 Macro-Aware Quant Forecasting Dashboard
 
-This project combines real-time market and macroeconomic data with forecasting models (ARIMA, GARCH, HMM) and an interactive dashboard using Streamlit.
+This project combines real-time market and macroeconomic data with advanced forecasting models (ARIMA, GARCH, HMM) and an interactive Streamlit dashboard.
 
-## 📂 Structure
+## ✨ Features
 
-- `src/` - Feature engineering, macro API, modeling tools
-- `notebooks/` - Jupyter notebooks for modeling
-- `streamlit_app/dashboard.py` - Interactive forecasting dashboard
-- `.github/workflows/refresh.yml` - Weekly automation via GitHub Actions
-- `.env.example` - Environment variable template (do not commit real keys)
+- Real-time data ingestion from Yahoo Finance and FRED
+- Forecasting engine with ARIMA, GARCH, and Hidden Markov Models
+- Confidence intervals and volatility-based risk scoring
+- Automated trade recommendations (Buy, Sell, Hold)
+- Option trading suggestions based on forecast trends
+- Top 3 trade ideas highlighted daily
+- Downloadable trade recommendation summaries (CSV)
+- Weekly data refresh via GitHub Actions
+
+## 📂 Project Structure
+
+- `src/` - Feature engineering, macroeconomic API calls, modeling tools
+- `notebooks/` - Jupyter notebooks for exploratory modeling
+- `streamlit_app/dashboard.py` - Main forecasting dashboard
+- `streamlit_app/trade_recommendations.py` - Daily trade recommendation engine
+- `.github/workflows/refresh.yml` - Weekly automation setup
+- `.env.example` - Environment variable template (FRED API key)
 
 ## 🚀 Quickstart
 
 ```bash
 pip install -r requirements.txt
 streamlit run streamlit_app/dashboard.py
-```
-
-## 🌐 Deployment
-
-- Connect this repo to [Streamlit Cloud](https://streamlit.io/cloud)
-- Add your FRED API key to Streamlit secrets:
-
-```
-FRED_API_KEY=your_key_here
-```
-
-## 🔁 Automation
-
-Data is refreshed weekly using GitHub Actions.
-
----
-
-Made with 💻 by [Tcooper4](https://github.com/Tcooper4)
+# OR
+streamlit run streamlit_app/trade_recommendations.py
