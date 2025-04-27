@@ -5,9 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
+# ---- App Config ----
 st.set_page_config(page_title="Portfolio Optimization Dashboard", layout="wide")
 st.title("📈 Portfolio Optimization Dashboard")
-
 st.caption("Optimize your portfolio for maximum Sharpe Ratio using historical data.")
 
 # ---- User Inputs ----
@@ -17,7 +17,7 @@ end_date = st.date_input("End Date", pd.to_datetime("today"))
 
 tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.strip()]
 
-# ---- Caching data fetching ----
+# ---- Caching Data Fetch ----
 @st.cache_data
 def fetch_data(tickers, start, end):
     try:
@@ -27,30 +27,29 @@ def fetch_data(tickers, start, end):
             st.error("No data was returned. Please check tickers and date range.")
             return None
 
-        # Whether it's 1 ticker or multiple, auto_adjust=True ensures simple columns
         if isinstance(data, pd.DataFrame):
             if len(tickers) == 1:
-                # Only 1 ticker, rename 'Close' column to ticker name
+                # Only 1 ticker
                 if 'Close' in data.columns:
                     df = data[['Close']].copy()
                     df.columns = [tickers[0]]
                     return df
                 else:
-                    st.error("Expected 'Close' data not found for ticker.")
+                    st.error("Expected 'Close' data not found.")
                     return None
             else:
-                # Multiple tickers: data already has ticker columns
+                # Multiple tickers
                 return data
 
         else:
-            st.error("Unexpected data format received.")
+            st.error("Unexpected data format.")
             return None
 
     except Exception as e:
         st.error(f"Error fetching data: {e}")
         return None
 
-# ---- Optimization functions ----
+# ---- Portfolio Optimization Functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns * weights) * 252
     std = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights))) * np.sqrt(252)
@@ -81,19 +80,24 @@ if st.button("Optimize Portfolio"):
 
             st.success("✅ Data fetched successfully!")
 
-            # 🔥 Final correct returns calculation (NO 'Adj Close' needed!)
+            # Calculate returns
             returns = df.pct_change().dropna()
             mean_returns = returns.mean()
             cov_matrix = returns.cov()
 
+            # Optimize Portfolio
             opt = optimize_portfolio(mean_returns, cov_matrix)
             opt_weights = opt.x
 
-            # Show Optimal Portfolio
+            # 🔥 Correct Ticker + Weight match
             st.subheader("🔎 Optimal Portfolio Allocation")
-            opt_df = pd.DataFrame({'Ticker': tickers, 'Weight': opt_weights})
+            opt_df = pd.DataFrame({
+                'Ticker': mean_returns.index,
+                'Weight': opt_weights
+            })
             st.dataframe(opt_df.style.format({"Weight": "{:.2%}"}))
 
+            # Show Performance Metrics
             port_return, port_std, port_sharpe = portfolio_performance(opt_weights, mean_returns, cov_matrix)
 
             st.metric("Expected Annual Return", f"{port_return:.2%}")
@@ -104,7 +108,7 @@ if st.button("Optimize Portfolio"):
             st.subheader("📈 Efficient Frontier")
             results = {'Returns': [], 'Volatility': [], 'Sharpe': [], 'Weights': []}
             for _ in range(5000):
-                weights = np.random.dirichlet(np.ones(len(tickers)), size=1)[0]
+                weights = np.random.dirichlet(np.ones(len(mean_returns)), size=1)[0]
                 ret, vol, sharpe = portfolio_performance(weights, mean_returns, cov_matrix)
                 results['Returns'].append(ret)
                 results['Volatility'].append(vol)
