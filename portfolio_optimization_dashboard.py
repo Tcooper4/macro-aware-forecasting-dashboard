@@ -22,14 +22,23 @@ tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.str
 def fetch_data(tickers, start, end):
     data = yf.download(tickers, start=start, end=end, auto_adjust=True)
 
+    if data.empty:
+        st.error("No data was returned. Please check tickers and date range.")
+        return None
+
     if isinstance(data.columns, pd.MultiIndex):
-        # If multiple tickers, yfinance gives a multi-index DataFrame
-        df = data.xs('close', axis=1, level=1)
+        # Handle multiple tickers properly
+        if 'close' in data.columns.get_level_values(1):
+            df = data.xs('close', axis=1, level=1)
+        else:
+            st.error("Expected 'close' price data not found. Please check tickers.")
+            return None
     else:
-        # If single ticker
+        # Handle single ticker properly
         df = data.to_frame(name="Close")
 
     return df
+
 
 # ---- Optimization functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
