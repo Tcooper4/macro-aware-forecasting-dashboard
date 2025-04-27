@@ -8,6 +8,10 @@ import pandas as pd
 from features.merge_data import merge_data
 from fred_macro_data import fetch_and_plot, get_macro_indicators
 
+@st.cache_data
+def merge_data_cached(ticker):
+    return merge_data(ticker)
+
 st.set_page_config(page_title="Macro-Aware Forecasting Dashboard", layout="wide")
 
 st.title("📈 Macro-Aware Quant Forecasting Dashboard")
@@ -16,7 +20,7 @@ ticker = st.text_input("Enter a ticker symbol (e.g., SPY, AAPL):", value="SPY")
 
 if st.button("Load Data"):
     with st.spinner("Fetching data..."):
-        df = merge_data(ticker)
+        df = merge_data_cached(ticker)
         st.success("Data Loaded Successfully!")
         st.line_chart(df[f"{ticker}_Close"])
 

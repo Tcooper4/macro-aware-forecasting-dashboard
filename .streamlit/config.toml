@@ -10,3 +10,10 @@ font="sans serif"
 [server]
 headless = true
 enableCORS = false
+
+[browser]
+gatherUsageStats = false
+serverAddress = "0.0.0.0"
+serverPort = 8501
+serverTitle = "Macro-Aware Forecasting Dashboard"
+serverDescription = "Live macroeconomic-driven stock strategy dashboard pulling real-time FRED and ticker data."
