@@ -20,26 +20,16 @@ tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.str
 # ---- Caching data fetching ----
 @st.cache_data
 def fetch_data(tickers, start, end):
-    try:
-        data = yf.download(tickers, start=start, end=end, group_by='ticker', auto_adjust=True)
+    data = yf.download(tickers, start=start, end=end, auto_adjust=True)
 
-        if data.empty:
-            st.error("No data was returned. Please check the tickers and date range.")
-            return None
+    if isinstance(data.columns, pd.MultiIndex):
+        # If multiple tickers, yfinance gives a multi-index DataFrame
+        df = data.xs('close', axis=1, level=1)
+    else:
+        # If single ticker
+        df = data.to_frame(name="Close")
 
-        # Handle multi-ticker or single ticker
-        if isinstance(data.columns, pd.MultiIndex):
-            df = data['Close']
-        else:
-            df = data.to_frame(name=tickers[0])
-
-        return df
-
-    except Exception as e:
-        st.error(f"Error fetching data: {e}")
-        return None
-
-
+    return df
 
 # ---- Optimization functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
