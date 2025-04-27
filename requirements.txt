@@ -4,3 +4,4 @@ fredapi
 yfinance
 python-dotenv
 matplotlib
+scipy

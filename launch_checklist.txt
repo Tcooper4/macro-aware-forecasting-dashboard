@@ -1,0 +1,30 @@
+✅ Local Development
+[ ] Save all local code
+[ ] Check requirements.txt includes all libraries (streamlit, pandas, etc.)
+
+✅ GitHub Push
+[ ] git add .
+[ ] git commit -m "Meaningful message"
+[ ] git push
+
+✅ Streamlit Deployment
+[ ] Delete old Streamlit app (if needed)
+[ ] Create New App → Select repo, branch, main file
+[ ] Confirm requirements.txt detected
+[ ] Add Secrets (e.g., API Keys)
+
+✅ Testing
+[ ] Confirm app loads with no errors
+[ ] Test all inputs/buttons
+[ ] Check that spinner, caching, timestamp, themes work
+
+✅ Final Polish
+[ ] Custom subdomain set (optional)
+[ ] Dark theme and professional styling (.streamlit/config.toml)
+[ ] SEO metadata added
+[ ] Link app from Portfolio Homepage (optional)
+
+✅ Post-Launch
+[ ] Add app to resume/LinkedIn
+[ ] Share link with network
+[ ] Monitor usage and iterate
