@@ -28,18 +28,18 @@ def fetch_data(tickers, start, end):
             return None
 
         if isinstance(data.columns, pd.MultiIndex):
-            # When MultiIndex, like ('AAPL', 'Close')
+            # When multiple tickers
             close_data = pd.DataFrame()
             for ticker in tickers:
                 if (ticker, 'Close') in data.columns:
                     close_data[ticker] = data[(ticker, 'Close')]
                 else:
-                    st.error(f"No 'Close' data found for {ticker}")
+                    st.error(f"No 'Close' price found for {ticker}")
                     return None
             return close_data
 
         else:
-            # Single ticker, normal DataFrame
+            # Single ticker
             if 'Close' in data.columns:
                 df = data[['Close']].copy()
                 df.columns = [tickers[0]]  # Rename to ticker name
@@ -79,8 +79,11 @@ if st.button("Optimize Portfolio"):
         with st.spinner("Fetching data and optimizing..."):
             df = fetch_data(tickers, start_date, end_date)
             if df is None:
-                st.stop()  # 🛑 Immediately stop app if data fetch failed
+                st.stop()
 
+            st.success("✅ Data fetched successfully!")
+
+            # 🔥 Final correct returns calculation (NO 'Adj Close' needed!)
             returns = df.pct_change().dropna()
             mean_returns = returns.mean()
             cov_matrix = returns.cov()
