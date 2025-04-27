@@ -21,14 +21,16 @@ tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.str
 @st.cache_data
 def fetch_data(tickers, start, end):
     data = yf.download(tickers, start=start, end=end)
-    
-    # Handle single ticker vs multiple tickers correctly
-    if len(tickers) == 1:
-        df = data["Adj Close"].to_frame()
-    else:
+
+    if isinstance(data.columns, pd.MultiIndex):
+        # If multiple tickers (MultiIndex columns)
         df = data["Adj Close"]
-    
+    else:
+        # If single ticker (single column)
+        df = data.to_frame(name="Adj Close")
+
     return df
+
 
 # ---- Optimization functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
