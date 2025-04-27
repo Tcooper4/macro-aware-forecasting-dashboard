@@ -22,15 +22,23 @@ tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.str
 def fetch_data(tickers, start, end):
     data = yf.download(tickers, start=start, end=end)
 
+    # Safety checks
+    if data.empty:
+        st.error("No data was returned. Please check the tickers and date range.")
+        return None
+
     if isinstance(data.columns, pd.MultiIndex):
-        # If multiple tickers (MultiIndex columns)
+        if "Adj Close" not in data.columns.levels[0]:
+            st.error("Missing 'Adj Close' data. Please check the tickers.")
+            return None
         df = data["Adj Close"]
     else:
-        # If single ticker (single column)
+        if "Adj Close" not in data.columns:
+            st.error("Missing 'Adj Close' data. Please check the tickers.")
+            return None
         df = data.to_frame(name="Adj Close")
 
     return df
-
 
 # ---- Optimization functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
@@ -58,10 +66,13 @@ if st.button("Optimize Portfolio"):
     else:
         with st.spinner("Fetching data and optimizing..."):
             df = fetch_data(tickers, start_date, end_date)
+            if df is None:
+                st.stop()
+
             returns = df.pct_change().dropna()
             mean_returns = returns.mean()
             cov_matrix = returns.cov()
-            
+
             opt = optimize_portfolio(mean_returns, cov_matrix)
             opt_weights = opt.x
 
@@ -86,7 +97,7 @@ if st.button("Optimize Portfolio"):
                 results['Volatility'].append(vol)
                 results['Sharpe'].append(sharpe)
                 results['Weights'].append(weights)
-            
+
             results_df = pd.DataFrame(results)
             plt.figure(figsize=(10,6))
             scatter = plt.scatter(results_df['Volatility'], results_df['Returns'], c=results_df['Sharpe'], cmap='viridis', alpha=0.7)
