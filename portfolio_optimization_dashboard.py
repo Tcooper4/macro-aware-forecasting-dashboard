@@ -27,26 +27,24 @@ def fetch_data(tickers, start, end):
             st.error("No data was returned. Please check tickers and date range.")
             return None
 
-        if isinstance(data.columns, pd.MultiIndex):
-            # When multiple tickers
-            close_data = pd.DataFrame()
-            for ticker in tickers:
-                if (ticker, 'Close') in data.columns:
-                    close_data[ticker] = data[(ticker, 'Close')]
+        # Whether it's 1 ticker or multiple, auto_adjust=True ensures simple columns
+        if isinstance(data, pd.DataFrame):
+            if len(tickers) == 1:
+                # Only 1 ticker, rename 'Close' column to ticker name
+                if 'Close' in data.columns:
+                    df = data[['Close']].copy()
+                    df.columns = [tickers[0]]
+                    return df
                 else:
-                    st.error(f"No 'Close' price found for {ticker}")
+                    st.error("Expected 'Close' data not found for ticker.")
                     return None
-            return close_data
+            else:
+                # Multiple tickers: data already has ticker columns
+                return data
 
         else:
-            # Single ticker
-            if 'Close' in data.columns:
-                df = data[['Close']].copy()
-                df.columns = [tickers[0]]  # Rename to ticker name
-                return df
-            else:
-                st.error("Expected 'Close' data not found. Please check tickers.")
-                return None
+            st.error("Unexpected data format received.")
+            return None
 
     except Exception as e:
         st.error(f"Error fetching data: {e}")
