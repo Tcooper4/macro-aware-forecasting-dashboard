@@ -67,7 +67,7 @@ if st.button("Optimize Portfolio"):
         with st.spinner("Fetching data and optimizing..."):
             df = fetch_data(tickers, start_date, end_date)
             if df is None:
-                st.stop()
+                st.stop()  # 🛑 Immediately stop app if data fetch failed
 
             returns = df.pct_change().dropna()
             mean_returns = returns.mean()
