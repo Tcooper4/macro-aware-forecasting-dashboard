@@ -20,25 +20,32 @@ tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.str
 # ---- Caching data fetching ----
 @st.cache_data
 def fetch_data(tickers, start, end):
-    data = yf.download(tickers, start=start, end=end)
+    try:
+        data = yf.download(tickers, start=start, end=end, group_by='ticker', auto_adjust=True)
 
-    # Safety checks
-    if data.empty:
-        st.error("No data was returned. Please check the tickers and date range.")
+        # If empty DataFrame
+        if data.empty:
+            st.error("No data was returned. Please check tickers and date range.")
+            return None
+
+        # Handle multi-ticker download
+        if isinstance(data.columns, pd.MultiIndex):
+            # Check if "Adj Close" exists in the multiindex
+            if "Adj Close" in data.columns.get_level_values(1):
+                df = data.xs('Adj Close', level=1, axis=1)
+            else:
+                st.error("'Adj Close' data is missing. Please check your tickers.")
+                return None
+        else:
+            # Single ticker situation
+            df = data.to_frame(name=tickers[0])
+
+        return df
+
+    except Exception as e:
+        st.error(f"Error fetching data: {e}")
         return None
 
-    if isinstance(data.columns, pd.MultiIndex):
-        if "Adj Close" not in data.columns.levels[0]:
-            st.error("Missing 'Adj Close' data. Please check the tickers.")
-            return None
-        df = data["Adj Close"]
-    else:
-        if "Adj Close" not in data.columns:
-            st.error("Missing 'Adj Close' data. Please check the tickers.")
-            return None
-        df = data.to_frame(name="Adj Close")
-
-    return df
 
 # ---- Optimization functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
