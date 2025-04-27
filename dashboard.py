@@ -1,28 +1,26 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 from features.merge_data import merge_data
-from fred_macro_data import fetch_and_plot, get_macro_indicators
+from fred_macro_data import fetch_and_plot_cached, get_macro_indicators
+
+st.set_page_config(page_title="Macro-Aware Forecasting Dashboard", layout="wide")
+
+st.title("📈 Macro-Aware Quant Forecasting Dashboard")
+st.caption(f"Last updated: {datetime.now().strftime('%B %d, %Y %H:%M:%S')}")
+
+ticker = st.text_input("Enter a ticker symbol (e.g., SPY, AAPL):", value="SPY")
 
 @st.cache_data
 def merge_data_cached(ticker):
     return merge_data(ticker)
 
-st.set_page_config(page_title="Macro-Aware Forecasting Dashboard", layout="wide")
-
-st.title("📈 Macro-Aware Quant Forecasting Dashboard")
-
-ticker = st.text_input("Enter a ticker symbol (e.g., SPY, AAPL):", value="SPY")
-
 if st.button("Load Data"):
-    with st.spinner("Fetching data..."):
+    with st.spinner("Fetching stock and macro data..."):
         df = merge_data_cached(ticker)
-        st.success("Data Loaded Successfully!")
-        st.line_chart(df[f"{ticker}_Close"])
+    st.success("✅ Data Loaded Successfully!")
+    st.line_chart(df[f"{ticker}_Close"])
 
 if st.sidebar.checkbox("Show Macroeconomic Indicators"):
     st.subheader("📊 Macroeconomic Trends")
@@ -33,7 +31,7 @@ if st.sidebar.checkbox("Show Macroeconomic Indicators"):
         "GDPC1": "Real GDP"
     }
     for code, label in macro_options.items():
-        data = fetch_and_plot(code, label)
+        data = fetch_and_plot_cached(code, label)
         st.line_chart(data.rename(label))
 
 if st.sidebar.checkbox("Show Strategy Recommendation"):
