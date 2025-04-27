@@ -24,27 +24,33 @@ def fetch_data(tickers, start, end):
         data = yf.download(tickers, start=start, end=end, auto_adjust=True)
 
         if data.empty:
-            st.error("No data was returned. Please check the tickers and date range.")
+            st.error("No data was returned. Please check tickers and date range.")
             return None
 
         if isinstance(data.columns, pd.MultiIndex):
-            # If multiple tickers
-            if 'Close' in data.columns.get_level_values(1):
-                df = data.xs('Close', level=1, axis=1)
-            else:
-                st.error("Expected 'Close' price data not found. Please check tickers.")
-                return None
-        else:
-            # Single ticker situation
-            df = data.to_frame(name="Close")
+            # When MultiIndex, like ('AAPL', 'Close')
+            close_data = pd.DataFrame()
+            for ticker in tickers:
+                if (ticker, 'Close') in data.columns:
+                    close_data[ticker] = data[(ticker, 'Close')]
+                else:
+                    st.error(f"No 'Close' data found for {ticker}")
+                    return None
+            return close_data
 
-        return df
+        else:
+            # Single ticker, normal DataFrame
+            if 'Close' in data.columns:
+                df = data[['Close']].copy()
+                df.columns = [tickers[0]]  # Rename to ticker name
+                return df
+            else:
+                st.error("Expected 'Close' data not found. Please check tickers.")
+                return None
 
     except Exception as e:
         st.error(f"Error fetching data: {e}")
         return None
-
-
 
 # ---- Optimization functions ----
 def portfolio_performance(weights, mean_returns, cov_matrix):
