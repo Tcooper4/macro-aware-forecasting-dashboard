@@ -20,7 +20,14 @@ tickers = [ticker.strip().upper() for ticker in tickers.split(",") if ticker.str
 # ---- Caching data fetching ----
 @st.cache_data
 def fetch_data(tickers, start, end):
-    df = yf.download(tickers, start=start, end=end)["Adj Close"]
+    data = yf.download(tickers, start=start, end=end)
+    
+    # Handle single ticker vs multiple tickers correctly
+    if len(tickers) == 1:
+        df = data["Adj Close"].to_frame()
+    else:
+        df = data["Adj Close"]
+    
     return df
 
 # ---- Optimization functions ----
