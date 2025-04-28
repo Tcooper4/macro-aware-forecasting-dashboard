@@ -62,7 +62,7 @@ if st.button("Generate Forecasts"):
 
             # Force Clean Close Prices
             close_raw = data['Close'].dropna().astype(float)
-            close_prices = pd.Series(close_raw.values, index=close_raw.index)
+            close_prices = pd.Series(close_raw.values.flatten(), index=close_raw.index)  # <-- Flatten added here
 
             # Hard sanity checks
             if close_prices.empty or len(close_prices) < 60:
@@ -95,6 +95,7 @@ if st.button("Generate Forecasts"):
 
         except Exception as e:
             st.error(f"Failed to forecast {ticker}: {e}")
+
 
 
 
