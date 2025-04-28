@@ -1,8 +1,11 @@
 import warnings
+from statsmodels.tools.sm_exceptions import ConvergenceWarning  # <-- Add this import!
+
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import pandas as pd
 import numpy as np
 import yfinance as yf
