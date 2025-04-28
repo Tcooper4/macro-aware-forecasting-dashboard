@@ -11,4 +11,4 @@ seaborn
 statsmodels
 prophet
 tensorflow
-sklearn
+scikit-learn
