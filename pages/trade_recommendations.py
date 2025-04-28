@@ -106,19 +106,20 @@ if st.button("Generate Forecasts"):
 
             import plotly.graph_objects as go
 
-            # Define history window (make sure index is datetime)
-            # Define history window (force datetime index and sorting)
+            # Ensure datetime index
             close_prices.index = pd.to_datetime(close_prices.index)
-            history = close_prices[-60:].sort_index()  # <-- sort_index forces oldest to newest
-            forecast.index = pd.to_datetime(forecast.index)  # Forecast already in correct order
+            forecast.index = pd.to_datetime(forecast.index)
 
-            # Confidence intervals (simple +/- 1.5%)
+            # Sort history correctly
+            history = close_prices[-60:].sort_index()
+
+            # Confidence interval bounds
             upper_conf = forecast * 1.015
             lower_conf = forecast * 0.985
 
             fig = go.Figure()
 
-            # Plot actual historical prices
+            # Historical prices (blue line)
             fig.add_trace(go.Scatter(
                 x=history.index,
                 y=history.values,
@@ -127,7 +128,7 @@ if st.button("Generate Forecasts"):
                 line=dict(color='blue')
             ))
 
-            # Plot forecasted future prices
+            # Forecasted prices (green dashed line)
             fig.add_trace(go.Scatter(
                 x=forecast.index,
                 y=forecast.values,
@@ -136,7 +137,7 @@ if st.button("Generate Forecasts"):
                 line=dict(color='green', dash='dash')
             ))
 
-            # Plot confidence interval as shaded area
+            # Confidence Interval
             fig.add_trace(go.Scatter(
                 x=list(forecast.index) + list(forecast.index[::-1]),
                 y=list(upper_conf.values) + list(lower_conf.values[::-1]),
@@ -150,7 +151,6 @@ if st.button("Generate Forecasts"):
 
             # Detect trend for annotation
             trend = forecast.iloc[-1] - forecast.iloc[0]
-
             if trend > 0:
                 annotation_text = "BUY 📈"
                 annotation_color = "green"
@@ -158,7 +158,7 @@ if st.button("Generate Forecasts"):
                 annotation_text = "SELL 📉"
                 annotation_color = "red"
 
-            # Add annotation on the last forecast point
+            # Add annotation at last forecasted point
             fig.add_trace(go.Scatter(
                 x=[forecast.index[-1]],
                 y=[forecast.iloc[-1]],
@@ -169,24 +169,15 @@ if st.button("Generate Forecasts"):
                 showlegend=False
             ))
 
-            # Update layout with limits
+            # FINAL layout (very important fix: REMOVE fixed range, let Plotly handle it)
             fig.update_layout(
                 title=f"Price Forecast for {ticker}",
                 xaxis_title="Date",
                 yaxis_title="Price ($)",
                 xaxis=dict(
-                    range=[history.index.min(), forecast.index.max()],  # only from past history to forecast end
-                    type='date',   # Force x-axis to be a time series (not number)
+                    type='date',        # Force date-time x-axis
                     showgrid=True,
-                    rangeselector=dict(
-                        buttons=list([
-                            dict(count=7, label="1w", step="day", stepmode="backward"),
-                            dict(count=1, label="1m", step="month", stepmode="backward"),
-                            dict(count=3, label="3m", step="month", stepmode="backward"),
-                            dict(step="all")
-                        ])
-                    ),
-                    rangeslider=dict(visible=True)
+                    rangeslider=dict(visible=True),   # Allow zooming nicely
                 ),
                 yaxis=dict(
                     showgrid=True
@@ -198,6 +189,7 @@ if st.button("Generate Forecasts"):
             st.plotly_chart(fig, use_container_width=True)
 
             st.info(f"**Risk Level:** {risk_scores[ticker]}")
+
 
 
         st.success("✅ Forecasts Generated Successfully!")
