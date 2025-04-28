@@ -103,12 +103,87 @@ if st.button("Generate Forecasts"):
     if forecast_results:
         for ticker, forecast in forecast_results.items():
             st.subheader(f"📈 Forecast for {ticker}")
-            st.line_chart(forecast)
 
+            import plotly.graph_objects as go
+
+            # Define history window
+            history = close_prices[-60:]  # Last 60 days of real prices
+            forecast_start_date = forecast.index[0]
+
+            # Estimate confidence intervals (simple +/- 1.5% of forecast as example)
+            upper_conf = forecast * 1.015
+            lower_conf = forecast * 0.985
+
+            fig = go.Figure()
+
+            # Plot actual past prices
+            fig.add_trace(go.Scatter(
+                x=history.index,
+                y=history.values,
+                mode='lines',
+                name='Historical Prices',
+                line=dict(color='blue')
+            ))
+
+            # Plot forecasted future prices
+            fig.add_trace(go.Scatter(
+                x=forecast.index,
+                y=forecast.values,
+                mode='lines',
+                name='Forecasted Prices',
+                line=dict(color='green', dash='dash')
+            ))
+
+            # Plot confidence intervals
+            fig.add_trace(go.Scatter(
+                x=list(forecast.index) + list(forecast.index[::-1]),
+                y=list(upper_conf.values) + list(lower_conf.values[::-1]),
+                fill='toself',
+                fillcolor='rgba(0, 255, 0, 0.2)',
+                line=dict(color='rgba(255,255,255,0)'),
+                hoverinfo="skip",
+                showlegend=True,
+                name='Confidence Interval'
+            ))
+
+            # Detect trend for annotation
             trend = forecast.iloc[-1] - forecast.iloc[0]
-            recommendation = "Buy" if trend > 0 else "Sell" if trend < 0 else "Hold"
 
-            st.success(f"**Recommendation for {ticker}:** {recommendation}")
+            if trend > 0:
+                annotation_text = "BUY 📈"
+                annotation_color = "green"
+            else:
+                annotation_text = "SELL 📉"
+                annotation_color = "red"
+
+            # Add annotation
+            fig.add_trace(go.Scatter(
+                x=[forecast.index[-1]],
+                y=[forecast.iloc[-1]],
+                mode='markers+text',
+                marker=dict(color=annotation_color, size=12),
+                text=[annotation_text],
+                textposition="top center",
+                showlegend=False
+            ))
+
+            fig.update_layout(
+                title=f"Price Forecast for {ticker}",
+                xaxis_title="Date",
+                yaxis_title="Price ($)",
+                xaxis=dict(
+                    range=[history.index.min(), forecast.index.max()],
+                    showgrid=True
+                ),
+                yaxis=dict(
+                    showgrid=True
+                ),
+                legend=dict(x=0, y=1),
+                template="plotly_white"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
             st.info(f"**Risk Level:** {risk_scores[ticker]}")
 
         st.success("✅ Forecasts Generated Successfully!")
