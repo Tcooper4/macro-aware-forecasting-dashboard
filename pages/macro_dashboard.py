@@ -1,13 +1,9 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-# from forecast_engine import fetch_macro_data, detect_macro_regime  # 🚫 Commented out because not ready
-from utils import navigation_bar
 import requests
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+from utils import navigation_bar
 
 st.set_page_config(page_title="Macro Dashboard", layout="wide")
 navigation_bar()
@@ -65,87 +61,33 @@ st.subheader("🧠 Detect Current Macro Regime")
 #     st.markdown(f"### 💼 Suggested Strategy: **{strategy}**")
 
 # --- Put/Call Ratio Section ---
-st.header("📊 Put/Call Ratio (Options Market Sentiment) — Real CBOE Data")
+st.header("📊 Put/Call Ratio (Options Market Sentiment) — Live Data")
 
 @st.cache_data
-def get_cboe_put_call_data():
-    url = "https://www.cboe.com/us/options/market_statistics/daily/"
+def get_barchart_put_call():
+    url = "https://www.barchart.com/stocks/most-active/put-call-ratios"
     response = requests.get(url)
 
     if response.status_code != 200:
-        return None  # Fail gracefully if CBOE website is down
-
-    # Parse all tables
-    tables = pd.read_html(response.text)
-
-    # The table we want is usually the one with "Equity Put/Call Ratio"
-    target_table = None
-    for table in tables:
-        if "Equity" in table.columns[0] and "Put/Call" in table.columns[0]:
-            target_table = table
-            break
-
-    if target_table is None:
-        return None  # No matching table found
-
-    # Clean the table
-    target_table.columns = ['Metric', 'Today', 'Previous']
-    target_table = target_table.set_index('Metric')
-
-    equity_put_call_today = target_table.loc['Equity Option Put/Call Ratio', 'Today']
-
-    return float(equity_put_call_today)
-
-# --- Fetch real CBOE Put/Call Ratio ---
-st.header("📊 Put/Call Ratio (Options Market Sentiment) — Real CBOE Data (via Selenium)")
-
-@st.cache_data
-def get_cboe_put_call_selenium():
-    # Set up headless Chrome
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-    
-    # Load CBOE page
-    url = "https://www.cboe.com/us/options/market_statistics/daily/"
-    driver.get(url)
-
-    # Let it load
-    driver.implicitly_wait(10)
-
-    # Get page source and parse
-    soup = BeautifulSoup(driver.page_source, "html.parser")
-
-    driver.quit()
-
-    # Find the correct table
-    tables = pd.read_html(str(soup))
-    target_table = None
-    for table in tables:
-        if "Equity" in table.columns[0] and "Put/Call" in table.columns[0]:
-            target_table = table
-            break
-
-    if target_table is None:
         return None
 
-    target_table.columns = ['Metric', 'Today', 'Previous']
-    target_table = target_table.set_index('Metric')
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    try:
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+        
+        # Typically the first row is index-wide put/call ratio
+        equity_put_call = df.iloc[0]['Put/Call Ratio']
+        return float(equity_put_call)
+    except Exception as e:
+        return None
 
-    equity_put_call_today = target_table.loc['Equity Option Put/Call Ratio', 'Today']
-
-    return float(equity_put_call_today)
-
-# --- Fetch real CBOE Put/Call Ratio ---
-put_call_value = get_cboe_put_call_selenium()
+put_call_value = get_barchart_put_call()
 
 if put_call_value is not None:
-    st.metric(label="Real-Time Equity Put/Call Ratio", value=f"{put_call_value:.2f}")
+    st.metric(label="Real-Time Put/Call Ratio (from Barchart)", value=f"{put_call_value:.2f}")
 
-    # Interpretation
     st.subheader("Current Put/Call Sentiment:")
 
     if put_call_value > 1.0:
@@ -155,4 +97,4 @@ if put_call_value is not None:
     else:
         st.info(f"😐 Neutral Sentiment: Put/Call Ratio = {put_call_value:.2f}")
 else:
-    st.error("⚠️ Failed to fetch Put/Call Ratio from CBOE. Please try again later.")
+    st.error("⚠️ Failed to fetch Put/Call Ratio. Please try again later.")
