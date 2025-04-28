@@ -60,29 +60,51 @@ st.subheader("🧠 Detect Current Macro Regime")
 #     st.markdown(f"### 💼 Suggested Strategy: **{strategy}**")
 
 # --- Put/Call Ratio Section ---
-st.header("📊 Put/Call Ratio (Options Market Sentiment)")
+st.header("📊 Put/Call Ratio (Options Market Sentiment) — Real CBOE Data")
 
 @st.cache_data
-def get_put_call_data():
-    put_call = yf.download('^CPCE', period='1y', interval='1d', progress=False)
-    put_call = put_call['Close'].dropna()
-    return put_call
+def get_cboe_put_call_data():
+    url = "https://www.cboe.com/us/options/market_statistics/daily/"
+    response = requests.get(url)
 
-put_call_data = get_put_call_data()
+    if response.status_code != 200:
+        return None  # Fail gracefully if CBOE website is down
 
-st.line_chart(put_call_data)
+    # Parse all tables
+    tables = pd.read_html(response.text)
 
-if not put_call_data.empty:
-    current_pc = float(put_call_data.iloc[-1])
+    # The table we want is usually the one with "Equity Put/Call Ratio"
+    target_table = None
+    for table in tables:
+        if "Equity" in table.columns[0] and "Put/Call" in table.columns[0]:
+            target_table = table
+            break
 
+    if target_table is None:
+        return None  # No matching table found
+
+    # Clean the table
+    target_table.columns = ['Metric', 'Today', 'Previous']
+    target_table = target_table.set_index('Metric')
+
+    equity_put_call_today = target_table.loc['Equity Option Put/Call Ratio', 'Today']
+
+    return float(equity_put_call_today)
+
+# --- Fetch real CBOE Put/Call Ratio ---
+put_call_value = get_cboe_put_call_data()
+
+if put_call_value is not None:
+    st.metric(label="Real-Time Equity Put/Call Ratio", value=f"{put_call_value:.2f}")
+
+    # Interpretation
     st.subheader("Current Put/Call Sentiment:")
 
-    if current_pc > 1.0:
-        st.success(f"🚀 High Fear: Put/Call Ratio = {current_pc:.2f} (Contrarian Buy Signal)")
-    elif current_pc < 0.7:
-        st.error(f"🛑 High Greed: Put/Call Ratio = {current_pc:.2f} (Caution Warranted)")
+    if put_call_value > 1.0:
+        st.success(f"🚀 High Fear: Put/Call Ratio = {put_call_value:.2f} (Contrarian Buy Signal)")
+    elif put_call_value < 0.7:
+        st.error(f"🛑 High Greed: Put/Call Ratio = {put_call_value:.2f} (Caution Warranted)")
     else:
-        st.info(f"😐 Neutral Sentiment: Put/Call Ratio = {current_pc:.2f}")
+        st.info(f"😐 Neutral Sentiment: Put/Call Ratio = {put_call_value:.2f}")
 else:
-    st.error("⚠️ Failed to load Put/Call Ratio data. Please try again later.")
-
+    st.error("⚠️ Failed to fetch Put/Call Ratio from CBOE. Please try again later.")
