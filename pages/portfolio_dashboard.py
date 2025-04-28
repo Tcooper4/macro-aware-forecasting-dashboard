@@ -101,4 +101,7 @@ if st.button("Run Optimization"):
             plt.xlabel('Volatility')
             plt.ylabel('Expected Return')
             plt.legend()
+
+            st.subheader("📈 Efficient Frontier of Portfolio Returns vs Volatility")  # <-- Add this line
             st.pyplot(plt)
+

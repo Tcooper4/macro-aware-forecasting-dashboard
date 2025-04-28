@@ -50,7 +50,9 @@ if st.button("Generate Forecasts"):
                     "Upper Bound": forecast * 1.05,
                     "Lower Bound": forecast * 0.95
                 })
+                st.subheader(f"📈 Forecast for {ticker}")
                 st.line_chart(forecast_df)
+
 
                 change_pct = (forecast[-1] - forecast[0]) / forecast[0]
                 if change_pct > 0.02:

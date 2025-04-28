@@ -31,7 +31,10 @@ if st.button("Load Macro Data"):
         if data is not None:
             st.success("✅ Data Loaded Successfully!")
             for code in selected_indicators:
+                chart_title = f"📈 {macro_options.get(code, code)} Trend"
+                st.subheader(chart_title)
                 st.line_chart(data[code].rename(macro_options.get(code, code)))
+
         else:
             st.error("Failed to fetch macro data.")
 
