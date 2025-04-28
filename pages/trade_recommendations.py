@@ -169,6 +169,17 @@ if st.button("Generate Forecasts"):
                 showlegend=False
             ))
 
+            # Add buy/sell target price marker at start of forecast
+            fig.add_trace(go.Scatter(
+                x=[forecast.index[0]],
+                y=[forecast.iloc[0]],
+                mode='markers+text',
+                marker=dict(color=annotation_color, size=10, symbol='diamond'),
+                text=[f"Target ${forecast.iloc[0]:.2f}"],
+                textposition="bottom center",
+                showlegend=False
+            ))
+
             # FINAL layout (very important fix: REMOVE fixed range, let Plotly handle it)
             fig.update_layout(
                 title=f"Price Forecast for {ticker}",
