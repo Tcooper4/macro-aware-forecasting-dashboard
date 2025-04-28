@@ -27,6 +27,41 @@ elif current_vix < 20:
 else:
     st.info(f"😐 Moderate Volatility: VIX = {current_vix:.2f}")
 
-# Coming next: AAII Sentiment, Put/Call Ratio
-st.markdown("---")
-st.caption("More sentiment indicators coming soon: AAII Survey, Put/Call Ratio 🚀")
+st.header("📊 AAII Investor Sentiment Survey")
+
+@st.cache_data
+def get_aaii_data():
+    url = "https://www.aaii.com/files/surveys/sentiment.csv"
+    df = pd.read_csv(url)
+    df['Survey Date'] = pd.to_datetime(df['Survey Date'])
+    df = df.set_index('Survey Date')
+    df = df.sort_index()
+    return df
+
+aaii_data = get_aaii_data()
+
+# Line chart of sentiment
+st.line_chart(aaii_data[['Bullish', 'Neutral', 'Bearish']])
+
+# Latest values
+latest_aaii = aaii_data.iloc[-1]
+
+st.subheader("Latest AAII Readings:")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if latest_aaii['Bullish'] > 45:
+        st.error(f"🛑 Bullish: {latest_aaii['Bullish']:.1f}% (Extreme optimism)")
+    else:
+        st.info(f"📈 Bullish: {latest_aaii['Bullish']:.1f}%")
+
+with col2:
+    st.info(f"😐 Neutral: {latest_aaii['Neutral']:.1f}%")
+
+with col3:
+    if latest_aaii['Bearish'] > 45:
+        st.success(f"🚀 Bearish: {latest_aaii['Bearish']:.1f}% (Extreme fear)")
+    else:
+        st.info(f"📉 Bearish: {latest_aaii['Bearish']:.1f}%")
+
