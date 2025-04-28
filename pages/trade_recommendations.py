@@ -10,6 +10,18 @@ st.session_state["_page_"] = __file__
 navigation_bar()
 
 st.title("🛒 Daily Trade Recommendations")
+with st.expander("ℹ️ About the Trade Recommendation Engine", expanded=True):
+    st.markdown("""
+    This engine generates **buy, sell, or hold signals** based on short-term price forecasts.
+
+    - 🔮 **Forecast Models:** Uses time series models (e.g., Exponential Smoothing) to predict next prices.
+    - 🛒 **Recommendations:** Analyzes forecasted trends to suggest trade actions.
+    - 📊 **Outputs:** Includes forecasted price ranges, risk levels, and downloadable trade summaries.
+    - 💡 **Options Tip:** Provides basic options trading ideas (e.g., Buy Call, Buy Put).
+
+    **Use this to find daily trading opportunities automatically!**
+    """)
+
 st.markdown("### Generate trade ideas based on short-term forecasts with confidence intervals and risk analysis.")
 
 # --- User Inputs ---

@@ -10,6 +10,18 @@ st.set_page_config(page_title="Portfolio Optimizer", layout="wide")
 navigation_bar()
 
 st.title("📊 Portfolio Optimizer")
+with st.expander("ℹ️ About the Portfolio Optimizer", expanded=True):
+    st.markdown("""
+    This tool helps you **optimize your stock portfolio** based on historical returns and volatility.
+
+    - 📈 **Goal:** Maximize the Sharpe Ratio (risk-adjusted returns).
+    - 🎯 **How:** Simulates thousands of random portfolios and identifies the most efficient one.
+    - ⚙️ **Input:** Select your stocks and historical time range.
+    - 📊 **Output:** Optimal weights for each stock and visualization of the Efficient Frontier.
+
+    **Use this to balance return and risk intelligently!**
+    """)
+
 
 st.markdown("### Optimize your portfolio for maximum Sharpe Ratio using historical price data.")
 
