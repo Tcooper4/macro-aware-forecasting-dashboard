@@ -55,12 +55,16 @@ def detect_macro_regime():
 # --- Forecast Prices Using Exponential Smoothing ---
 def forecast_prices(series, forecast_days=5):
     try:
-        series = series.dropna().astype(float)  # <--- force numeric type
-        series = series.asfreq('B')  # Set frequency to Business Day
+        series = series.dropna().astype(float)  # Clean to float
+        if series.empty:
+            raise ValueError("Series is empty after cleaning.")
+
+        series = series.asfreq('B')  # Set business day frequency for smooth forecasting
         model = ExponentialSmoothing(series, trend="add", seasonal=None, initialization_method="estimated")
         fitted = model.fit()
         forecast = fitted.forecast(forecast_days)
         return forecast
     except Exception as e:
         raise Exception(f"Forecasting failed: {e}")
+
 

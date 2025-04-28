@@ -38,18 +38,24 @@ if st.button("Generate Forecasts"):
         for ticker in tickers:
             try:
                 data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
+
+                # Validate data is usable
                 if data.empty or 'Close' not in data.columns or data['Close'].dropna().empty:
                     st.warning(f"No valid price data for {ticker}. Skipping.")
                     continue
 
-                forecast = forecast_prices(data['Close'].dropna(), forecast_days)
+                # Clean series before forecasting
+                close_prices = data['Close'].dropna().astype(float)
 
-                vol = np.std(data['Close'].pct_change().dropna()) * np.sqrt(252)  # Annualized volatility
+                forecast = forecast_prices(close_prices, forecast_days)
+                vol = np.std(close_prices.pct_change().dropna()) * np.sqrt(252)  # Annualized volatility
                 risk = "Low" if vol < 0.2 else "Medium" if vol < 0.4 else "High"
                 forecast_results[ticker] = forecast
                 risk_scores[ticker] = risk
+
             except Exception as e:
                 st.error(f"Failed to forecast {ticker}: {e}")
+
 
         if forecast_results:
             st.success("✅ Forecasts generated!")
