@@ -27,4 +27,10 @@ def get_macro_indicators():
     for label, code in series.items():
         data[label] = fred.get_series(code)
     df = pd.DataFrame(data)
+
+    # Interpolate Real GDP to monthly for smooth plotting
+    if "Real GDP" in df.columns:
+        df["Real GDP"] = df["Real GDP"].interpolate(method="linear")
+
     return df
+

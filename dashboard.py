@@ -16,10 +16,30 @@ st.set_page_config(page_title="Macro-Aware Forecasting Dashboard", layout="wide"
 
 # Title and last updated time
 st.title("📈 Macro-Aware Quant Forecasting Dashboard")
+with st.expander("ℹ️ How This Platform Works", expanded=True):
+    st.markdown("""
+    This dashboard helps you:
+    - 📈 Analyze market and macroeconomic trends.
+    - 🛒 Get daily trade recommendations based on forecasts.
+    - 📊 Optimize your stock portfolio to maximize returns.
+
+    **Use the sidebar to navigate between tools!**
+    """)
+
 st.caption(f"Last updated: {datetime.now().strftime('%B %d, %Y %H:%M:%S')}")
 
 # --- Sidebar Inputs ---
 ticker = st.text_input("Enter a ticker symbol (e.g., SPY, AAPL):", value="SPY")
+st.sidebar.title("📚 Instructions")
+
+st.sidebar.markdown("""
+- **Enter a stock ticker** (e.g., AAPL, SPY) to fetch stock data.
+- **Load Data** to view historical prices.
+- **Macro Dashboard:** Explore macroeconomic indicators.
+- **Trade Recommendations:** Generate buy/sell trade ideas.
+- **Portfolio Optimizer:** Optimize your investment portfolio.
+""")
+
 
 @st.cache_data
 def merge_data_cached(ticker):
