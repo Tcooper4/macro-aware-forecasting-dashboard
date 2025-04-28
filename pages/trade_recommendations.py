@@ -26,10 +26,12 @@ if st.button("Generate Forecasts"):
         for ticker in tickers:
             try:
                 data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
-                if data.empty:
-                    st.warning(f"No data found for {ticker}. Skipping.")
+                if data.empty or data['Close'].dropna().empty:
+                    st.warning(f"No valid price data for {ticker}. Skipping.")
                     continue
-                forecast = forecast_prices(data['Close'], forecast_days)
+
+                forecast = forecast_prices(data['Close'].dropna(), forecast_days)
+
                 vol = np.std(data['Close'].pct_change().dropna()) * np.sqrt(252)  # Annualized volatility
                 risk = "Low" if vol < 0.2 else "Medium" if vol < 0.4 else "High"
                 forecast_results[ticker] = forecast

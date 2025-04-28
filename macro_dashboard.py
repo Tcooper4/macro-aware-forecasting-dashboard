@@ -42,3 +42,4 @@ if st.button("Analyze Current Regime"):
     regime, strategy = detect_macro_regime()
     st.markdown(f"### 📊 Current Detected Regime: **{regime}**")
     st.markdown(f"### 💼 Suggested Strategy: **{strategy}**")
+

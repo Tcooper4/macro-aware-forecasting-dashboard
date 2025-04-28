@@ -27,5 +27,4 @@ def get_macro_indicators():
     for label, code in series.items():
         data[label] = fred.get_series(code)
     df = pd.DataFrame(data)
-    df = df.asfreq('MS')  # Month Start frequency for macro indicators
     return df
