@@ -3,6 +3,11 @@ import pandas as pd
 import yfinance as yf
 # from forecast_engine import fetch_macro_data, detect_macro_regime  # 🚫 Commented out because not ready
 from utils import navigation_bar
+import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 
 st.set_page_config(page_title="Macro Dashboard", layout="wide")
 navigation_bar()
@@ -92,7 +97,50 @@ def get_cboe_put_call_data():
     return float(equity_put_call_today)
 
 # --- Fetch real CBOE Put/Call Ratio ---
-put_call_value = get_cboe_put_call_data()
+st.header("📊 Put/Call Ratio (Options Market Sentiment) — Real CBOE Data (via Selenium)")
+
+@st.cache_data
+def get_cboe_put_call_selenium():
+    # Set up headless Chrome
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    
+    # Load CBOE page
+    url = "https://www.cboe.com/us/options/market_statistics/daily/"
+    driver.get(url)
+
+    # Let it load
+    driver.implicitly_wait(10)
+
+    # Get page source and parse
+    soup = BeautifulSoup(driver.page_source, "html.parser")
+
+    driver.quit()
+
+    # Find the correct table
+    tables = pd.read_html(str(soup))
+    target_table = None
+    for table in tables:
+        if "Equity" in table.columns[0] and "Put/Call" in table.columns[0]:
+            target_table = table
+            break
+
+    if target_table is None:
+        return None
+
+    target_table.columns = ['Metric', 'Today', 'Previous']
+    target_table = target_table.set_index('Metric')
+
+    equity_put_call_today = target_table.loc['Equity Option Put/Call Ratio', 'Today']
+
+    return float(equity_put_call_today)
+
+# --- Fetch real CBOE Put/Call Ratio ---
+put_call_value = get_cboe_put_call_selenium()
 
 if put_call_value is not None:
     st.metric(label="Real-Time Equity Put/Call Ratio", value=f"{put_call_value:.2f}")
