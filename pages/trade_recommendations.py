@@ -106,17 +106,18 @@ if st.button("Generate Forecasts"):
 
             import plotly.graph_objects as go
 
-            # Define history window
-            history = close_prices[-60:]  # Last 60 days of real prices
-            forecast_start_date = forecast.index[0]
+            # Define history window (make sure index is datetime)
+            close_prices.index = pd.to_datetime(close_prices.index)
+            history = close_prices[-60:]  # Last 60 business days
+            forecast.index = pd.to_datetime(forecast.index)  # Make sure forecast index is datetime
 
-            # Estimate confidence intervals (simple +/- 1.5% of forecast as example)
+            # Confidence intervals (simple +/- 1.5%)
             upper_conf = forecast * 1.015
             lower_conf = forecast * 0.985
 
             fig = go.Figure()
 
-            # Plot actual past prices
+            # Plot actual historical prices
             fig.add_trace(go.Scatter(
                 x=history.index,
                 y=history.values,
@@ -134,12 +135,12 @@ if st.button("Generate Forecasts"):
                 line=dict(color='green', dash='dash')
             ))
 
-            # Plot confidence intervals
+            # Plot confidence interval as shaded area
             fig.add_trace(go.Scatter(
                 x=list(forecast.index) + list(forecast.index[::-1]),
                 y=list(upper_conf.values) + list(lower_conf.values[::-1]),
                 fill='toself',
-                fillcolor='rgba(0, 255, 0, 0.2)',
+                fillcolor='rgba(0,255,0,0.2)',
                 line=dict(color='rgba(255,255,255,0)'),
                 hoverinfo="skip",
                 showlegend=True,
@@ -156,7 +157,7 @@ if st.button("Generate Forecasts"):
                 annotation_text = "SELL 📉"
                 annotation_color = "red"
 
-            # Add annotation
+            # Add annotation on the last forecast point
             fig.add_trace(go.Scatter(
                 x=[forecast.index[-1]],
                 y=[forecast.iloc[-1]],
@@ -167,13 +168,24 @@ if st.button("Generate Forecasts"):
                 showlegend=False
             ))
 
+            # Update layout with limits
             fig.update_layout(
                 title=f"Price Forecast for {ticker}",
                 xaxis_title="Date",
                 yaxis_title="Price ($)",
                 xaxis=dict(
-                    range=[history.index.min(), forecast.index.max()],
-                    showgrid=True
+                    range=[history.index.min(), forecast.index.max()],  # only from past history to forecast end
+                    type='date',   # Force x-axis to be a time series (not number)
+                    showgrid=True,
+                    rangeselector=dict(
+                        buttons=list([
+                            dict(count=7, label="1w", step="day", stepmode="backward"),
+                            dict(count=1, label="1m", step="month", stepmode="backward"),
+                            dict(count=3, label="3m", step="month", stepmode="backward"),
+                            dict(step="all")
+                        ])
+                    ),
+                    rangeslider=dict(visible=True)
                 ),
                 yaxis=dict(
                     showgrid=True
@@ -185,6 +197,7 @@ if st.button("Generate Forecasts"):
             st.plotly_chart(fig, use_container_width=True)
 
             st.info(f"**Risk Level:** {risk_scores[ticker]}")
+
 
         st.success("✅ Forecasts Generated Successfully!")
     else:
