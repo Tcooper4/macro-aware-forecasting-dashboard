@@ -31,11 +31,13 @@ def navigation_bar():
     cols = st.columns(4)
 
     pages = [
-        ("🏠 Home", "dashboard.py"),
-        ("📈 Macro Dashboard", "pages/macro_dashboard.py"),
-        ("📑 Trade Recommendations", "pages/trade_recommendations.py"),
-        ("📊 Portfolio Optimizer", "pages/portfolio_dashboard.py")
-    ]
+    ("🏠 Home", "home.py"),
+    ("📈 Macro Dashboard", "macro_dashboard.py"),
+    ("📊 Portfolio Optimizer", "portfolio_optimizer.py"),
+    ("📑 Trade Recommendations", "trade_recommendations.py"),
+    ("🌎 Macro Sentiment Dashboard", "pages/macro_sentiment_dashboard.py")  # <-- Add this!
+]
+
 
     current_page = get_current_page()
 
