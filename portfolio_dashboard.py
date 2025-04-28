@@ -24,14 +24,9 @@ tickers = [ticker.strip().upper() for ticker in tickers_input.split(",") if tick
 @st.cache_data
 def fetch_prices(tickers, start, end):
     try:
-        data = yf.download(tickers, start=start, end=end, auto_adjust=True)
+        data = yf.download(tickers, start=start, end=end, auto_adjust=True)['Close']
         if isinstance(data, pd.DataFrame) and not data.empty:
-            if len(tickers) == 1:
-                df = data[['Close']].copy()
-                df.columns = [tickers[0]]
-                return df
-            else:
-                return data
+            return data
         else:
             return None
     except Exception:

@@ -15,10 +15,12 @@ This project combines real-time market and macroeconomic data with advanced fore
 
 ## 📂 Project Structure
 
-- `src/` - Feature engineering, macroeconomic API calls, modeling tools
+- `dashboard.py` - Main forecasting dashboard
+- `pages/trade_recommendations.py` - Daily trade recommendation engine
+- `pages/macro_dashboard.py` - Macro data dashboard
+- `pages/portfolio_dashboard.py` - Portfolio optimizer
+- `src/` - Feature engineering, modeling tools
 - `notebooks/` - Jupyter notebooks for exploratory modeling
-- `streamlit_app/dashboard.py` - Main forecasting dashboard
-- `streamlit_app/trade_recommendations.py` - Daily trade recommendation engine
 - `.github/workflows/refresh.yml` - Weekly automation setup
 - `.env.example` - Environment variable template (FRED API key)
 
@@ -26,6 +28,4 @@ This project combines real-time market and macroeconomic data with advanced fore
 
 ```bash
 pip install -r requirements.txt
-streamlit run streamlit_app/dashboard.py
-# OR
-streamlit run streamlit_app/trade_recommendations.py
+streamlit run dashboard.py

@@ -31,7 +31,7 @@ data = load_data(ticker, start_date, end_date)
 
 # --- ARIMA Forecast ---
 def forecast_arima(series, steps=20):
-    model = ARIMA(series, order=(5,1,0))
+    model = ARIMA(series, order=(5, 1, 0))
     fitted_model = model.fit()
     forecast = fitted_model.forecast(steps=steps)
     return forecast
@@ -59,7 +59,7 @@ hmm_states = forecast_hmm(data['Returns'])
 st.subheader("📊 Historical Price and Forecast")
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=data.index, y=data['Adj Close'], name='Historical'))
-future_dates = pd.date_range(data.index[-1], periods=forecast_days+1, freq='B')[1:]
+future_dates = pd.date_range(data.index[-1], periods=forecast_days + 1, freq='B')[1:]
 fig.add_trace(go.Scatter(x=future_dates, y=arima_forecast, name='ARIMA Forecast'))
 st.plotly_chart(fig, use_container_width=True)
 

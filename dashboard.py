@@ -1,3 +1,9 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+FRED_API_KEY = os.getenv("FRED_API_KEY")
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -46,4 +52,6 @@ if st.sidebar.checkbox("Show Macroeconomic Indicators"):
 if st.sidebar.checkbox("Show Strategy Recommendation"):
     st.subheader("🧠 Macro Regime Detection and Strategy Recommendation")
     
-    df_macro = get_macro_indicators()._
+    df_macro = get_macro_indicators()
+    if df_macro is not None:
+        st.dataframe(df_macro)

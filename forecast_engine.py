@@ -20,7 +20,9 @@ def fetch_macro_data(series_codes):
                 observations = response.json().get("observations", [])
                 dates = [obs["date"] for obs in observations]
                 values = [float(obs["value"]) if obs["value"] != '.' else np.nan for obs in observations]
-                data[code] = pd.Series(values, index=pd.to_datetime(dates))
+                series = pd.Series(values, index=pd.to_datetime(dates))
+                series = series.asfreq('MS')  # Set frequency to Month Start for FRED data
+                data[code] = series
             else:
                 raise Exception(f"FRED API error for {code}: {response.status_code}")
 
@@ -53,6 +55,7 @@ def detect_macro_regime():
 # --- Forecast Prices Using Exponential Smoothing ---
 def forecast_prices(series, forecast_days=5):
     try:
+        series = series.asfreq('B')  # Set frequency to Business Day for stock price forecasts
         model = ExponentialSmoothing(series, trend="add", seasonal=None, initialization_method="estimated")
         fitted = model.fit()
         forecast = fitted.forecast(forecast_days)

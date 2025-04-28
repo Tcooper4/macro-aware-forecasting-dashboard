@@ -31,18 +31,17 @@ def navigation_bar():
     cols = st.columns(4)
 
     pages = [
-        ("🏠 Home", "home.py"),
-        ("📈 Macro Dashboard", "macro_dashboard.py"),
-        ("📊 Portfolio Optimizer", "portfolio_optimizer.py"),
-        ("📑 Trade Recommendations", "trade_recommendations.py")
+        ("🏠 Home", "dashboard.py"),
+        ("📈 Macro Dashboard", "pages/macro_dashboard.py"),
+        ("📑 Trade Recommendations", "pages/trade_recommendations.py"),
+        ("📊 Portfolio Optimizer", "pages/portfolio_dashboard.py")
     ]
 
     current_page = get_current_page()
 
     for idx, (label, page) in enumerate(pages):
         with cols[idx]:
-            button_label = f'<button class="nav-button {"active-button" if page == current_page else ""}">{label}</button>'
-            if st.markdown(button_label, unsafe_allow_html=True):
+            if st.button(label):
                 st.switch_page(page)
 
     st.markdown("---")

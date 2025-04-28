@@ -10,7 +10,5 @@ Explore live interactive projects below:
 """)
 
 st.page_link("https://tcooper.streamlit.app", label="📈 Macro-Aware Forecasting Dashboard")
-
-# Future: you can add more dashboards here when you build them
-# Example:
-# st.page_link("https://yoursecondproject.streamlit.app", label="📊 Portfolio Optimization Model")
+st.page_link("https://tcooper-portfolio-optimizer.streamlit.app", label="📊 Portfolio Optimization Model (Coming Soon)")
+st.page_link("https://tcooper-trade-recommendations.streamlit.app", label="🛒 Trade Recommendation Engine (Coming Soon)")

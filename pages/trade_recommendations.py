@@ -25,7 +25,7 @@ if st.button("Generate Forecasts"):
         risk_scores = {}
         for ticker in tickers:
             try:
-                data = yf.download(ticker, start=start_date, progress=False)
+                data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
                 if data.empty:
                     st.warning(f"No data found for {ticker}. Skipping.")
                     continue

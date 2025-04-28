@@ -1,19 +1,19 @@
 # .streamlit/config.toml
+
 [theme]
-base="dark"
-primaryColor="#00C851"
-backgroundColor="#1E1E1E"
-secondaryBackgroundColor="#262730"
-textColor="#FAFAFA"
-font="sans serif"
+base = "dark"
+primaryColor = "#00C851"
+backgroundColor = "#1E1E1E"
+secondaryBackgroundColor = "#262730"
+textColor = "#FAFAFA"
+font = "sans serif"
 
 [server]
 headless = true
 enableCORS = false
+enableXsrfProtection = false
 
 [browser]
 gatherUsageStats = false
 serverAddress = "0.0.0.0"
 serverPort = 8501
-serverTitle = "Macro-Aware Forecasting Dashboard"
-serverDescription = "Live macroeconomic-driven stock strategy dashboard pulling real-time FRED and ticker data."
