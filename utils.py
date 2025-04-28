@@ -28,7 +28,7 @@ def navigation_bar():
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    cols = st.columns(4)
+    cols = st.columns(5)
 
     pages = [
     ("🏠 Home", "home.py"),
