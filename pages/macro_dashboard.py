@@ -8,6 +8,18 @@ st.set_page_config(page_title="Macro Dashboard", layout="wide")
 navigation_bar()
 
 st.title("📈 Macro Dashboard")
+with st.expander("ℹ️ About the Macro Dashboard", expanded=True):
+    st.markdown("""
+    This section helps you **analyze key macroeconomic indicators** and understand the current market environment.
+
+    - 🏦 **Macro Indicators:** View trends for Inflation (CPI), Unemployment, Fed Funds Rate, and Real GDP.
+    - 📈 **Visualization:** Interactive line charts of economic data over time.
+    - 🧠 **Macro Regime Detection:** Automatically analyzes data to detect whether we are in Growth, Recession, or Stagflation.
+    - 🎯 **Strategy Tips:** Get suggested investment strategies based on the detected regime.
+
+    **Use this dashboard to align your investment decisions with the broader economic environment.**
+    """)
+
 
 st.markdown("### Analyze key macroeconomic indicators and detect market regimes.")
 
