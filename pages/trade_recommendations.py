@@ -56,14 +56,15 @@ if st.button("Generate Forecasts"):
         try:
             data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
 
-            # Validate clean 'Close' prices
             if data.empty or 'Close' not in data.columns:
                 st.warning(f"No valid price data for {ticker}. Skipping.")
                 continue
 
-            close_prices = data['Close'].dropna().astype(float)
+            # Force Clean Close Prices
+            close_raw = data['Close'].dropna().astype(float)
+            close_prices = pd.Series(close_raw.values, index=close_raw.index)
 
-            # HARD SANITY CHECK
+            # Hard sanity checks
             if close_prices.empty or len(close_prices) < 60:
                 st.warning(f"Not enough clean price data for {ticker}. Skipping.")
                 continue
@@ -72,7 +73,7 @@ if st.button("Generate Forecasts"):
                 st.warning(f"Invalid data type for {ticker}. Skipping.")
                 continue
 
-            # Route to selected model
+            # Select model and forecast
             if model_choice == "Simple - Exponential Smoothing":
                 forecast = forecast_prices_smoothing(close_prices, forecast_days)
             elif model_choice == "Intermediate - ARIMA":
@@ -94,6 +95,7 @@ if st.button("Generate Forecasts"):
 
         except Exception as e:
             st.error(f"Failed to forecast {ticker}: {e}")
+
 
 
     # Display Results
