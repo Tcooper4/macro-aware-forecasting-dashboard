@@ -1,3 +1,8 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
 import pandas as pd
 import numpy as np
 import yfinance as yf
@@ -55,16 +60,18 @@ def detect_macro_regime():
 # --- Forecast Prices Using Exponential Smoothing ---
 def forecast_prices(series, forecast_days=5):
     try:
-        series = series.dropna().astype(float)  # Clean to float
-        if series.empty:
-            raise ValueError("Series is empty after cleaning.")
+        series = series.dropna().astype(float)
+        if series.empty or len(series) < 60:
+            raise ValueError("Series is empty or too short for reliable forecasting.")
 
-        series = series.asfreq('B')  # Set business day frequency for smooth forecasting
+        series = series.asfreq('B')  # Business days
         model = ExponentialSmoothing(series, trend="add", seasonal=None, initialization_method="estimated")
         fitted = model.fit()
         forecast = fitted.forecast(forecast_days)
         return forecast
     except Exception as e:
         raise Exception(f"Forecasting failed: {e}")
+
+
 
 

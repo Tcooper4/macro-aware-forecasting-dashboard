@@ -1,3 +1,8 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
 import streamlit as st
 import pandas as pd
 import yfinance as yf
@@ -39,9 +44,9 @@ if st.button("Generate Forecasts"):
             try:
                 data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
 
-                # Validate data is usable
-                if data.empty or 'Close' not in data.columns or data['Close'].dropna().empty:
-                    st.warning(f"No valid price data for {ticker}. Skipping.")
+                # Validate: Must have Close column and enough data points
+                if data.empty or 'Close' not in data.columns or data['Close'].dropna().empty or len(data['Close'].dropna()) < 60:
+                    st.warning(f"Not enough clean price data for {ticker}. Skipping.")
                     continue
 
                 # Clean series before forecasting
@@ -55,6 +60,7 @@ if st.button("Generate Forecasts"):
 
             except Exception as e:
                 st.error(f"Failed to forecast {ticker}: {e}")
+
 
 
 
