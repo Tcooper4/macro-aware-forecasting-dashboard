@@ -57,6 +57,7 @@ if st.button("Generate Forecasts"):
                 st.error(f"Failed to forecast {ticker}: {e}")
 
 
+
         if forecast_results:
             st.success("✅ Forecasts generated!")
             trade_recs = []
