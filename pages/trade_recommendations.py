@@ -1,9 +1,10 @@
+import streamlit as st
 import warnings
+from statsmodels.tools.sm_exceptions import ConvergenceWarning  # <-- ADD THIS
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-import streamlit as st
 import pandas as pd
 import yfinance as yf
 import numpy as np
