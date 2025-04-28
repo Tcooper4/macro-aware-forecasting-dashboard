@@ -56,14 +56,23 @@ if st.button("Generate Forecasts"):
         try:
             data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
 
-            # Validate data
-            if data.empty or 'Close' not in data.columns or data['Close'].dropna().empty or len(data['Close'].dropna()) < 60:
-                st.warning(f"Not enough clean price data for {ticker}. Skipping.")
+            # Validate clean 'Close' prices
+            if data.empty or 'Close' not in data.columns:
+                st.warning(f"No valid price data for {ticker}. Skipping.")
                 continue
 
             close_prices = data['Close'].dropna().astype(float)
 
-            # Select model
+            # HARD SANITY CHECK
+            if close_prices.empty or len(close_prices) < 60:
+                st.warning(f"Not enough clean price data for {ticker}. Skipping.")
+                continue
+
+            if not isinstance(close_prices, pd.Series):
+                st.warning(f"Invalid data type for {ticker}. Skipping.")
+                continue
+
+            # Route to selected model
             if model_choice == "Simple - Exponential Smoothing":
                 forecast = forecast_prices_smoothing(close_prices, forecast_days)
             elif model_choice == "Intermediate - ARIMA":
@@ -78,13 +87,14 @@ if st.button("Generate Forecasts"):
                 st.error("Invalid Model Choice")
                 continue
 
-            vol = np.std(close_prices.pct_change().dropna()) * np.sqrt(252)  # Annualized volatility
+            vol = np.std(close_prices.pct_change().dropna()) * np.sqrt(252)
             risk = "Low" if vol < 0.2 else "Medium" if vol < 0.4 else "High"
             forecast_results[ticker] = forecast
             risk_scores[ticker] = risk
 
         except Exception as e:
             st.error(f"Failed to forecast {ticker}: {e}")
+
 
     # Display Results
     if forecast_results:
