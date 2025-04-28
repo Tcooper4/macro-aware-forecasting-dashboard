@@ -26,7 +26,7 @@ if st.button("Generate Forecasts"):
         for ticker in tickers:
             try:
                 data = yf.download(ticker, start=start_date, progress=False, auto_adjust=True)
-                if data.empty or data['Close'].dropna().empty:
+                if data.empty or 'Close' not in data.columns or data['Close'].dropna().empty:
                     st.warning(f"No valid price data for {ticker}. Skipping.")
                     continue
 
