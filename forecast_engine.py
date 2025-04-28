@@ -1,80 +1,96 @@
 import warnings
-from statsmodels.tools.sm_exceptions import ConvergenceWarning  # <-- Add this import!
-
+from statsmodels.tools.sm_exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import pandas as pd
-import numpy as np
-import yfinance as yf
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
-import requests
-import os
 
-# --- Fetch Macro Data from FRED ---
-def fetch_macro_data(series_codes):
-    try:
-        fred_api_key = os.getenv("FRED_API_KEY")
-        if not fred_api_key:
-            raise Exception("FRED API Key not set.")
-        
-        data = {}
-        for code in series_codes:
-            url = f"https://api.stlouisfed.org/fred/series/observations?series_id={code}&api_key={fred_api_key}&file_type=json"
-            response = requests.get(url)
-            if response.status_code == 200:
-                observations = response.json().get("observations", [])
-                dates = [obs["date"] for obs in observations]
-                values = [float(obs["value"]) if obs["value"] != '.' else np.nan for obs in observations]
-                series = pd.Series(values, index=pd.to_datetime(dates))
-                series = series.asfreq('MS')  # Set frequency to Month Start for FRED data
-                data[code] = series
-            else:
-                raise Exception(f"FRED API error for {code}: {response.status_code}")
+# Exponential Smoothing (Simple)
+def forecast_prices_smoothing(series, forecast_days=5):
+    from statsmodels.tsa.holtwinters import ExponentialSmoothing
+    series = series.dropna().astype(float)
+    model = ExponentialSmoothing(series, trend="add", seasonal=None, initialization_method="estimated")
+    fitted = model.fit()
+    forecast = fitted.forecast(forecast_days)
+    return forecast
 
-        df = pd.DataFrame(data)
-        return df
-    except Exception as e:
-        print(f"Error fetching macro data: {e}")
-        return None
+# ARIMA (Intermediate)
+def forecast_prices_arima(series, forecast_days=5):
+    from statsmodels.tsa.arima.model import ARIMA
+    series = series.dropna().astype(float)
+    model = ARIMA(series, order=(5,1,0))  # (p=5, d=1, q=0)
+    fitted = model.fit()
+    forecast = fitted.forecast(steps=forecast_days)
+    return forecast
 
-# --- Simple Macro Regime Detection ---
-def detect_macro_regime():
-    try:
-        data = fetch_macro_data(["CPIAUCSL", "GDPC1", "UNRATE", "FEDFUNDS"]).dropna()
-        latest = data.iloc[-1]
+# Prophet (Advanced)
+def forecast_prices_prophet(series, forecast_days=5):
+    from prophet import Prophet
+    df = series.dropna().astype(float).reset_index()
+    df.columns = ['ds', 'y']
 
-        cpi = latest["CPIAUCSL"]
-        gdp = latest["GDPC1"]
-        unemp = latest["UNRATE"]
-        fedfunds = latest["FEDFUNDS"]
+    model = Prophet(daily_seasonality=True)
+    model.fit(df)
 
-        if cpi > 300 and gdp < 20000:
-            return "Stagflation", "Defensive: Bonds, Utilities, Low Volatility Stocks"
-        elif gdp > 21000 and unemp < 4:
-            return "Growth", "Aggressive: Tech, Consumer Discretionary"
-        else:
-            return "Neutral", "Balanced Allocation: SPY + Macro Hedge"
-    except Exception:
-        return "Unknown", "Hold Cash"
+    future = model.make_future_dataframe(periods=forecast_days)
+    forecast = model.predict(future)
 
-# --- Forecast Prices Using Exponential Smoothing ---
-def forecast_prices(series, forecast_days=5):
-    try:
-        series = series.dropna().astype(float)
-        if series.empty or len(series) < 60:
-            raise ValueError("Series is empty or too short for reliable forecasting.")
+    forecasted = forecast[['ds', 'yhat']].set_index('ds').iloc[-forecast_days:]['yhat']
+    return forecasted
 
-        series = series.asfreq('B')  # Business days
-        model = ExponentialSmoothing(series, trend="add", seasonal=None, initialization_method="estimated")
-        fitted = model.fit()
-        forecast = fitted.forecast(forecast_days)
-        return forecast
-    except Exception as e:
-        raise Exception(f"Forecasting failed: {e}")
+# SARIMA (Expert)
+def forecast_prices_sarima(series, forecast_days=5):
+    from statsmodels.tsa.statespace.sarimax import SARIMAX
+    series = series.dropna().astype(float)
+    model = SARIMAX(series, order=(1, 1, 1), seasonal_order=(1, 1, 0, 12))
+    fitted = model.fit(disp=False)
+    forecast = fitted.forecast(steps=forecast_days)
+    return forecast
 
+# LSTM Neural Net (Elite)
+def forecast_prices_lstm(series, forecast_days=5):
+    import numpy as np
+    import tensorflow as tf
+    from tensorflow import keras
+    from tensorflow.keras import layers
 
+    from sklearn.preprocessing import MinMaxScaler
 
+    series = series.dropna().astype(float)
+    data = series.values.reshape(-1, 1)
 
+    # Normalize
+    scaler = MinMaxScaler()
+    data_scaled = scaler.fit_transform(data)
+
+    # Create sequences
+    sequence_length = 60
+    X, y = [], []
+    for i in range(len(data_scaled) - sequence_length):
+        X.append(data_scaled[i:i+sequence_length])
+        y.append(data_scaled[i+sequence_length])
+    X, y = np.array(X), np.array(y)
+
+    # Build model
+    model = keras.Sequential([
+        layers.LSTM(50, activation='relu', input_shape=(sequence_length, 1)),
+        layers.Dense(1)
+    ])
+    model.compile(optimizer='adam', loss='mse')
+    model.fit(X, y, epochs=10, verbose=0)
+
+    # Forecast
+    last_seq = data_scaled[-sequence_length:]
+    forecast = []
+    input_seq = last_seq.reshape((1, sequence_length, 1))
+
+    for _ in range(forecast_days):
+        next_pred = model.predict(input_seq, verbose=0)[0, 0]
+        forecast.append(next_pred)
+        input_seq = np.append(input_seq[:, 1:, :], [[[next_pred]]], axis=1)
+
+    forecast = scaler.inverse_transform(np.array(forecast).reshape(-1, 1)).flatten()
+    forecast_dates = pd.date_range(series.index[-1] + pd.Timedelta(days=1), periods=forecast_days, freq='B')
+
+    return pd.Series(forecast, index=forecast_dates)

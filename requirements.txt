@@ -9,3 +9,5 @@ numpy
 plotly
 seaborn
 statsmodels
+prophet
+tensorflow
