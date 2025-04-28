@@ -16,7 +16,7 @@ def get_vix_data():
 st.header("📈 VIX Fear Index (Market Volatility)")
 
 vix_data = get_vix_data()
-current_vix = vix_data.iloc[-1]
+current_vix = float(vix_data.iloc[-1])
 
 st.line_chart(vix_data)
 
