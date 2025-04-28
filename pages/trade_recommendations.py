@@ -107,9 +107,10 @@ if st.button("Generate Forecasts"):
             import plotly.graph_objects as go
 
             # Define history window (make sure index is datetime)
+            # Define history window (force datetime index and sorting)
             close_prices.index = pd.to_datetime(close_prices.index)
-            history = close_prices[-60:]  # Last 60 business days
-            forecast.index = pd.to_datetime(forecast.index)  # Make sure forecast index is datetime
+            history = close_prices[-60:].sort_index()  # <-- sort_index forces oldest to newest
+            forecast.index = pd.to_datetime(forecast.index)  # Forecast already in correct order
 
             # Confidence intervals (simple +/- 1.5%)
             upper_conf = forecast * 1.015
