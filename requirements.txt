@@ -13,3 +13,4 @@ prophet
 tensorflow
 scikit-learn
 plotly
+requests

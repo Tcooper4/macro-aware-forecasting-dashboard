@@ -1,6 +1,7 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
+import requests
 
 st.set_page_config(page_title="Macro Sentiment Dashboard", page_icon="🌎", layout="wide")
 
@@ -31,13 +32,22 @@ st.header("📊 AAII Investor Sentiment Survey")
 
 @st.cache_data
 def get_aaii_data():
-    url = "https://www.aaii.com/files/surveys/sentiment.csv"
-    df = pd.read_csv(url)
-    df['Survey Date'] = pd.to_datetime(df['Survey Date'])
-    df = df.set_index('Survey Date')
-    df = df.sort_index()
-    return df
+    url = "https://www.aaii.com/sentimentsurvey"
+    response = requests.get(url)
+    dfs = pd.read_html(response.text)
 
+    # AAII sentiment table is usually the first table on the page
+    sentiment_table = dfs[0]
+
+    # Clean column names
+    sentiment_table.columns = ['Week Ended', 'Bullish', 'Neutral', 'Bearish']
+    sentiment_table['Week Ended'] = pd.to_datetime(sentiment_table['Week Ended'])
+    sentiment_table = sentiment_table.set_index('Week Ended')
+    sentiment_table = sentiment_table.sort_index()
+
+    return sentiment_table
+
+# Fetch the AAII sentiment data
 aaii_data = get_aaii_data()
 
 # Line chart of sentiment
@@ -64,4 +74,3 @@ with col3:
         st.success(f"🚀 Bearish: {latest_aaii['Bearish']:.1f}% (Extreme fear)")
     else:
         st.info(f"📉 Bearish: {latest_aaii['Bearish']:.1f}%")
-
