@@ -16,6 +16,7 @@ def navigation_bar():
                 cursor: pointer;
                 border-radius: 8px;
                 transition: background-color 0.3s ease;
+                width: 100%;
             }
             .nav-button:hover {
                 background-color: #d6e4f0;
@@ -31,19 +32,19 @@ def navigation_bar():
     cols = st.columns(5)
 
     pages = [
-    ("🏠 Home", "home.py"),
-    ("📈 Macro Dashboard", "macro_dashboard.py"),
-    ("📊 Portfolio Optimizer", "portfolio_optimizer.py"),
-    ("📑 Trade Recommendations", "trade_recommendations.py"),
-    ("🌎 Macro Sentiment Dashboard", "pages/macro_sentiment_dashboard.py")  # <-- Add this!
-]
-
+        ("🏠 Home", "home.py"),
+        ("📈 Macro Dashboard", "macro_dashboard.py"),
+        ("📊 Portfolio Optimizer", "portfolio_optimizer.py"),
+        ("📑 Trade Recommendations", "trade_recommendations.py"),
+        ("🌎 Macro Sentiment Dashboard", "pages/macro_sentiment_dashboard.py")
+    ]
 
     current_page = get_current_page()
 
     for idx, (label, page) in enumerate(pages):
         with cols[idx]:
-            if st.button(label):
+            btn_style = "active-button" if page.lower() == current_page else "nav-button"
+            if st.button(label, key=page):
                 st.switch_page(page)
 
     st.markdown("---")

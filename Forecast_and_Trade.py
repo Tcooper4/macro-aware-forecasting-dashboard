@@ -14,7 +14,7 @@ st.set_page_config(page_title="Forecast and Trade", layout="wide", page_icon="�
 st.title("📈 Forecasts and Trade Recommendations")
 
 # --- Sidebar: User Inputs ---
-st.sidebar.header("Customize Forecast")
+st.sidebar.header("⚙️ Customize Forecast")
 ticker = st.sidebar.text_input("Enter Ticker Symbol", value='SPY')
 start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2020-01-01"))
 end_date = st.sidebar.date_input("End Date", value=pd.to_datetime("today"))
@@ -55,12 +55,18 @@ arima_forecast = forecast_arima(data['Adj Close'], steps=forecast_days)
 garch_forecast_vol = forecast_garch(data['Returns'], steps=forecast_days)
 hmm_states = forecast_hmm(data['Returns'])
 
-# --- Show Plots ---
-st.subheader("📊 Historical Price and Forecast")
+# --- Plot Forecasts ---
+st.subheader("📊 Historical Price with ARIMA Forecast")
 fig = go.Figure()
-fig.add_trace(go.Scatter(x=data.index, y=data['Adj Close'], name='Historical'))
+fig.add_trace(go.Scatter(x=data.index, y=data['Adj Close'], name='Historical', line=dict(color='blue')))
 future_dates = pd.date_range(data.index[-1], periods=forecast_days + 1, freq='B')[1:]
-fig.add_trace(go.Scatter(x=future_dates, y=arima_forecast, name='ARIMA Forecast'))
+fig.add_trace(go.Scatter(x=future_dates, y=arima_forecast, name='ARIMA Forecast', line=dict(color='green', dash='dash')))
+fig.update_layout(
+    xaxis_title="Date",
+    yaxis_title="Price",
+    template="plotly_white",
+    legend=dict(x=0, y=1)
+)
 st.plotly_chart(fig, use_container_width=True)
 
 # --- Trading Recommendation ---
@@ -77,3 +83,11 @@ else:
     recommendation = "🔎 Neutral/Uncertain Regime — Consider **Waiting**."
 
 st.success(recommendation)
+
+# --- Optional: Display Diagnostics ---
+st.markdown("""
+---
+**Diagnostics:**
+- GARCH Forecasted Volatility: {:.2f}
+- Latest HMM Regime: {}
+""".format(recent_volatility, recent_state))
