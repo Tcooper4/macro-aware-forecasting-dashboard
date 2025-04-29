@@ -38,27 +38,12 @@ selected_indicators = st.multiselect(
     default=["CPIAUCSL", "UNRATE", "FEDFUNDS"]
 )
 
-# 🚫 Temporarily comment out fetching macro data functionality
-# if st.button("Load Macro Data"):
-#     with st.spinner("Fetching macro data..."):
-#         data = fetch_macro_data(selected_indicators)
-#         if data is not None:
-#             st.success("✅ Data Loaded Successfully!")
-#             for code in selected_indicators:
-#                 chart_title = f"📈 {macro_options.get(code, code)} Trend"
-#                 st.subheader(chart_title)
-#                 st.line_chart(data[code].rename(macro_options.get(code, code)))
-#         else:
-#             st.error("Failed to fetch macro data.")
+# --- Placeholder chart (replace with live FRED data if available) ---
+st.info("Live macroeconomic charts will be added soon. Currently under development.")
 
 # --- Detect Market Regime ---
 st.subheader("🧠 Detect Current Macro Regime")
-
-# 🚫 Temporarily comment out regime detection
-# if st.button("Analyze Current Regime"):
-#     regime, strategy = detect_macro_regime()
-#     st.markdown(f"### 📊 Current Detected Regime: **{regime}**")
-#     st.markdown(f"### 💼 Suggested Strategy: **{strategy}**")
+st.warning("Macro regime detection logic is coming soon! Stay tuned.")
 
 # --- Put/Call Ratio Section ---
 st.header("📊 Put/Call Ratio (Options Market Sentiment) — Live Data")
@@ -74,18 +59,16 @@ def get_marketwatch_put_call():
     soup = BeautifulSoup(response.text, "html.parser")
 
     try:
-        # Find the element containing the ratio
         price_span = soup.find("bg-quote", {"field": "Last"})
-
         if price_span:
             put_call_value = float(price_span.text.strip())
             return put_call_value
         else:
             return None
-    except Exception as e:
+    except Exception:
         return None
-    
-    # --- Fetch and Display Put/Call Ratio ---
+
+# --- Fetch and Display Put/Call Ratio ---
 put_call_value = get_marketwatch_put_call()
 
 if put_call_value is not None:
@@ -101,4 +84,3 @@ if put_call_value is not None:
         st.info(f"😐 Neutral Sentiment: {put_call_value:.2f}")
 else:
     st.error("⚠️ Failed to fetch Put/Call Ratio. Please try again later.")
-
