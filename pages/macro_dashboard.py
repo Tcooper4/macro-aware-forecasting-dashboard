@@ -38,58 +38,34 @@ selected_indicators = st.multiselect(
     default=["CPIAUCSL", "UNRATE", "FEDFUNDS"]
 )
 
-# 🚫 Temporarily comment out fetching macro data functionality
-# if st.button("Load Macro Data"):
-#     with st.spinner("Fetching macro data..."):
-#         data = fetch_macro_data(selected_indicators)
-#         if data is not None:
-#             st.success("✅ Data Loaded Successfully!")
-#             for code in selected_indicators:
-#                 chart_title = f"📈 {macro_options.get(code, code)} Trend"
-#                 st.subheader(chart_title)
-#                 st.line_chart(data[code].rename(macro_options.get(code, code)))
-#         else:
-#             st.error("Failed to fetch macro data.")
-
-# --- Detect Market Regime ---
-st.subheader("🧠 Detect Current Macro Regime")
-
-# 🚫 Temporarily comment out regime detection
-# if st.button("Analyze Current Regime"):
-#     regime, strategy = detect_macro_regime()
-#     st.markdown(f"### 📊 Current Detected Regime: **{regime}**")
-#     st.markdown(f"### 💼 Suggested Strategy: **{strategy}**")
-
 # --- Put/Call Ratio Section ---
-st.header("📊 Put/Call Ratio (Options Market Sentiment) — Live Data")
+st.header("📊 Put/Call Ratio (Options Market Sentiment) — Live Barchart.com Data")
 
 @st.cache_data
-def get_marketwatch_put_call():
-    url = "https://www.marketwatch.com/investing/index/cboe-equity-put-call-ratio"
-    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+def get_barchart_put_call():
+    url = "https://www.barchart.com/stocks/most-active/put-call-ratios"
+    response = requests.get(url)
 
     if response.status_code != 200:
         return None
 
     soup = BeautifulSoup(response.text, "html.parser")
-
+    
+    # This will find the first instance of put/call ratio
     try:
-        # Find the element containing the ratio
-        price_span = soup.find("bg-quote", {"field": "Last"})
-
-        if price_span:
-            put_call_value = float(price_span.text.strip())
-            return put_call_value
-        else:
-            return None
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+        
+        # Typically the first row is Index/Overall market, adjust if necessary
+        equity_put_call = df.iloc[0]['Put/Call Ratio']
+        return float(equity_put_call)
     except Exception as e:
         return None
-    
-    # --- Fetch and Display Put/Call Ratio ---
-put_call_value = get_marketwatch_put_call()
+
+put_call_value = get_barchart_put_call()
 
 if put_call_value is not None:
-    st.metric(label="Real-Time Put/Call Ratio (from MarketWatch)", value=f"{put_call_value:.2f}")
+    st.metric(label="Real-Time Put/Call Ratio (from Barchart)", value=f"{put_call_value:.2f}")
 
     st.subheader("Current Put/Call Sentiment:")
 
@@ -98,7 +74,6 @@ if put_call_value is not None:
     elif put_call_value < 0.7:
         st.error(f"🛑 High Greed: Put/Call Ratio = {put_call_value:.2f} (Caution Warranted)")
     else:
-        st.info(f"😐 Neutral Sentiment: {put_call_value:.2f}")
+        st.info(f"😐 Neutral Sentiment: Put/Call Ratio = {put_call_value:.2f}")
 else:
     st.error("⚠️ Failed to fetch Put/Call Ratio. Please try again later.")
-
