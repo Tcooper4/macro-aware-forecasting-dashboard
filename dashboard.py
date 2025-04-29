@@ -40,38 +40,45 @@ st.sidebar.markdown("""
 - **Portfolio Optimizer:** Optimize your investment portfolio.
 """)
 
-
 @st.cache_data
 def merge_data_cached(ticker):
     return merge_data(ticker)
 
 # --- Load Stock and Macro Data ---
-if st.button("Load Data"):
+if st.button("📥 Load Data"):
     with st.spinner("Fetching stock and macro data..."):
         df = merge_data_cached(ticker)
     st.success("✅ Data Loaded Successfully!")
+    st.subheader(f"📊 Price Trend for {ticker}")
     st.line_chart(df[f"{ticker}_Close"])
 
 # --- Macroeconomic Indicators Section ---
 if st.sidebar.checkbox("Show Macroeconomic Indicators"):
     st.subheader("📊 Macroeconomic Trends")
-    
+
     macro_options = {
         "CPIAUCSL": "Consumer Price Index (CPI)",
         "UNRATE": "Unemployment Rate",
         "FEDFUNDS": "Federal Funds Rate",
         "GDPC1": "Real GDP"
     }
-    
+
     for code, label in macro_options.items():
         data = fetch_and_plot_cached(code, label)
         if data is not None:
+            st.subheader(f"📉 {label}")
             st.line_chart(data.rename(columns={data.columns[0]: label}))
 
 # --- Strategy Recommendation Section ---
 if st.sidebar.checkbox("Show Strategy Recommendation"):
     st.subheader("🧠 Macro Regime Detection and Strategy Recommendation")
-    
+
     df_macro = get_macro_indicators()
-    if df_macro is not None:
-        st.dataframe(df_macro)
+    if df_macro is not None and not df_macro.empty:
+        st.dataframe(df_macro.tail(12), use_container_width=True)
+        st.markdown("""
+        Use macro patterns to interpret economic conditions and adjust your trading strategy:
+        - 📈 **Growth Regime**: Favor stocks and risk-on assets.
+        - 📉 **Recession**: Consider bonds or defensive sectors.
+        - ⚖️ **Stagflation**: Prioritize inflation hedges (commodities, value stocks).
+        """)
