@@ -16,3 +16,5 @@ python-dotenv
 lxml
 html5lib
 webdriver-manager
+pandas_datareader
+wbdata
