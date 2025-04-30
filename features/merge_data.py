@@ -1,5 +1,6 @@
 import pandas as pd
 import yfinance as yf
+import traceback
 
 def merge_data(ticker: str) -> pd.DataFrame:
     """
@@ -22,4 +23,5 @@ def merge_data(ticker: str) -> pd.DataFrame:
         data = data.rename(columns={"Close": f"{ticker}_Close"})
         return data[[f"{ticker}_Close"]]
     except Exception as e:
+        traceback.print_exc()  # print full stack trace in terminal or Streamlit log
         raise RuntimeError(f"Failed to fetch or process data for {ticker}: {e}")
