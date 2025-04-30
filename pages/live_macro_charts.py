@@ -28,11 +28,18 @@ with st.sidebar:
     }
 
     st.markdown("---")
-    st.subheader("🌍 World Bank Comparison")
-    all_countries = wbdata.get_country(display=False)
-    country_dict = {c['name']: c['id'] for c in all_countries}
-    selected_countries = st.multiselect("Select Countries", options=sorted(country_dict.keys()),
-                                        default=["United States", "Germany"])
+    st.subheader("🌍 World Bank GDP Comparison")
+
+    # Get list of all countries from World Bank
+    all_countries = wbdata.get_country()
+    country_dict = {c['name']: c['id'] for c in all_countries if c['region']['id'] != 'NA'}  # Exclude aggregates
+
+    selected_countries = st.multiselect(
+        "Select Countries",
+        options=sorted(country_dict.keys()),
+        default=["United States", "Germany"]
+    )
+
     indicator_code = "NY.GDP.MKTP.CD"  # GDP (current US$)
     indicator_name = "GDP (USD)"
 
