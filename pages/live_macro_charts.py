@@ -30,9 +30,13 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🌍 World Bank GDP Comparison")
 
-    # Get list of all countries from World Bank
-    all_countries = wbdata.get_country()
-    country_dict = {c['name']: c['id'] for c in all_countries if c['region']['id'] != 'NA'}  # Exclude aggregates
+    # Get list of all valid countries from World Bank (exclude aggregates)
+    all_countries = wbdata.get_countries()
+    country_dict = {
+        c['name']: c['id']
+        for c in all_countries
+        if c['region']['id'] != 'NA'  # exclude aggregates
+    }
 
     selected_countries = st.multiselect(
         "Select Countries",
