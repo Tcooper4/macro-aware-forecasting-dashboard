@@ -84,16 +84,27 @@ except Exception as e:
     st.error(f"Failed to load FRED data: {e}")
 
 # --- World Bank GDP Comparison ---
+# --- World Bank GDP Comparison ---
 try:
     st.subheader("🌐 GDP Comparison Between Countries")
 
     selected_iso = [country_dict[c] for c in selected_countries]
     raw_df = wbdata.get_dataframe({indicator_code: indicator_name}, country=selected_iso).reset_index()
 
+    # Handle single-country case where 'country' column is missing
+    if 'country' not in raw_df.columns and len(selected_countries) == 1:
+        raw_df['country'] = selected_countries[0]
+
+    # Convert 'date' to datetime
     raw_df['date'] = pd.to_datetime(raw_df['date'], format='%Y')
+
+    # Filter by range
     filtered_df = raw_df[(raw_df['date'] >= start) & (raw_df['date'] <= end)]
+
+    # Pivot for plotting
     pivot_df = filtered_df.pivot(index='date', columns='country', values=indicator_name)
 
+    # Plot
     fig2 = go.Figure()
     for country in pivot_df.columns:
         fig2.add_trace(go.Scatter(
