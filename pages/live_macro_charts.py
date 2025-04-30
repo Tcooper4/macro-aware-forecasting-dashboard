@@ -63,14 +63,15 @@ except Exception as e:
     st.error(f"Failed to load FRED data: {e}")
 
 # --- Multi-Country GDP Comparison ---
-# --- Multi-Country GDP Comparison ---
 try:
     st.subheader(f"🌐 GDP Comparison Between Countries")
 
     selected_iso = [country_options[c] for c in selected_countries]
-    wbdata.set_date(start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d'))
-    wb_df = wbdata.get_dataframe({indicator_code: indicator_name}, country=selected_iso, convert_date=True).unstack(level=0)
+    raw_df = wbdata.get_dataframe({indicator_code: indicator_name}, country=selected_iso, convert_date=True)
 
+    # Filter dates manually
+    wb_df = raw_df.loc[(raw_df.index >= start) & (raw_df.index <= end)]
+    wb_df = wb_df.unstack(level=0)
     wb_df = wb_df[indicator_name]
     wb_df.index.name = "Date"
     wb_df.sort_index(inplace=True)
@@ -84,3 +85,4 @@ try:
 
 except Exception as e:
     st.error(f"Failed to load World Bank data: {e}")
+
