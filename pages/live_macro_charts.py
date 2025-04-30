@@ -62,27 +62,33 @@ try:
 except Exception as e:
     st.error(f"Failed to load FRED data: {e}")
 
-# --- Multi-Country GDP Comparison ---
+# --- World Bank GDP Comparison ---
 try:
-    st.subheader(f"🌐 GDP Comparison Between Countries")
+    st.subheader("🌐 GDP Comparison Between Countries")
 
     selected_iso = [country_options[c] for c in selected_countries]
-    raw_df = wbdata.get_dataframe({indicator_code: indicator_name}, country=selected_iso, convert_date=True)
 
-    # Filter dates manually
-    wb_df = raw_df.loc[(raw_df.index >= start) & (raw_df.index <= end)]
-    wb_df = wb_df.unstack(level=0)
-    wb_df = wb_df[indicator_name]
-    wb_df.index.name = "Date"
-    wb_df.sort_index(inplace=True)
+    # Get raw WB data (no convert_date or data_date support in latest versions)
+    raw_df = wbdata.get_dataframe({indicator_code: indicator_name}, country=selected_iso)
+    raw_df = raw_df.reset_index()
+
+    # Convert year to datetime
+    raw_df['date'] = pd.to_datetime(raw_df['date'], format='%Y')
+
+    # Filter by range
+    filtered_df = raw_df[(raw_df['date'] >= start) & (raw_df['date'] <= end)]
+
+    # Pivot for plotting
+    pivot_df = filtered_df.pivot(index='date', columns='country', values=indicator_name)
 
     fig2 = go.Figure()
-    for country in wb_df.columns:
-        fig2.add_trace(go.Scatter(x=wb_df.index, y=wb_df[country], mode='lines', name=country))
+    for country in pivot_df.columns:
+        fig2.add_trace(go.Scatter(x=pivot_df.index, y=pivot_df[country],
+                                  mode='lines', name=country))
 
-    fig2.update_layout(title="GDP Comparison", xaxis_title="Date", yaxis_title="USD", template=template)
+    fig2.update_layout(title="GDP Comparison (World Bank)",
+                       xaxis_title="Year", yaxis_title="GDP (USD)",
+                       template=template)
     st.plotly_chart(fig2, use_container_width=True)
-
 except Exception as e:
     st.error(f"Failed to load World Bank data: {e}")
-
