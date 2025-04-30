@@ -33,7 +33,7 @@ def navigation_bar():
 
     pages = [
         ("🏠 Home", "home.py"),
-        ("📈 Macro Dashboard", "macro_dashboard.py"),
+        ("📈 Macro Dashboard", "pages/live_macro_charts.py"),
         ("📊 Portfolio Optimizer", "portfolio_optimizer.py"),
         ("📑 Trade Recommendations", "trade_recommendations.py"),
         ("🌎 Macro Sentiment Dashboard", "pages/macro_sentiment_dashboard.py")

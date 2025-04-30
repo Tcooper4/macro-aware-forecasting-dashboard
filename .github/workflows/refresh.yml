@@ -23,4 +23,6 @@ jobs:
 
       - name: Run Auto-Refresh
         run: |
-          streamlit run dashboard.py
+          streamlit run streamlit_app.py
+
+

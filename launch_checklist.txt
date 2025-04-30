@@ -9,7 +9,7 @@
 
 ✅ Streamlit Deployment
 [x] Delete old Streamlit app (if needed)
-[x] Create New App → Select repo, branch, main file (dashboard.py or quant_portfolio_home.py)
+[x] Create New App → Select repo, branch, main file (streamlit_app.py)
 [x] Confirm requirements.txt detected correctly
 [x] Add Secrets (e.g., FRED_API_KEY)
 

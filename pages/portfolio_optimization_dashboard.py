@@ -16,7 +16,7 @@ start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2020-01-01"))
 end_date = st.sidebar.date_input("End Date", pd.to_datetime("today"))
 risk_free_rate = st.sidebar.number_input("Risk-Free Rate (%)", min_value=0.0, max_value=10.0, value=1.5) / 100
 freq = st.sidebar.selectbox("Return Frequency", ["Daily", "Weekly", "Monthly"])
-st.sidebar.page_link("pages/portfolio_dashboard.py", label="🔙 Back to Portfolio Dashboard")
+st.sidebar.page_link("streamlit_app.py", label="🔙 Back to Home")
 st.sidebar.page_link("pages/live_macro_charts.py", label="🌐 Macroeconomic Charts")
 
 
