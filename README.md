@@ -1,16 +1,25 @@
 # Macro-Aware Forecasting Dashboard
 
-This app gives you trading ideas, portfolio analytics, and live macro data — no experience needed.
+This dashboard provides automated trade recommendations, macroeconomic charts, and portfolio analytics — all designed for beginners and advanced users alike.
 
-## Features
-- View inflation, GDP, unemployment, and CO₂ trends
-- Get daily trade signals based on proven strategies
-- Track your investments vs. benchmarks
-- Auto-adjust strategies based on performance — or stay manual
+## 📦 Features
+- 🌐 Live macroeconomic data (GDP, inflation, unemployment)
+- 📈 Daily trade ideas (RSI, MACD, EMA logic)
+- 💼 Portfolio tracker vs benchmarks
+- ⚙️ Auto-adjusting strategy engine with manual override
 
-## Run It
+## 🚀 Get Started
 ```bash
-git clone https://github.com/YOUR_USER/macro-aware-forecasting-dashboard.git
-cd macro-aware-forecasting-dashboard
 pip install -r requirements.txt
 streamlit run streamlit_app.py
+```
+
+## 📁 Directory Overview
+- `streamlit_app.py` – Main entry point
+- `pages/` – All Streamlit page modules
+- `features/` – Core logic: indicators, data fetching
+- `utils/` – Helpers for plotting/export
+- `archive/` – Deprecated or legacy modules
+
+## 📘 For Beginners
+Every page has built-in explanations. You don't need to know finance to use this app.

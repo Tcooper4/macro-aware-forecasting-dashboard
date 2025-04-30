@@ -1,6 +1,7 @@
-__pycache__/
-.ipynb_checkpoints/
 .env
+__pycache__/
+archive/
 *.pyc
-.DS_Store
-node_modules/
+*.pyo
+*.pyd
+.env.*
