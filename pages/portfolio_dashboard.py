@@ -16,6 +16,8 @@ start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2020-01-01"))
 end_date = st.sidebar.date_input("End Date", pd.to_datetime("today"))
 freq = st.sidebar.selectbox("Return Frequency", ["Daily", "Weekly", "Monthly"])
 st.sidebar.page_link("pages/portfolio_optimization_dashboard.py", label="📊 Go to Optimization Dashboard")
+st.sidebar.page_link("pages/live_macro_charts.py", label="🌐 Macroeconomic Charts")
+
 
 tickers = [t.strip().upper() for t in tickers.split(",") if t.strip()]
 weights = [float(w.strip()) for w in weights_input.split(",") if w.strip()]

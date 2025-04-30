@@ -14,6 +14,15 @@ from fred_macro_data import fetch_and_plot_cached, get_macro_indicators
 # Set the page configuration
 st.set_page_config(page_title="Macro-Aware Forecasting Dashboard", layout="wide", page_icon="📈")
 
+import streamlit as st
+
+# --- Add Sidebar Navigation ---
+with st.sidebar:
+    st.header("🧭 Navigation")
+    st.page_link("pages/portfolio_dashboard.py", label="💼 Portfolio Dashboard")
+    st.page_link("pages/portfolio_optimization_dashboard.py", label="📊 Optimization Dashboard")
+    st.page_link("pages/live_macro_charts.py", label="🌐 Macroeconomic Charts")
+
 # Title and last updated time
 st.title("📈 Macro-Aware Quant Forecasting Dashboard")
 with st.expander("ℹ️ How This Platform Works", expanded=True):
