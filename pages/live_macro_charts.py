@@ -9,14 +9,10 @@ import pandas as pd
 st.set_page_config(page_title="Macroeconomic Charts", layout="wide")
 st.title("🌐 Live Macroeconomic Charts")
 
-# --- Sidebar: Theme and Inputs ---
+# --- Sidebar Inputs ---
 with st.sidebar:
     st.header("⚙️ Settings")
 
-    theme = st.selectbox("Select Chart Theme", ["Light", "Dark"])
-    plotly_template = "plotly_dark" if theme == "Dark" else "plotly_white"
-
-    st.markdown("---")
     st.subheader("📈 FRED Indicator")
     fred_series = st.selectbox("Choose FRED Series", [
         "FEDFUNDS",  # Federal Funds Rate
@@ -33,25 +29,16 @@ with st.sidebar:
 
     st.markdown("---")
     st.subheader("🌍 World Bank Comparison")
-    country_options = {"United States": "US", "Germany": "DE", "China": "CN", "Japan": "JP"}
-    selected_countries = st.multiselect("Select Countries", options=list(country_options.keys()), default=["United States", "Germany"])
+    all_countries = wbdata.get_country(display=False)
+    country_dict = {c['name']: c['id'] for c in all_countries}
+    selected_countries = st.multiselect("Select Countries", options=sorted(country_dict.keys()),
+                                        default=["United States", "Germany"])
     indicator_code = "NY.GDP.MKTP.CD"  # GDP (current US$)
     indicator_name = "GDP (USD)"
 
 # --- Date range ---
 start = datetime.datetime(2000, 1, 1)
 end = datetime.datetime.today()
-
-# --- Helper to apply theme and layout ---
-def apply_layout(fig, title, x_title, y_title):
-    fig.update_layout(
-        title=title,
-        xaxis_title=x_title,
-        yaxis_title=y_title,
-        template=plotly_template,
-        height=500
-    )
-    return fig
 
 # --- FRED Line Chart ---
 try:
@@ -74,7 +61,12 @@ try:
         annotation_text="2008 Recession", annotation_position="top left"
     )
 
-    fig1 = apply_layout(fig1, fred_label_map[fred_series], "Date", "Value")
+    fig1.update_layout(
+        title=fred_label_map[fred_series],
+        xaxis_title="Date",
+        yaxis_title="Value",
+        height=500
+    )
     st.plotly_chart(fig1, use_container_width=True)
 
 except Exception as e:
@@ -84,16 +76,11 @@ except Exception as e:
 try:
     st.subheader("🌐 GDP Comparison Between Countries")
 
-    selected_iso = [country_options[c] for c in selected_countries]
+    selected_iso = [country_dict[c] for c in selected_countries]
     raw_df = wbdata.get_dataframe({indicator_code: indicator_name}, country=selected_iso).reset_index()
 
-    # Convert 'date' to datetime
     raw_df['date'] = pd.to_datetime(raw_df['date'], format='%Y')
-
-    # Filter range
     filtered_df = raw_df[(raw_df['date'] >= start) & (raw_df['date'] <= end)]
-
-    # Pivot for chart
     pivot_df = filtered_df.pivot(index='date', columns='country', values=indicator_name)
 
     fig2 = go.Figure()
@@ -105,7 +92,12 @@ try:
             name=country
         ))
 
-    fig2 = apply_layout(fig2, "GDP Comparison (World Bank)", "Year", "GDP (USD)")
+    fig2.update_layout(
+        title="GDP Comparison (World Bank)",
+        xaxis_title="Year",
+        yaxis_title="GDP (USD)",
+        height=500
+    )
     st.plotly_chart(fig2, use_container_width=True)
 
 except Exception as e:
