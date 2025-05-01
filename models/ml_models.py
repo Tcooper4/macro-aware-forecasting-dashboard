@@ -1,26 +1,29 @@
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from sklearn.linear_model import LogisticRegression
+import pandas as pd
 import numpy as np
+from sklearn.ensemble import RandomForestRegressor
 
-def prepare_ml_data(df):
-    df = df.dropna().copy()
-    df["Target"] = np.where(df["Close"].shift(-1) > df["Close"], 1, 0)
-    X = df.drop(columns=["Target", "Close"])
-    y = df["Target"]
-    return X, y
+def forecast_ml(df, horizon="1 Week"):
+    steps = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
+    df["Return"] = df["Close"].pct_change()
+    df["Lag1"] = df["Return"].shift(1)
+    df["Lag2"] = df["Return"].shift(2)
+    df.dropna(inplace=True)
+    
+    X = df[["Lag1", "Lag2"]]
+    y = df["Return"]
 
-def predict_xgboost(X_train, y_train, X_test):
-    model = XGBClassifier(use_label_encoder=False, eval_metric='logloss')
-    model.fit(X_train, y_train)
-    return model.predict(X_test)[-1], model.predict_proba(X_test)[-1][1]
+    model = RandomForestRegressor()
+    model.fit(X, y)
 
-def predict_random_forest(X_train, y_train, X_test):
-    model = RandomForestClassifier()
-    model.fit(X_train, y_train)
-    return model.predict(X_test)[-1], model.predict_proba(X_test)[-1][1]
+    preds = []
+    lag1, lag2 = X.iloc[-1].values
+    for _ in range(steps):
+        pred = model.predict([[lag1, lag2]])[0]
+        preds.append(pred)
+        lag2, lag1 = lag1, pred
 
-def predict_logistic(X_train, y_train, X_test):
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
-    return model.predict(X_test)[-1], model.predict_proba(X_test)[-1][1]
+    last_price = df["Close"].iloc[-1]
+    prices = [last_price * (1 + preds[0])]
+    for i in range(1, steps):
+        prices.append(prices[-1] * (1 + preds[i]))
+    return pd.Series(prices)
