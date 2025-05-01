@@ -1,103 +1,84 @@
 import streamlit as st
-import yfinance as yf
 import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-from arch import arch_model
+import yfinance as yf
 from statsmodels.tsa.arima.model import ARIMA
+from arch import arch_model
 from hmmlearn.hmm import GaussianHMM
-import warnings
-warnings.filterwarnings('ignore')
+import numpy as np
+import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Forecast and Trade", layout="wide", page_icon="📈")
+st.set_page_config(page_title="📈 Forecast & Trade", layout="wide")
+st.title("📈 Forecast & Trade Assistant")
+st.caption("ARIMA, GARCH, and HMM-based market analysis")
 
-st.title("📈 Forecasts and Trade Recommendations")
+# --- User Inputs ---
+ticker = st.text_input("Enter stock ticker", value="SPY")
+forecast_days = st.slider("Forecast horizon (days)", 1, 30, 5)
+start_date = st.date_input("Start date", pd.to_datetime("2020-01-01"))
+end_date = st.date_input("End date", pd.to_datetime("today"))
 
-# --- Sidebar: User Inputs ---
-st.sidebar.header("⚙️ Customize Forecast")
-ticker = st.sidebar.text_input("Enter Ticker Symbol", value='SPY')
-start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2020-01-01"))
-end_date = st.sidebar.date_input("End Date", value=pd.to_datetime("today"))
-forecast_days = st.sidebar.slider("Forecast Horizon (Days)", min_value=5, max_value=60, value=20)
-
-# --- Load Data ---
+# --- Fetch Price Data ---
 @st.cache_data
-def load_data(ticker, start_date, end_date):
-    data = yf.download(ticker, start=start_date, end=end_date)
-    data['Returns'] = np.log(data['Adj Close'] / data['Adj Close'].shift(1))
-    return data.dropna()
+def fetch_data(ticker, start, end):
+    data = yf.download(ticker, start=start, end=end, auto_adjust=True)
+    return data
 
-data = load_data(ticker, start_date, end_date)
+if st.button("Run Forecast"):
+    data = fetch_data(ticker, start_date, end_date)
+    
+    st.subheader("📊 Price Data Preview")
+    st.dataframe(data.tail())
 
-# --- ARIMA Forecast ---
-def forecast_arima(series, steps=5):
-    from statsmodels.tsa.arima.model import ARIMA
+    if "Adj Close" not in data.columns:
+        st.error("⚠️ 'Adj Close' column not found in data.")
+        st.stop()
 
-    # Clean and check the data
-    series = series.dropna()
+    series = data["Adj Close"].dropna()
+    st.write("✅ Series length:", len(series))
+    st.line_chart(series)
+
     if len(series) < 30:
-        raise ValueError("Time series too short for ARIMA")
+        st.warning("Time series too short for ARIMA. Try a different date range.")
+        st.stop()
 
-    # ARIMA model (p=1, d=1, q=1) — adjust as needed
-    model = ARIMA(series, order=(1, 1, 1))
-    fitted_model = model.fit()
+    # --- ARIMA Forecast ---
+    def forecast_arima(series, steps=5):
+        model = ARIMA(series, order=(1, 1, 1))
+        fitted_model = model.fit()
+        forecast = fitted_model.forecast(steps=steps)
+        return forecast
 
-    forecast = fitted_model.forecast(steps=steps)
-    return forecast
+    arima_forecast = forecast_arima(series, steps=forecast_days)
 
+    # --- GARCH Volatility ---
+    def estimate_volatility(series):
+        returns = 100 * series.pct_change().dropna()
+        model = arch_model(returns, vol="Garch", p=1, q=1)
+        garch_fit = model.fit(disp="off")
+        return garch_fit.conditional_volatility
 
-# --- GARCH Forecast (Volatility) ---
-def forecast_garch(series, steps=20):
-    model = arch_model(series * 100, vol='Garch', p=1, q=1)
-    fitted_model = model.fit(disp="off")
-    forecast = fitted_model.forecast(horizon=steps)
-    return np.sqrt(forecast.variance.values[-1])
+    volatility = estimate_volatility(series)
 
-# --- Regime-Switching (HMM) ---
-def forecast_hmm(series):
-    model = GaussianHMM(n_components=2, covariance_type="diag", n_iter=1000)
-    model.fit(series.values.reshape(-1, 1))
-    hidden_states = model.predict(series.values.reshape(-1, 1))
-    return hidden_states
+    # --- HMM Regime Detection ---
+    def detect_regime(series, n_states=3):
+        log_returns = np.log(series / series.shift(1)).dropna().values.reshape(-1, 1)
+        model = GaussianHMM(n_components=n_states, covariance_type="full", n_iter=1000)
+        model.fit(log_returns)
+        hidden_states = model.predict(log_returns)
+        return hidden_states
 
-# --- Run Forecasts ---
-arima_forecast = forecast_arima(data['Adj Close'], steps=forecast_days)
-garch_forecast_vol = forecast_garch(data['Returns'], steps=forecast_days)
-hmm_states = forecast_hmm(data['Returns'])
+    regimes = detect_regime(series)
 
-# --- Plot Forecasts ---
-st.subheader("📊 Historical Price with ARIMA Forecast")
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=data.index, y=data['Adj Close'], name='Historical', line=dict(color='blue')))
-future_dates = pd.date_range(data.index[-1], periods=forecast_days + 1, freq='B')[1:]
-fig.add_trace(go.Scatter(x=future_dates, y=arima_forecast, name='ARIMA Forecast', line=dict(color='green', dash='dash')))
-fig.update_layout(
-    xaxis_title="Date",
-    yaxis_title="Price",
-    template="plotly_white",
-    legend=dict(x=0, y=1)
-)
-st.plotly_chart(fig, use_container_width=True)
+    # --- Display Results ---
+    st.subheader("🔮 ARIMA Forecast")
+    st.line_chart(arima_forecast)
 
-# --- Trading Recommendation ---
-st.subheader("💡 Trade Recommendation")
+    st.subheader("📉 GARCH Estimated Volatility")
+    st.line_chart(volatility)
 
-recent_volatility = np.mean(garch_forecast_vol)
-recent_state = hmm_states[-1]
-
-if recent_state == 0 and recent_volatility < 2.0:
-    recommendation = "✅ Likely Stable Regime — Consider **Buying** or **Holding**."
-elif recent_state == 1 and recent_volatility > 2.5:
-    recommendation = "⚠️ High Volatility Regime — Consider **Selling** or **Avoiding**."
-else:
-    recommendation = "🔎 Neutral/Uncertain Regime — Consider **Waiting**."
-
-st.success(recommendation)
-
-# --- Optional: Display Diagnostics ---
-st.markdown("""
----
-**Diagnostics:**
-- GARCH Forecasted Volatility: {:.2f}
-- Latest HMM Regime: {}
-""".format(recent_volatility, recent_state))
+    st.subheader("📊 Detected Market Regimes (HMM)")
+    fig, ax = plt.subplots()
+    ax.plot(series.index[1:], series.values[1:], label="Price")
+    ax.scatter(series.index[1:], series.values[1:], c=regimes, cmap="tab10", label="Regime")
+    ax.set_title("Market Regimes")
+    st.pyplot(fig)
