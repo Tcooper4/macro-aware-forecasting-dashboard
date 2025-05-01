@@ -30,11 +30,21 @@ def load_data(ticker, start_date, end_date):
 data = load_data(ticker, start_date, end_date)
 
 # --- ARIMA Forecast ---
-def forecast_arima(series, steps=20):
-    model = ARIMA(series, order=(5, 1, 0))
+def forecast_arima(series, steps=5):
+    from statsmodels.tsa.arima.model import ARIMA
+
+    # Clean and check the data
+    series = series.dropna()
+    if len(series) < 30:
+        raise ValueError("Time series too short for ARIMA")
+
+    # ARIMA model (p=1, d=1, q=1) — adjust as needed
+    model = ARIMA(series, order=(1, 1, 1))
     fitted_model = model.fit()
+
     forecast = fitted_model.forecast(steps=steps)
     return forecast
+
 
 # --- GARCH Forecast (Volatility) ---
 def forecast_garch(series, steps=20):
