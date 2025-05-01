@@ -9,18 +9,15 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     recent_data = df.copy()
     results = {}
 
-    # Run forecasts
     results["ARIMA"] = forecast_arima(recent_data, horizon)
     results["GARCH"] = forecast_garch(recent_data, horizon)
     results["HMM"] = forecast_hmm(recent_data, horizon)
     results["LSTM"] = forecast_lstm(recent_data, horizon)
     results["XGBoost"] = forecast_ml(recent_data, horizon)
 
-    # Combine
     forecast_df = pd.DataFrame(results)
     forecast_df["Average"] = forecast_df.mean(axis=1)
 
-    # Signal logic
     last_row = forecast_df.iloc[-1]
     avg_forecast = last_row["Average"]
     current_price = recent_data["Close"].iloc[-1]
