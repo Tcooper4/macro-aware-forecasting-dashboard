@@ -5,9 +5,9 @@ def forecast_arima(df, horizon="1 Week"):
     steps = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
     close = df["Close"].dropna()
 
-    # Must have enough data to fit ARIMA
-    if len(close) < 30:
-        return pd.Series([close.iloc[-1]] * steps)
+    # If empty or too short, return fallback
+    if close.empty or len(close) < 10:
+        return pd.Series([100.0] * steps)  # fallback dummy value
 
     try:
         model = ARIMA(close, order=(5, 1, 0))
