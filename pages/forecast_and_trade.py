@@ -30,9 +30,6 @@ def load_data(ticker, start_date, end_date):
 data = load_data(ticker, start_date, end_date)
 
 # --- ARIMA Forecast ---
-st.write("Series length:", len(series))
-st.line_chart(series)
-
 def forecast_arima(series, steps=5):
     from statsmodels.tsa.arima.model import ARIMA
 
