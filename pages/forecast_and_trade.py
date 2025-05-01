@@ -33,7 +33,7 @@ if st.button("Run Forecast"):
         st.error("⚠️ 'Adj Close' column not found in data.")
         st.stop()
 
-    series = data["Adj Close"].dropna()
+    series = data["Close"].dropna()
     st.write("✅ Series length:", len(series))
     st.line_chart(series)
 
