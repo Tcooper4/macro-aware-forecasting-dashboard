@@ -18,23 +18,30 @@ start_date = st.date_input("Start date", pd.to_datetime("2020-01-01"))
 end_date = st.date_input("End date", pd.to_datetime("today"))
 
 # --- Fetch Price Data ---
-@st.cache_data
+# Disable caching for debugging
+# @st.cache_data
 def fetch_data(ticker, start, end):
-    data = yf.download(ticker, start=start, end=end, auto_adjust=True)
-    return data
+    return yf.download(ticker, start=start, end=end, auto_adjust=True)
 
 if st.button("Run Forecast"):
     data = fetch_data(ticker, start_date, end_date)
-    
-    st.subheader("📊 Price Data Preview")
-    st.dataframe(data.tail())
 
-    if "Adj Close" not in data.columns:
-        st.error("⚠️ 'Adj Close' column not found in data.")
+    # --- Diagnostics ---
+    st.subheader("📊 Raw Downloaded Data")
+    st.dataframe(data)
+
+    st.write("🧾 Columns in data:", data.columns.tolist())
+    st.write("📐 Data shape:", data.shape)
+    st.write("🧼 Missing values per column:")
+    st.dataframe(data.isna().sum())
+
+    # --- Define Series Safely ---
+    if "Close" not in data.columns:
+        st.error("⚠️ 'Close' column not found in data.")
         st.stop()
 
     series = data["Close"].dropna()
-    st.write("✅ Series length:", len(series))
+    st.write("✅ Series length after dropna:", len(series))
     st.line_chart(series)
 
     if len(series) < 30:
