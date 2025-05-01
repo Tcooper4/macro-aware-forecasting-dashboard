@@ -14,13 +14,19 @@ forecast_days = st.slider("Forecast horizon (ARIMA)", 1, 30, 5)
 start_date = st.date_input("Start date", pd.to_datetime("2020-01-01"))
 end_date = st.date_input("End date", pd.to_datetime("today"))
 
-# --- Clean and prepare ticker list ---
+# --- Clean tickers ---
 tickers_raw = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
-tickers = tickers_raw  # Always a list, even if length 1
+tickers = tickers_raw  # always a list
 
+# --- Robust Fetching ---
 @st.cache_data
 def fetch_data(tickers, start, end):
-    return yf.download(tickers, start=start, end=end, auto_adjust=True)
+    try:
+        df = yf.download(tickers, start=start, end=end, auto_adjust=True)
+        return df
+    except Exception as e:
+        st.error(f"❌ Data fetch failed: {e}")
+        return pd.DataFrame()
 
 if st.button("Run Forecast & Signals"):
     data = fetch_data(tickers, start_date, end_date)
@@ -62,7 +68,7 @@ if st.button("Run Forecast & Signals"):
             pos_size = signal_result["Position Size"]
             votes = signal_result["Votes"]
 
-            # Show signal
+            # Display signal info
             st.metric(label=f"🚦 Signal for {ticker}", value=signal)
             st.write(f"🧠 Model Votes: {votes}")
             st.write(f"📊 Confidence Score: {score}")
@@ -70,7 +76,6 @@ if st.button("Run Forecast & Signals"):
             st.write(f"📐 Suggested Position Size: {pos_size}")
             st.line_chart(df["Close"])
 
-            # Store for CSV
             results.append({
                 "Ticker": ticker,
                 "Signal": signal,
@@ -83,7 +88,7 @@ if st.button("Run Forecast & Signals"):
         except Exception as e:
             st.error(f"❌ Error processing {ticker}: {e}")
 
-    # --- Summary Table and CSV ---
+    # --- CSV export ---
     if results:
         df_signals = pd.DataFrame(results)
         st.subheader("📋 Signal Summary")
