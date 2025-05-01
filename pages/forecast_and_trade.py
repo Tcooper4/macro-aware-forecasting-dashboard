@@ -16,22 +16,22 @@ start_date = st.date_input("Start date", pd.to_datetime("2020-01-01"))
 end_date = st.date_input("End date", pd.to_datetime("today"))
 
 tickers_raw = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
-tickers = tickers_raw  # always a list for consistency
+tickers = tickers_raw
 
-# --- Alpha Vantage Fetch ---
+# --- Alpha Vantage Fetch (Free Endpoint) ---
 @st.cache_data
 def fetch_data(ticker, start=None, end=None):
     api_key = st.secrets["ALPHA_VANTAGE_API_KEY"]
     ts = TimeSeries(key=api_key, output_format="pandas")
 
     try:
-        df, _ = ts.get_daily_adjusted(symbol=ticker, outputsize="full")
+        df, _ = ts.get_daily(symbol=ticker, outputsize="full")  # ✅ Free endpoint
         df = df.rename(columns={
-            "5. adjusted close": "Close",
+            "4. close": "Close",
             "1. open": "Open",
             "2. high": "High",
             "3. low": "Low",
-            "6. volume": "Volume"
+            "5. volume": "Volume"
         })
         df = df[["Close", "High", "Low", "Open", "Volume"]]
         df.index = pd.to_datetime(df.index)
