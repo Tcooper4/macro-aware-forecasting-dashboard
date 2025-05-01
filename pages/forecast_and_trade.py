@@ -14,8 +14,9 @@ forecast_days = st.slider("Forecast horizon (ARIMA)", 1, 30, 5)
 start_date = st.date_input("Start date", pd.to_datetime("2020-01-01"))
 end_date = st.date_input("End date", pd.to_datetime("today"))
 
+# --- Clean and prepare ticker list ---
 tickers_raw = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
-tickers = tickers_raw[0] if len(tickers_raw) == 1 else tickers_raw
+tickers = tickers_raw  # Always a list, even if length 1
 
 @st.cache_data
 def fetch_data(tickers, start, end):
@@ -24,12 +25,18 @@ def fetch_data(tickers, start, end):
 if st.button("Run Forecast & Signals"):
     data = fetch_data(tickers, start_date, end_date)
 
+    st.subheader("🔎 Raw Debug Info")
+    st.write("Requested tickers:", tickers)
+    st.write("Type of data:", type(data))
+    st.write("Data shape:", data.shape if hasattr(data, "shape") else "No shape")
+    st.dataframe(data.head())
+
     if data is None or data.empty or len(data) == 0:
-        st.error("❌ No data returned. Try different tickers or dates.")
+        st.error("❌ No data returned. Check ticker spelling or try a broader date range.")
         st.stop()
 
     multi_ticker = isinstance(data.columns, pd.MultiIndex)
-    tickers_to_process = tickers_raw if isinstance(tickers, list) else [tickers]
+    tickers_to_process = tickers_raw
 
     results = []
 
@@ -37,8 +44,11 @@ if st.button("Run Forecast & Signals"):
         st.markdown(f"---\n## 📊 {ticker}")
 
         try:
-            df = data["Close", ticker] if multi_ticker else data["Close"]
-            df = df.dropna().to_frame(name="Close")
+            series = (
+                data["Close", ticker] if multi_ticker else data["Close"]
+            ).dropna()
+
+            df = series.to_frame(name="Close")
             df = calculate_indicators(df)
 
             if len(df) < 30:
@@ -58,6 +68,7 @@ if st.button("Run Forecast & Signals"):
             st.write(f"📊 Confidence Score: {score}")
             st.write(f"📉 Estimated Volatility: {vol}")
             st.write(f"📐 Suggested Position Size: {pos_size}")
+            st.line_chart(df["Close"])
 
             # Store for CSV
             results.append({
@@ -70,13 +81,13 @@ if st.button("Run Forecast & Signals"):
             })
 
         except Exception as e:
-            st.error(f"Error processing {ticker}: {e}")
+            st.error(f"❌ Error processing {ticker}: {e}")
 
-    # --- Downloadable CSV ---
+    # --- Summary Table and CSV ---
     if results:
         df_signals = pd.DataFrame(results)
         st.subheader("📋 Signal Summary")
         st.dataframe(df_signals)
 
-        csv = df_signals.to_csv(index=False).encode('utf-8')
+        csv = df_signals.to_csv(index=False).encode("utf-8")
         st.download_button("📥 Download Signal CSV", csv, "trade_signals.csv", "text/csv")
