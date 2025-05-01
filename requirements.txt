@@ -20,3 +20,4 @@ pandas_datareader
 wbdata
 arch
 hmmlearn
+alpha_vantage
