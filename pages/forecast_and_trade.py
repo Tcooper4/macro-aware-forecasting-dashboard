@@ -1,102 +1,82 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-from statsmodels.tsa.arima.model import ARIMA
-from arch import arch_model
-from hmmlearn.hmm import GaussianHMM
-import numpy as np
 import matplotlib.pyplot as plt
+from features.strategy_engine import calculate_indicators, generate_signal
 
 st.set_page_config(page_title="📈 Forecast & Trade", layout="wide")
 st.title("📈 Forecast & Trade Assistant")
-st.caption("Multi-asset ARIMA, GARCH, and HMM-based market analysis")
+st.caption("Advanced multi-indicator trade signals and forecast analysis")
 
-# --- User Inputs ---
-tickers_input = st.text_input("Enter ticker(s) separated by commas", value="SPY")
-forecast_days = st.slider("Forecast horizon (days)", 1, 30, 5)
+# --- Inputs ---
+tickers_input = st.text_input("Enter ticker(s), comma-separated", value="SPY")
+forecast_days = st.slider("Forecast horizon (ARIMA)", 1, 30, 5)
 start_date = st.date_input("Start date", pd.to_datetime("2020-01-01"))
 end_date = st.date_input("End date", pd.to_datetime("today"))
 
-# Clean ticker list
-tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
+tickers_raw = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
+tickers = tickers_raw[0] if len(tickers_raw) == 1 else tickers_raw
 
-# --- Fetch Price Data ---
 @st.cache_data
 def fetch_data(tickers, start, end):
     return yf.download(tickers, start=start, end=end, auto_adjust=True)
 
-if st.button("Run Forecast"):
+if st.button("Run Forecast & Signals"):
     data = fetch_data(tickers, start_date, end_date)
 
-    if data.empty:
-        st.error("❌ Failed to retrieve any data. Check ticker symbols or date range.")
+    if data is None or data.empty or len(data) == 0:
+        st.error("❌ No data returned. Try different tickers or dates.")
         st.stop()
 
-    # Detect if multiple tickers returned a multi-index column
     multi_ticker = isinstance(data.columns, pd.MultiIndex)
+    tickers_to_process = tickers_raw if isinstance(tickers, list) else [tickers]
 
-    st.subheader("📊 Raw Downloaded Data")
-    st.dataframe(data.tail())
-    st.write("🧾 Columns:", data.columns.tolist())
-    st.write("📐 Shape:", data.shape)
-    st.dataframe(data.isna().sum())
+    results = []
 
-    for ticker in tickers:
-        st.markdown(f"---\n## 📈 {ticker} Forecasting")
+    for ticker in tickers_to_process:
+        st.markdown(f"---\n## 📊 {ticker}")
 
         try:
-            series = (
-                data["Close", ticker] if multi_ticker else data["Close"]
-            ).dropna()
+            df = data["Close", ticker] if multi_ticker else data["Close"]
+            df = df.dropna().to_frame(name="Close")
+            df = calculate_indicators(df)
 
-            st.write(f"✅ {ticker} series length:", len(series))
-            st.line_chart(series)
-
-            if len(series) < 30:
-                st.warning(f"{ticker}: Not enough data points for ARIMA. Skipping.")
+            if len(df) < 30:
+                st.warning(f"{ticker}: Not enough data for signal generation.")
                 continue
 
-            # --- ARIMA Forecast ---
-            def forecast_arima(series, steps=5):
-                model = ARIMA(series, order=(1, 1, 1))
-                fitted_model = model.fit()
-                forecast = fitted_model.forecast(steps=steps)
-                return forecast
+            signal_result = generate_signal(df)
+            signal = signal_result["Signal"]
+            score = signal_result["Score"]
+            vol = signal_result["Volatility"]
+            pos_size = signal_result["Position Size"]
+            votes = signal_result["Votes"]
 
-            arima_forecast = forecast_arima(series, steps=forecast_days)
+            # Show signal
+            st.metric(label=f"🚦 Signal for {ticker}", value=signal)
+            st.write(f"🧠 Model Votes: {votes}")
+            st.write(f"📊 Confidence Score: {score}")
+            st.write(f"📉 Estimated Volatility: {vol}")
+            st.write(f"📐 Suggested Position Size: {pos_size}")
 
-            # --- GARCH Volatility ---
-            def estimate_volatility(series):
-                returns = 100 * series.pct_change().dropna()
-                model = arch_model(returns, vol="Garch", p=1, q=1)
-                garch_fit = model.fit(disp="off")
-                return garch_fit.conditional_volatility
-
-            volatility = estimate_volatility(series)
-
-            # --- HMM Regime Detection ---
-            def detect_regime(series, n_states=3):
-                log_returns = np.log(series / series.shift(1)).dropna().values.reshape(-1, 1)
-                model = GaussianHMM(n_components=n_states, covariance_type="full", n_iter=1000)
-                model.fit(log_returns)
-                hidden_states = model.predict(log_returns)
-                return hidden_states
-
-            regimes = detect_regime(series)
-
-            # --- Display Results ---
-            st.subheader(f"🔮 ARIMA Forecast for {ticker}")
-            st.line_chart(arima_forecast)
-
-            st.subheader(f"📉 GARCH Estimated Volatility for {ticker}")
-            st.line_chart(volatility)
-
-            st.subheader(f"📊 HMM Market Regimes for {ticker}")
-            fig, ax = plt.subplots()
-            ax.plot(series.index[1:], series.values[1:], label="Price")
-            ax.scatter(series.index[1:], series.values[1:], c=regimes, cmap="tab10", label="Regime")
-            ax.set_title(f"{ticker} Market Regimes")
-            st.pyplot(fig)
+            # Store for CSV
+            results.append({
+                "Ticker": ticker,
+                "Signal": signal,
+                "Score": score,
+                "Volatility": vol,
+                "Position Size": pos_size,
+                "Votes": ", ".join(votes)
+            })
 
         except Exception as e:
-            st.error(f"❌ Error processing {ticker}: {e}")
+            st.error(f"Error processing {ticker}: {e}")
+
+    # --- Downloadable CSV ---
+    if results:
+        df_signals = pd.DataFrame(results)
+        st.subheader("📋 Signal Summary")
+        st.dataframe(df_signals)
+
+        csv = df_signals.to_csv(index=False).encode('utf-8')
+        st.download_button("📥 Download Signal CSV", csv, "trade_signals.csv", "text/csv")
