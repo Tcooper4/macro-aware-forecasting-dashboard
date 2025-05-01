@@ -1,10 +1,10 @@
 import pandas as pd
 import requests
-import os
-from datetime import datetime
+import streamlit as st
 from io import StringIO
 
-ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY", "demo")  # use your real key or set via Streamlit secrets
+# ✅ Use secret for Alpha Vantage API key
+ALPHA_VANTAGE_API_KEY = st.secrets.get("ALPHA_VANTAGE_API_KEY", "demo")
 
 def fetch_price_data(ticker, start, end):
     url = (
@@ -29,7 +29,7 @@ def fetch_price_data(ticker, start, end):
         df = df[["adjusted_close"]].rename(columns={"adjusted_close": "Close"})
 
         if df.empty:
-            raise ValueError("No data returned in date range")
+            raise ValueError("No data returned in selected date range.")
 
         return df
 
