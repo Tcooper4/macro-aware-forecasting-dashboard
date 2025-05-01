@@ -1,3 +1,5 @@
+st.write("🔑 API Key in secrets:", st.secrets.get("ALPHA_VANTAGE_API_KEY", "not found"))
+
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -8,8 +10,6 @@ from utils.helpers import fetch_price_data
 from models.ensemble import generate_forecast_ensemble
 from pages.strategy_settings import get_user_strategy_settings
 from features.strategy_engine import apply_strategy_settings
-
-st.write("🔑 API Key in secrets:", st.secrets.get("ALPHA_VANTAGE_API_KEY", "not found"))
 
 st.set_page_config(page_title="Forecast & Trade", layout="wide")
 st.title("📈 Forecast & Trade Suggestions")
