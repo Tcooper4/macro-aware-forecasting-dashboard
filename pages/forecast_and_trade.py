@@ -1,21 +1,25 @@
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from alpha_vantage.timeseries import TimeSeries
+import datetime
 
+# --- Import model layers ---
 from features.strategy_engine import calculate_indicators, generate_signal
 from models.arima_model import forecast_arima
 from models.garch_model import forecast_garch
 from models.hmm_model import detect_regimes
 from models.ml_models import prepare_ml_data, predict_xgboost, predict_random_forest, predict_logistic
 from models.ensemble import ensemble_vote
+from models.lstm_model import train_lstm
 
-# --- Streamlit Page Setup ---
+# --- Page setup ---
 st.set_page_config(page_title="📈 Forecast & Trade", layout="wide")
 st.title("📈 Forecast & Trade Assistant")
-st.caption("Advanced multi-model trade signals and forecast analysis")
+st.caption("Multi-model trade signals and interactive forecasting")
 
-# --- User Inputs ---
+# --- Inputs ---
 ticker_input = st.text_input("Enter Ticker", value="SPY")
 forecast_days = st.slider("Forecast Horizon (Days)", 1, 30, 5)
 start_date = st.date_input("Start Date", pd.to_datetime("2020-01-01"))
@@ -47,30 +51,28 @@ def fetch_data(ticker, start=None, end=None):
         st.error(f"❌ Alpha Vantage fetch error: {e}")
         return pd.DataFrame()
 
-# --- Main Logic ---
+# --- Run Analysis ---
 if st.button("Run Forecast & Signals"):
     df = fetch_data(ticker_input, start=start_date, end=end_date)
-
-    st.subheader("🔎 Raw Debug Info")
-    st.write("Data shape:", df.shape)
-    st.dataframe(df.head())
-
-    if df.empty or len(df) < 30:
-        st.error("❌ Not enough data returned. Try a different ticker or date range.")
+    st.subheader("🔎 Raw Data")
+    st.write(df.tail())
+    
+    if df.empty or len(df) < 60:
+        st.error("❌ Not enough data. Try a longer date range.")
         st.stop()
 
-    # --- Rule-Based Strategy ---
-    rule_df = calculate_indicators(df.copy())
-    rule_signal = generate_signal(rule_df)
+    # Rule-based strategy
+    strategy_df = calculate_indicators(df.copy())
+    rule_result = generate_signal(strategy_df)
 
-    st.metric("📊 Rule-Based Signal", rule_signal["Signal"])
-    st.write(f"📉 Volatility: {rule_signal['Volatility']}")
-    st.write(f"📐 Suggested Position Size: {rule_signal['Position Size']}")
-    st.write(f"🧠 Votes: {rule_signal['Votes']}")
-    st.line_chart(rule_df["Close"])
+    st.metric("📊 Rule-Based Signal", rule_result["Signal"])
+    st.write("📉 Volatility:", rule_result["Volatility"])
+    st.write("📐 Suggested Position Size:", rule_result["Position Size"])
+    st.write("🧠 Votes:", rule_result["Votes"])
+    st.line_chart(strategy_df["Close"])
 
-    # --- Machine Learning Models ---
-    X, y = prepare_ml_data(rule_df)
+    # ML-based forecast
+    X, y = prepare_ml_data(strategy_df)
     X_train, X_test = X[:-forecast_days], X[-forecast_days:]
     y_train = y[:-forecast_days]
 
@@ -78,38 +80,60 @@ if st.button("Run Forecast & Signals"):
     pred2, conf2 = predict_random_forest(X_train, y_train, X_test)
     pred3, conf3 = predict_logistic(X_train, y_train, X_test)
 
-    # --- Ensemble Decision ---
-    final_signal, final_conf = ensemble_vote(
-        [pred1, pred2, pred3], [conf1, conf2, conf3]
-    )
+    final_signal, final_conf = ensemble_vote([pred1, pred2, pred3], [conf1, conf2, conf3])
     st.metric("🧠 Ensemble ML Signal", final_signal)
-    st.write(f"🔎 ML Confidence Score: {final_conf:.2f}")
+    st.write("🔍 Confidence:", round(final_conf, 2))
 
     # --- ARIMA Forecast ---
-    arima_forecast = forecast_arima(rule_df["Close"], steps=forecast_days)
-    st.subheader("🔮 ARIMA Forecast")
-    st.line_chart(arima_forecast)
+    try:
+        arima_forecast = forecast_arima(df["Close"], steps=forecast_days)
+        future_dates = pd.date_range(start=df.index[-1] + pd.Timedelta(days=1), periods=forecast_days)
+        st.subheader("🔮 ARIMA Forecast")
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=df.index, y=df["Close"], mode="lines", name="Historical"))
+        fig.add_trace(go.Scatter(x=future_dates, y=arima_forecast, mode="lines+markers", name="ARIMA Forecast"))
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as e:
+        st.error(f"❌ ARIMA failed: {e}")
 
-    # --- GARCH Forecast ---
-    garch_var = forecast_garch(rule_df["Close"], steps=forecast_days)
-    st.metric("📉 Forecasted Volatility (GARCH)", f"{garch_var[-1]:.2f}")
+    # --- GARCH Volatility ---
+    try:
+        garch = forecast_garch(df["Close"], steps=forecast_days)
+        st.metric("📉 GARCH Volatility Forecast", f"{garch[-1]:.2f}")
+    except Exception as e:
+        st.error(f"❌ GARCH failed: {e}")
 
     # --- HMM Regimes ---
-    states = detect_regimes(rule_df["Close"], n_states=3)
-    rule_df["Regime"] = states
-    st.subheader("📊 Regime Detection (HMM)")
-    st.line_chart(rule_df["Regime"])
+    try:
+        regimes = detect_regimes(df["Close"], n_states=3)
+        df["Regime"] = regimes
+        st.subheader("📊 HMM Regimes")
+        st.line_chart(df["Regime"])
+    except Exception as e:
+        st.error(f"❌ HMM failed: {e}")
 
-    # --- Export Summary ---
+    # --- LSTM Forecast ---
+    try:
+        lstm = train_lstm(df["Close"], look_back=60, forecast_horizon=forecast_days)
+        future_lstm = pd.date_range(start=df.index[-1] + pd.Timedelta(days=1), periods=forecast_days)
+        st.subheader("🧠 LSTM Forecast")
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=df.index, y=df["Close"], mode="lines", name="Historical"))
+        fig.add_trace(go.Scatter(x=future_lstm, y=lstm, mode="lines+markers", name="LSTM Forecast"))
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as e:
+        st.error(f"❌ LSTM failed: {e}")
+
+    # --- Signal Summary ---
     summary = pd.DataFrame([{
         "Ticker": ticker_input,
-        "Rule Signal": rule_signal["Signal"],
+        "Rule Signal": rule_result["Signal"],
         "ML Ensemble Signal": final_signal,
-        "Confidence Score": final_conf,
-        "Volatility": rule_signal["Volatility"],
-        "Votes": ", ".join(rule_signal["Votes"])
+        "ML Confidence": round(final_conf, 2),
+        "Volatility": rule_result["Volatility"],
+        "Votes": ", ".join(rule_result["Votes"])
     }])
-    st.subheader("📋 Signal Summary")
+    st.subheader("📋 Final Signal Summary")
     st.dataframe(summary)
     csv = summary.to_csv(index=False).encode("utf-8")
-    st.download_button("📥 Download Signal CSV", csv, "forecast_summary.csv", "text/csv")
+    st.download_button("📥 Download Forecast Summary", csv, "forecast_summary.csv", "text/csv")

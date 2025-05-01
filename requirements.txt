@@ -22,3 +22,4 @@ arch
 hmmlearn
 alpha_vantage
 xgboost
+keras
