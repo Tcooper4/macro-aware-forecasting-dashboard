@@ -29,5 +29,6 @@ def fetch_price_data(ticker, start, end):
     except Exception as e:
         st.warning("Using fallback synthetic data due to Alpha Vantage error.")
         dates = pd.date_range(start=start, end=end)
-        prices = pd.Series(100 + 0.2 * (range(len(dates))), index=dates)
+        prices = pd.Series(100 + 0.2 * np.arange(len(dates)), index=dates)
         return pd.DataFrame({"Close": prices})
+
