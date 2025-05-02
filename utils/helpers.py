@@ -1,34 +1,29 @@
+import os
 import pandas as pd
-import numpy as np
 import requests
-import streamlit as st
-from io import StringIO
+from datetime import datetime
 
-ALPHA_VANTAGE_API_KEY = st.secrets.get("ALPHA_VANTAGE_API_KEY", "demo")
+def fetch_price_data(symbol, start="2020-01-01", end=None):
+    api_key = os.getenv("ALPHA_VANTAGE_API_KEY")
+    if not api_key:
+        raise ValueError("Alpha Vantage API key not found in environment.")
 
-def fetch_price_data(ticker, start, end):
-    url = (
-        f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY"
-        f"&symbol={ticker}&outputsize=compact&apikey={ALPHA_VANTAGE_API_KEY}&datatype=csv"
-    )
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&outputsize=full&apikey={api_key}"
+    r = requests.get(url)
+    data = r.json()
 
-    try:
-        response = requests.get(url)
-        if response.status_code != 200 or "timestamp" not in response.text.lower():
-            raise ValueError("Alpha Vantage returned no valid data")
+    if "Time Series (Daily)" not in data:
+        raise ValueError(f"Alpha Vantage error: {data.get('Note') or data.get('Error Message') or 'Invalid response'}")
 
-        df = pd.read_csv(StringIO(response.text))
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
-        df = df.set_index("timestamp").sort_index()
-        df = df.loc[start:end]
-        df = df[["close"]].rename(columns={"close": "Close"})
-        if df.empty:
-            raise ValueError("No data in date range")
-        return df
+    df = pd.DataFrame.from_dict(data["Time Series (Daily)"], orient="index")
+    df = df.rename(columns={"5. adjusted close": "Close"})
+    df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
+    df["Close"] = df["Close"].astype(float)
 
-    except Exception as e:
-        st.warning(f"Using fallback synthetic data for {ticker}: {e}")
-        dates = pd.date_range(start=start, end=end)
-        np.random.seed(len(ticker))
-        synthetic = pd.Series(100 * np.cumprod(1 + np.random.normal(0.0005, 0.02, len(dates))), index=dates)
-        return pd.DataFrame({"Close": synthetic})
+    if end:
+        df = df[(df.index >= start) & (df.index <= end)]
+    else:
+        df = df[df.index >= start]
+
+    return df
