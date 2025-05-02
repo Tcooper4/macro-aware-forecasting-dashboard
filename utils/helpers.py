@@ -13,11 +13,8 @@ def fetch_price_data(ticker, start, end):
 
     try:
         response = requests.get(url)
-        st.write("🔗 URL:", url)  # ✅ Show the full API request
-        st.write("📄 Raw text (first 300 chars):", response.text[:300])  # ✅ Preview response
-
         if response.status_code != 200 or "timestamp" not in response.text:
-            raise ValueError("Alpha Vantage API returned no time series data.")
+            raise ValueError("Alpha Vantage API returned no time series data (rate limited or invalid key?)")
 
         df = pd.read_csv(StringIO(response.text))
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -30,5 +27,7 @@ def fetch_price_data(ticker, start, end):
         return df
 
     except Exception as e:
-        st.error(f"Alpha Vantage error: {e}")
-        raise ValueError("Failed to fetch price data. Check ticker symbols and date range.")
+        st.warning("Using fallback synthetic data due to Alpha Vantage error.")
+        dates = pd.date_range(start=start, end=end)
+        prices = pd.Series(100 + 0.2 * (range(len(dates))), index=dates)
+        return pd.DataFrame({"Close": prices})
