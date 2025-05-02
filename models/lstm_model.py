@@ -22,6 +22,9 @@ def forecast_lstm(df, steps):
     units = settings.get("lstm", {}).get("units", 50)
     epochs = settings.get("lstm", {}).get("epochs", 5)
 
+    # 💡 Fix: Reset session to avoid stack corruption in streamlit / re-runs
+    K.clear_session()
+
     model = Sequential([
         LSTM(units, return_sequences=True, input_shape=(X.shape[1], 1)),
         LSTM(units),
