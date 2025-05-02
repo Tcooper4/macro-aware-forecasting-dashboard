@@ -3,6 +3,7 @@ import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
+from pages.strategy_settings import get_expert_settings
 
 def forecast_lstm(df, steps):
     data = df["Close"].values.reshape(-1, 1)
@@ -17,13 +18,17 @@ def forecast_lstm(df, steps):
         y.append(scaled[i])
     X, y = np.array(X), np.array(y)
 
+    settings = get_expert_settings()
+    units = settings.get("lstm", {}).get("units", 50)
+    epochs = settings.get("lstm", {}).get("epochs", 5)
+
     model = Sequential([
-        LSTM(50, return_sequences=True, input_shape=(X.shape[1], 1)),
-        LSTM(50),
+        LSTM(units, return_sequences=True, input_shape=(X.shape[1], 1)),
+        LSTM(units),
         Dense(1)
     ])
     model.compile(optimizer='adam', loss='mse')
-    model.fit(X, y, epochs=5, batch_size=32, verbose=0)
+    model.fit(X, y, epochs=epochs, batch_size=32, verbose=0)
 
     seq = scaled[-60:]
     preds = []
