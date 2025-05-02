@@ -3,7 +3,7 @@ import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
-from pages.strategy_settings import get_expert_settings
+from utils.expert import get_expert_settings
 
 def forecast_lstm(df, steps):
     data = df["Close"].values.reshape(-1, 1)

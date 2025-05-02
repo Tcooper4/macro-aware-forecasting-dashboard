@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
-from pages.strategy_settings import get_expert_settings
+from utils.expert import get_expert_settings
 
 def forecast_ml(df, steps):
     df["Return"] = df["Close"].pct_change()

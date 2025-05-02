@@ -1,6 +1,6 @@
 import pandas as pd
 from arch import arch_model
-from pages.strategy_settings import get_expert_settings
+from utils.expert import get_expert_settings
 
 def forecast_garch(df, steps):
     returns = df["Close"].pct_change().dropna() * 100
