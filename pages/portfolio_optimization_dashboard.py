@@ -13,93 +13,74 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.helpers import fetch_price_data
 
-# --- Title ---
 st.title("📊 Portfolio Optimization Dashboard")
-st.caption("Optimize allocations to maximize Sharpe Ratio using live market data.")
+st.caption("Optimize your asset allocation for maximum Sharpe Ratio using real market data.")
 
-# --- Sidebar Inputs ---
-tickers_input = st.sidebar.text_input("Enter stock tickers (comma-separated)", value="AAPL, MSFT, GOOG, AMZN")
+# Sidebar
+tickers_input = st.sidebar.text_input("Enter tickers (comma-separated)", value="AAPL, MSFT, GOOG, AMZN")
 start_date = st.sidebar.date_input("Start Date", datetime.date(2022, 1, 1))
 end_date = st.sidebar.date_input("End Date", datetime.date.today())
-risk_free_rate = st.sidebar.number_input("Risk-Free Rate (%)", 0.0, 10.0, 1.5) / 100
+rf = st.sidebar.number_input("Risk-Free Rate (%)", 0.0, 10.0, 1.5) / 100
 
 tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
 if len(tickers) < 2:
-    st.warning("⚠️ Please enter at least two stock tickers.")
+    st.warning("⚠️ Please enter at least two tickers.")
     st.stop()
 
-# --- Fetch Price Data ---
 @st.cache_data(ttl=3600)
 def load_prices(tickers, start, end):
-    price_data = {}
+    data = {}
     for t in tickers:
         try:
             df = fetch_price_data(t, start, end)
-            price_data[t] = df["Close"]
+            data[t] = df["Close"]
         except Exception as e:
-            st.warning(f"⚠️ {t}: {e}")
-    return pd.DataFrame(price_data)
+            st.warning(f"{t} skipped: {e}")
+    return pd.DataFrame(data)
 
 prices = load_prices(tickers, start_date, end_date)
-if prices.empty or prices.shape[1] < 2:
-    st.error("❌ Not enough valid data to optimize.")
+if prices.shape[1] < 2:
+    st.error("Not enough valid data.")
     st.stop()
 
-# --- Calculate Returns ---
 returns = prices.pct_change().dropna()
 
-# --- Sharpe Optimization ---
 def neg_sharpe(weights, ret, rf):
-    port_ret = np.sum(weights * ret.mean()) * 252
-    port_vol = np.sqrt(np.dot(weights.T, np.dot(ret.cov() * 252, weights)))
-    sharpe = (port_ret - rf) / port_vol
-    return -sharpe
+    mean_ret = np.sum(weights * ret.mean()) * 252
+    vol = np.sqrt(np.dot(weights.T, np.dot(ret.cov() * 252, weights)))
+    return -(mean_ret - rf) / vol
 
-# Constraints
-n_assets = len(tickers)
-init_guess = np.ones(n_assets) / n_assets
-bounds = [(0.0, 1.0) for _ in range(n_assets)]
-constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
+n = len(tickers)
+init = np.ones(n) / n
+bounds = [(0, 1)] * n
+constraints = {"type": "eq", "fun": lambda w: np.sum(w) - 1}
 
-# Run optimizer
-opt = minimize(neg_sharpe, init_guess, args=(returns, risk_free_rate),
-               method='SLSQP', bounds=bounds, constraints=constraints)
+opt = minimize(neg_sharpe, init, args=(returns, rf), method="SLSQP", bounds=bounds, constraints=constraints)
 
-# --- Display Results ---
 if opt.success:
-    weights = pd.Series(opt.x, index=tickers)
-    st.subheader("📈 Optimized Weights")
-    st.bar_chart(weights)
+    w = pd.Series(opt.x, index=tickers)
+    st.subheader("📈 Optimal Weights")
+    st.bar_chart(w)
 
-    # Performance stats
-    ann_return = np.sum(weights * returns.mean()) * 252
-    ann_vol = np.sqrt(np.dot(weights.T, np.dot(returns.cov() * 252, weights)))
-    sharpe = (ann_return - risk_free_rate) / ann_vol
+    ann_ret = np.sum(w * returns.mean()) * 252
+    vol = np.sqrt(np.dot(w.T, np.dot(returns.cov() * 252, w)))
+    sharpe = (ann_ret - rf) / vol
+    port_ret = (returns * w).sum(axis=1)
 
-    st.markdown(f"**Expected Annual Return:** `{ann_return:.2%}`")
-    st.markdown(f"**Expected Volatility:** `{ann_vol:.2%}`")
+    st.markdown(f"**Expected Return:** `{ann_ret:.2%}`")
+    st.markdown(f"**Volatility:** `{vol:.2%}`")
     st.markdown(f"**Sharpe Ratio:** `{sharpe:.2f}`")
 
-    # Drawdown
-    port_returns = (returns * weights).sum(axis=1)
-    cum_returns = (1 + port_returns).cumprod()
-    peak = cum_returns.cummax()
-    drawdown = (cum_returns - peak) / peak
-    st.markdown(f"**Max Drawdown:** `{drawdown.min():.2%}`")
+    cumret = (1 + port_ret).cumprod()
+    maxdd = (cumret / cumret.cummax() - 1).min()
+    st.markdown(f"**Max Drawdown:** `{maxdd:.2%}`")
 
-    # --- Correlation Heatmap ---
-    st.subheader("🔗 Asset Correlation")
+    st.subheader("📉 Correlation Matrix")
     fig, ax = plt.subplots()
     sns.heatmap(returns.corr(), annot=True, cmap="coolwarm", ax=ax)
     st.pyplot(fig)
 
-    # --- Export ---
-    df_out = pd.DataFrame({
-        "Ticker": tickers,
-        "Weight": weights.values
-    })
-    st.download_button("📥 Download Weights", df_out.to_csv(index=False).encode("utf-8"),
-                       "optimized_weights.csv", "text/csv")
+    st.download_button("📥 Export Weights", w.reset_index().rename(columns={0: "Weight"}).to_csv(index=False).encode("utf-8"), "weights.csv")
 
 else:
-    st.error("❌ Optimization failed. Try different tickers or date range.")
+    st.error("❌ Optimization failed.")

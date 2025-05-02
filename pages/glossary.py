@@ -1,28 +1,26 @@
 import streamlit as st
 
 st.set_page_config(page_title="Glossary", layout="wide")
-st.title("📘 Glossary & Education")
+st.title("📘 Trading Glossary")
 
 st.markdown("""
 ### ❓ What is a Forecast Model?
-A model is a mathematical formula that tries to predict the future based on past patterns in the data.
+Forecast models attempt to predict future prices based on past patterns.
 
-### 📊 Types of Models:
-- **ARIMA**: Time series model based on trends and seasonality
-- **GARCH**: Focuses on volatility and risk
-- **HMM**: Detects hidden market regimes (bull vs bear)
-- **LSTM**: Deep learning model that remembers past patterns
-- **XGBoost/Random Forest**: Machine learning models trained on returns
+### 📊 Models Used:
+- **ARIMA**: Forecasts trends based on past prices
+- **GARCH**: Estimates market volatility
+- **HMM**: Detects hidden market states
+- **LSTM**: Neural network that remembers time sequences
+- **XGBoost**: Machine learning model using technical features
 
-### 📌 Trade Signals:
-- **BUY**: Expected increase in price
-- **SELL**: Expected drop
-- **HOLD**: Unclear direction
+### 💡 Signal Types:
+- **BUY**: Price is expected to rise
+- **SELL**: Price is expected to fall
+- **HOLD**: No strong directional signal
 
-### 📈 Forecast Horizon:
-How far ahead the models are trying to predict (1 Day, 1 Week, 1 Month)
-
----
-
-Still lost? Toggle "Beginner Mode" on the homepage for simpler explanations.
+### 🛠️ Strategy Inputs:
+- **Risk Tolerance**: Controls position size
+- **Frequency**: How often trades are made
+- **Sizing**: Whether trades use fixed or dynamic percentages
 """)

@@ -1,19 +1,13 @@
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 
-def forecast_arima(df, horizon="1 Week"):
-    steps = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
+def forecast_arima(df, steps):
     close = df["Close"].dropna()
-
-    # If empty or too short, return fallback
-    if close.empty or len(close) < 10:
-        return pd.Series([100.0] * steps)  # fallback dummy value
+    if close.empty or len(close) < 30:
+        return pd.Series([close.iloc[-1]] * steps if not close.empty else [100] * steps)
 
     try:
-        model = ARIMA(close, order=(5, 1, 0))
-        model_fit = model.fit()
-        forecast = model_fit.forecast(steps=steps)
-        return forecast.reset_index(drop=True)
-    except Exception as e:
-        print(f"[ARIMA ERROR] {e}")
+        model = ARIMA(close, order=(5,1,0)).fit()
+        return model.forecast(steps).reset_index(drop=True)
+    except:
         return pd.Series([close.iloc[-1]] * steps)
