@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np  # ✅ required for np.arange
 import requests
 import streamlit as st
 from io import StringIO
@@ -14,7 +15,7 @@ def fetch_price_data(ticker, start, end):
     try:
         response = requests.get(url)
         if response.status_code != 200 or "timestamp" not in response.text:
-            raise ValueError("Alpha Vantage API returned no time series data (rate limited or invalid key?)")
+            raise ValueError("Alpha Vantage API returned no time series data.")
 
         df = pd.read_csv(StringIO(response.text))
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -29,6 +30,4 @@ def fetch_price_data(ticker, start, end):
     except Exception as e:
         st.warning("Using fallback synthetic data due to Alpha Vantage error.")
         dates = pd.date_range(start=start, end=end)
-        prices = pd.Series(100 + 0.2 * np.arange(len(dates)), index=dates)
-        return pd.DataFrame({"Close": prices})
-
+        prices = pd.Series(100
