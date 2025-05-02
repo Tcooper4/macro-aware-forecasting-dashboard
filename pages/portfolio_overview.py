@@ -1,69 +1,82 @@
 import streamlit as st
-import yfinance as yf
-import pandas as pd
-import datetime
-import plotly.graph_objects as go
-
 st.set_page_config(page_title="Portfolio Overview", layout="wide")
-st.title("💼 Portfolio Overview")
 
-# --- Sidebar Portfolio Input ---
-st.sidebar.header("📊 Portfolio Settings")
-tickers = st.sidebar.text_input("Holdings (comma-separated)", "AAPL, MSFT, TSLA")
-weights = st.sidebar.text_input("Weights (comma-separated)", "0.4, 0.3, 0.3")
-benchmark = st.sidebar.text_input("Benchmark Ticker", "SPY")
-start_date = st.sidebar.date_input("Start Date", datetime.date(2020, 1, 1))
+import sys
+import os
+import pandas as pd
+import numpy as np
+import datetime
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from utils.helpers import fetch_price_data
+
+st.title("📊 Portfolio Performance Overview")
+
+# --- Sidebar Inputs ---
+tickers_input = st.sidebar.text_input("Tickers (comma-separated)", "AAPL, MSFT, GOOG")
+weights_input = st.sidebar.text_input("Weights (same order)", "0.4, 0.3, 0.3")
+capital = st.sidebar.number_input("Initial Capital ($)", 1000.0, 1_000_000.0, 10_000.0, step=1000.0)
+start_date = st.sidebar.date_input("Start Date", datetime.date(2022, 1, 1))
 end_date = st.sidebar.date_input("End Date", datetime.date.today())
 
-tickers = [t.strip().upper() for t in tickers.split(",")]
-weights = [float(w.strip()) for w in weights.split(",")]
-
+tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
+weights = [float(w.strip()) for w in weights_input.split(",") if w.strip()]
 if len(tickers) != len(weights):
-    st.error("Tickers and weights must match.")
+    st.error("❌ Number of tickers must match number of weights.")
+    st.stop()
+if not np.isclose(sum(weights), 1.0):
+    st.error("❌ Weights must sum to 1.0")
     st.stop()
 
-# --- Fetch Price Data ---
-def fetch_prices(tickers, start, end):
-    data = yf.download(tickers, start=start, end=end)["Adj Close"]
-    return data.dropna()
+# --- Load price data ---
+@st.cache_data(ttl=3600)
+def load_prices(tickers, start, end):
+    price_data = {}
+    for t in tickers:
+        try:
+            df = fetch_price_data(t, start, end)
+            price_data[t] = df["Close"]
+        except Exception as e:
+            st.warning(f"{t} skipped: {e}")
+    return pd.DataFrame(price_data)
 
-df_prices = fetch_prices(tickers + [benchmark], start_date, end_date)
-returns = df_prices.pct_change().dropna()
+prices = load_prices(tickers, start_date, end_date)
+if prices.empty or prices.shape[1] < 2:
+    st.error("❌ Not enough price data to compute portfolio overview.")
+    st.stop()
 
-# --- Calculate Portfolio Metrics ---
-weights = pd.Series(weights, index=tickers)
-portfolio_returns = (returns[tickers] * weights).sum(axis=1)
-cumulative = (1 + portfolio_returns).cumprod()
+# --- Calculate metrics ---
+returns = prices.pct_change().dropna()
+weights_arr = np.array(weights)
+daily_returns = returns.dot(weights_arr)
+cumulative = (1 + daily_returns).cumprod()
+portfolio_value = cumulative * capital
+drawdown = (portfolio_value / portfolio_value.cummax()) - 1
 
-# --- Plot Portfolio Value ---
+# Metrics
+total_return = portfolio_value.iloc[-1] / capital - 1
+volatility = daily_returns.std() * np.sqrt(252)
+sharpe = (daily_returns.mean() * 252) / (daily_returns.std() * np.sqrt(252))
+max_dd = drawdown.min()
+
+# --- Display ---
 st.subheader("📈 Portfolio Value Over Time")
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=cumulative.index, y=cumulative, mode='lines', name="Portfolio"))
+st.line_chart(portfolio_value)
 
-if benchmark in df_prices.columns:
-    benchmark_returns = returns[benchmark]
-    benchmark_cum = (1 + benchmark_returns).cumprod()
-    fig.add_trace(go.Scatter(x=benchmark_cum.index, y=benchmark_cum, mode='lines', name=benchmark))
-
-fig.update_layout(title="Portfolio vs Benchmark", xaxis_title="Date", yaxis_title="Cumulative Return")
-st.plotly_chart(fig, use_container_width=True)
-
-# --- Show Metrics ---
 st.subheader("📊 Performance Metrics")
-st.metric("Total Return", f"{(cumulative[-1] - 1):.2%}")
-st.metric("Annualized Volatility", f"{portfolio_returns.std() * (252**0.5):.2%}")
-st.metric("Sharpe Ratio", f"{(portfolio_returns.mean() * 252) / (portfolio_returns.std() * (252**0.5)):.2f}")
+col1, col2, col3 = st.columns(3)
+col1.metric("Total Return", f"{total_return:.2%}")
+col2.metric("Annual Volatility", f"{volatility:.2%}")
+col3.metric("Sharpe Ratio", f"{sharpe:.2f}")
 
-# --- Allocation Pie Chart ---
-st.subheader("🧮 Allocation Breakdown")
-fig_pie = go.Figure(data=[go.Pie(labels=tickers, values=weights, hole=0.4)])
-fig_pie.update_layout(title="Portfolio Allocation")
-st.plotly_chart(fig_pie, use_container_width=True)
+st.subheader("📉 Drawdown")
+st.line_chart(drawdown)
 
-# --- Export Portfolio Returns ---
-st.subheader("📥 Export")
+# --- Download ---
 df_export = pd.DataFrame({
-    "Portfolio Cumulative Return": cumulative,
-    benchmark: benchmark_cum if benchmark in df_prices.columns else None
+    "Date": portfolio_value.index,
+    "Portfolio Value": portfolio_value.values,
+    "Daily Return": daily_returns.values,
+    "Drawdown": drawdown.values
 })
-st.download_button("Download CSV", df_export.to_csv().encode("utf-8"), file_name="portfolio_vs_benchmark.csv")
+st.download_button("📥 Download CSV", df_export.to_csv(index=False).encode("utf-8"), "portfolio_overview.csv", "text/csv")
