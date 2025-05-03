@@ -47,16 +47,18 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     steps = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
     results = {}
 
-    results["ARIMA"] = forecast_arima(df, steps)
-    results["GARCH"] = forecast_garch(df, steps)
-    results["HMM"] = forecast_hmm(df, steps)
-    results["LSTM"] = forecast_lstm(df, steps)
-    results["ML"] = forecast_ml(df, steps)
+    close_series = df["Close"]
+
+    results["ARIMA"] = forecast_arima(close_series, steps)
+    results["GARCH"] = forecast_garch(close_series, steps)
+    results["HMM"] = forecast_hmm(close_series, steps)
+    results["LSTM"] = forecast_lstm(close_series, steps)
+    results["ML"] = forecast_ml(close_series, steps)
 
     forecast_df = pd.DataFrame(results)
     forecast_df["Average"] = forecast_df.mean(axis=1)
 
-    last_price = df["Close"].iloc[-1]
+    last_price = close_series.iloc[-1]
     predicted = forecast_df["Average"].iloc[-1]
     change = (predicted - last_price) / last_price
 
@@ -75,5 +77,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     return {
         "forecast_table": forecast_df[["Date"] + list(results.keys()) + ["Average"]],
         "final_signal": adjusted_signal,
-        "rationale": f"Model signal was `{raw_signal}`, but adjusted to `{adjusted_signal}` based on `{regime}` regime."
+        "rationale": f"Model signal was `{raw_signal}`, but adjusted to `{adjusted_signal}` based on `{regime}` regime.",
+        "regime": regime
     }
