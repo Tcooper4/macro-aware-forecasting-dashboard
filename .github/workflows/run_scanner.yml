@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}  # Use PAT instead of default token
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -32,5 +34,11 @@ jobs:
           git config user.email "action@github.com"
           git add data/top_trades.csv
           git commit -m "Auto-update trade scan results" || echo "No changes to commit"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
-          git push origin main
+          git remote remove origin
+          git remote add origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
+
+      - name: 🔍 Show Git Remote (Debug)
+        run: git remote -v
+
+      - name: Push to GitHub
+        run: git push origin main
