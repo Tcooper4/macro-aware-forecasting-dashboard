@@ -37,7 +37,7 @@ def aggregate_signals(preds):
 # --- Main Scanning Loop ---
 for ticker in tqdm(TICKERS, desc="📈 Scanning tickers"):
     try:
-        df = yf.download(ticker, start=START_DATE, end=END_DATE)
+        df = yf.download(ticker, start=START_DATE, end=END_DATE, auto_adjust=True)
         if df.empty or 'Adj Close' not in df.columns:
             print(f"⚠️ No valid data for {ticker}. Skipping.")
             continue
