@@ -2,11 +2,11 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from models.arima import arima_forecast_signal
-from models.garch import garch_forecast_signal
-from models.hmm import hmm_forecast_signal
-from models.lstm import lstm_forecast_signal
-from models.xgboost_model import xgboost_forecast_signal
+from models.arima_model import forecast_arima
+from models.garch_model import forecast_garch
+from models.hmm_model import forecast_hmm
+from models.lstm_model import forecast_lstm
+from models.ml_models import forecast_ml
 
 from collections import Counter
 
@@ -14,27 +14,27 @@ def generate_ensemble_signal(ticker, start_date, end_date, settings=None):
     model_votes = {}
 
     try:
-        model_votes["ARIMA"] = arima_forecast_signal(ticker, start_date, end_date, settings)
+        model_votes["ARIMA"] = forecast_arima(ticker, start_date, end_date, settings)
     except Exception as e:
         model_votes["ARIMA"] = "ERROR"
 
     try:
-        model_votes["GARCH"] = garch_forecast_signal(ticker, start_date, end_date, settings)
+        model_votes["GARCH"] = forecast_garch(ticker, start_date, end_date, settings)
     except Exception as e:
         model_votes["GARCH"] = "ERROR"
 
     try:
-        model_votes["HMM"] = hmm_forecast_signal(ticker, start_date, end_date, settings)
+        model_votes["HMM"] = forecast_hmm(ticker, start_date, end_date, settings)
     except Exception as e:
         model_votes["HMM"] = "ERROR"
 
     try:
-        model_votes["LSTM"] = lstm_forecast_signal(ticker, start_date, end_date, settings)
+        model_votes["LSTM"] = forecast_lstm(ticker, start_date, end_date, settings)
     except Exception as e:
         model_votes["LSTM"] = "ERROR"
 
     try:
-        model_votes["XGBoost"] = xgboost_forecast_signal(ticker, start_date, end_date, settings)
+        model_votes["XGBoost"] = forecast_ml(ticker, start_date, end_date, settings)
     except Exception as e:
         model_votes["XGBoost"] = "ERROR"
 
