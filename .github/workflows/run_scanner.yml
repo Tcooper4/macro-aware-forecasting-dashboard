@@ -5,6 +5,9 @@ on:
     - cron: "0 13 * * *"  # Runs every day at 9AM EST (13:00 UTC)
   workflow_dispatch:      # Allow manual trigger
 
+permissions:
+  contents: write  # ✅ REQUIRED for pushing code back to the repo
+
 jobs:
   scan-and-commit:
     runs-on: ubuntu-latest
@@ -15,8 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # ✅ Use a supported version like 3.10 or 3.11
-
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
@@ -34,5 +36,4 @@ jobs:
           git commit -m "🔄 Auto-update top_trades.csv"
           git push
         env:
-          # Provide a token with write access to the repo
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
