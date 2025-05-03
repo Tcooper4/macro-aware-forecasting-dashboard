@@ -9,31 +9,39 @@ from pages.strategy_settings import get_user_strategy_settings
 def scan_sp500_for_trades(horizon="1 Week", top_n=10):
     os.makedirs("data", exist_ok=True)
 
-    # TEMP: Limit to 10 tickers for faster debugging
-    tickers = get_sp500_tickers()[:10]
+    tickers = get_sp500_tickers()[:10]  # Small set for debugging
     results = []
 
     for symbol in tickers:
         try:
-            print(f"📈 Scanning {symbol}...")
+            print(f"\n📈 Scanning {symbol}...")
 
             df = fetch_price_data(symbol)
+            if df is None or df.empty:
+                print(f"⚠️ No data for {symbol}. Skipping.")
+                continue
+
             print(f"✅ Data fetched for {symbol}. Rows: {len(df)}")
 
             forecast = generate_forecast_ensemble(df, horizon)
-            print(f"🧠 Forecast output for {symbol}: {forecast}")
+            if not forecast or "forecast_table" not in forecast or "final_signal" not in forecast:
+                print(f"⚠️ Forecast missing keys for {symbol}: {forecast}")
+                continue
 
             forecast_df = forecast["forecast_table"]
             signal = forecast["final_signal"]
-            rationale = forecast["rationale"]
+            rationale = forecast.get("rationale", "No rationale provided")
+
+            print(f"🔎 {symbol} Signal: {signal}, Rationale: {rationale}")
 
             forecast_df["Final Signal"] = [signal] * len(forecast_df)
-            strategy_settings = get_user_strategy_settings()
-            strategy = apply_strategy_settings(forecast_df, strategy_settings)
 
-            print(f"🔎 {symbol} → Signal: {signal}")
+            try:
+                strategy = apply_strategy_settings(forecast_df, get_user_strategy_settings())
+            except Exception as se:
+                print(f"⚠️ Strategy settings failed: {se}")
+                strategy = {"action": "HOLD", "position_size": 0}
 
-            # TEMP: Include all non-null signals for testing, not just BUY/SELL
             if signal:
                 print(f"✅ Adding {symbol} to results")
                 results.append({
@@ -57,5 +65,5 @@ def scan_sp500_for_trades(horizon="1 Week", top_n=10):
         df_results.to_csv("data/top_trades.csv", index=False)
         print("✅ Saved top trades to data/top_trades.csv")
     else:
-        print("⚠️ No valid trade signals found. Writing empty placeholder file.")
+        print("⚠️ No valid trade signals found. Writing empty file.")
         pd.DataFrame(columns=["Ticker", "Signal", "Rationale", "Action", "Size", "Regime", "Confidence"]).to_csv("data/top_trades.csv", index=False)
