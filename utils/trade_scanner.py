@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from utils.sp500_tickers import get_sp500_tickers
 from utils.helpers import fetch_price_data
@@ -6,6 +7,8 @@ from features.strategy_engine import apply_strategy_settings
 from pages.strategy_settings import get_user_strategy_settings
 
 def scan_sp500_for_trades(horizon="1 Week", top_n=10):
+    os.makedirs("data", exist_ok=True)
+
     tickers = get_sp500_tickers()
     results = []
 
@@ -32,9 +35,15 @@ def scan_sp500_for_trades(horizon="1 Week", top_n=10):
                 })
 
         except Exception as e:
+            print(f"❌ Error processing {symbol}: {e}")
             continue
 
     df_results = pd.DataFrame(results)
+
     if not df_results.empty:
         df_results = df_results.sort_values(by="Confidence", ascending=False).head(top_n)
         df_results.to_csv("data/top_trades.csv", index=False)
+        print("✅ Saved top trades to data/top_trades.csv")
+    else:
+        print("⚠️ No valid trade signals found. Writing empty file.")
+        pd.DataFrame(columns=["Ticker", "Signal", "Rationale", "Action", "Size", "Regime", "Confidence"]).to_csv("data/top_trades.csv", index=False)
