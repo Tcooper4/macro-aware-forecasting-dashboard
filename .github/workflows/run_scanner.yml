@@ -32,4 +32,5 @@ jobs:
           git config user.email "action@github.com"
           git add data/top_trades.csv
           git commit -m "Auto-update trade scan results" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
+          git push origin main
