@@ -1,16 +1,23 @@
-import pandas as pd
 import yfinance as yf
+import pandas as pd
+from datetime import datetime, timedelta
 
-def fetch_price_data(symbol: str, period: str = "2y", interval: str = "1d") -> pd.DataFrame:
+def fetch_price_data(ticker, start_date=None, end_date=None):
     """
-    Fetch historical price data using yfinance and clean it.
+    Fetches historical adjusted close price data for a given ticker.
+    Uses 'Close' as the adjusted close when auto_adjust=True.
     """
-    try:
-        df = yf.download(symbol, period=period, interval=interval, progress=False)
-        if df.empty:
-            print(f"⚠️ No data found for {symbol}")
-            return None
-        return df[["Open", "High", "Low", "Close", "Adj Close", "Volume"]].dropna()
-    except Exception as e:
-        print(f"❌ Error fetching data for {symbol}: {e}")
-        return None
+    if not start_date:
+        start_date = datetime.today() - timedelta(days=365 * 5)
+    if not end_date:
+        end_date = datetime.today()
+
+    df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
+
+    # Check if data exists
+    if df.empty or "Close" not in df.columns:
+        raise ValueError(f"No valid data returned for {ticker}")
+
+    df = df[["Close"]].dropna()
+    df.columns = ["Close"]
+    return df
