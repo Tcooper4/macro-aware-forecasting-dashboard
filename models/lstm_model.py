@@ -5,6 +5,7 @@ from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
 from utils.expert import get_expert_settings
 import tensorflow.keras.backend as K
+from utils.helpers import fetch_price_data
 
 def forecast_lstm(df, steps):
     data = df["Close"].values.reshape(-1, 1)

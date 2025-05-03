@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from hmmlearn.hmm import GaussianHMM
 from utils.expert import get_expert_settings
+from utils.helpers import fetch_price_data
 
 def forecast_hmm(df, steps):
     returns = np.log(df["Close"] / df["Close"].shift(1)).dropna().values.reshape(-1, 1)

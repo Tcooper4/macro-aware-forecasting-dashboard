@@ -1,6 +1,8 @@
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
+from utils.helpers import fetch_price_data
 from utils.expert import get_expert_settings
+
 
 def forecast_arima(df, steps):
     close = df["Close"].dropna()

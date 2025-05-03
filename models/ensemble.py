@@ -1,11 +1,13 @@
 import pandas as pd
+
 from models.arima_model import forecast_arima
 from models.garch_model import forecast_garch
 from models.hmm_model import forecast_hmm
 from models.lstm_model import forecast_lstm
 from models.ml_models import forecast_ml
-from sklearn.preprocessing import KBinsDiscretizer
 from utils.expert import get_expert_settings
+
+
 
 def classify_market_regime(df):
     """Uses HMM to classify market regime: Bull, Bear, or Volatile"""
