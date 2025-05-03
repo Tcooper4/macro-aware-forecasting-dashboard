@@ -47,18 +47,21 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     steps = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
     results = {}
 
-    close_series = df["Close"]
+    # Ensure df has proper Close column
+    if "Close" not in df.columns or df["Close"].dropna().empty:
+        raise ValueError("DataFrame must contain non-empty 'Close' column")
 
-    results["ARIMA"] = forecast_arima(close_series, steps)
-    results["GARCH"] = forecast_garch(close_series, steps)
-    results["HMM"] = forecast_hmm(close_series, steps)
-    results["LSTM"] = forecast_lstm(close_series, steps)
-    results["ML"] = forecast_ml(close_series, steps)
+    # Pass entire df to each model (they expect df with 'Close' column)
+    results["ARIMA"] = forecast_arima(df, steps)
+    results["GARCH"] = forecast_garch(df, steps)
+    results["HMM"] = forecast_hmm(df, steps)
+    results["LSTM"] = forecast_lstm(df, steps)
+    results["ML"] = forecast_ml(df, steps)
 
     forecast_df = pd.DataFrame(results)
     forecast_df["Average"] = forecast_df.mean(axis=1)
 
-    last_price = close_series.iloc[-1]
+    last_price = df["Close"].iloc[-1]
     predicted = forecast_df["Average"].iloc[-1]
     change = (predicted - last_price) / last_price
 
