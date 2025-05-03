@@ -26,11 +26,11 @@ jobs:
       - name: Run Trade Scanner
         run: python run_scanner.py
 
-      - name: Commit and Push Results
-        run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git add data/top_trades.csv
-          git commit -m "Auto-update trade scan results" || echo "No changes to commit"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
-          git push origin main
+            - name: Commit and Push Results
+              run: |
+                git config user.name "GitHub Action"
+                git config user.email "action@github.com"
+                git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
+                git add data/top_trades.csv
+                git commit -m "Auto-update trade scan results" || echo "No changes to commit"
+                git push origin main
