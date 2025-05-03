@@ -1,4 +1,6 @@
-# models/ensemble.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from models.arima import arima_forecast_signal
 from models.garch import garch_forecast_signal
@@ -9,19 +11,6 @@ from models.xgboost_model import xgboost_forecast_signal
 from collections import Counter
 
 def generate_ensemble_signal(ticker, start_date, end_date, settings=None):
-    """
-    Generate a final trading signal by combining multiple model outputs.
-
-    Parameters:
-    - ticker (str): Stock ticker.
-    - start_date (str): Start date for historical data.
-    - end_date (str): End date for historical data.
-    - settings (dict): Optional settings for individual models.
-
-    Returns:
-    - dict: Final signal and individual model votes.
-    """
-
     model_votes = {}
 
     try:
@@ -49,14 +38,13 @@ def generate_ensemble_signal(ticker, start_date, end_date, settings=None):
     except Exception as e:
         model_votes["XGBoost"] = "ERROR"
 
-    # Filter out errored models
     valid_votes = [v for v in model_votes.values() if v in {"BUY", "HOLD", "SELL"}]
 
     if valid_votes:
         vote_counts = Counter(valid_votes)
         final_signal = vote_counts.most_common(1)[0][0]
     else:
-        final_signal = "HOLD"  # default if all models fail
+        final_signal = "HOLD"
 
     return {
         "ticker": ticker,
