@@ -1,3 +1,4 @@
+# Core App & Visualization
 streamlit
 pandas
 numpy
@@ -5,21 +6,29 @@ scipy
 matplotlib
 plotly
 seaborn
+
+# Data Sources
 yfinance
 requests
 fredapi
-statsmodels
-prophet
-tensorflow
-scikit-learn
-python-dotenv
-lxml
-html5lib
-webdriver-manager
 pandas_datareader
 wbdata
-arch
-hmmlearn
 alpha_vantage
+python-dotenv
+
+# Forecasting & ML
+statsmodels
+prophet
+scikit-learn
 xgboost
+tensorflow
 keras
+hmmlearn
+arch
+
+# Web scraping & HTML parsing
+lxml
+html5lib
+
+# Browser automation (if needed for scraping)
+webdriver-manager

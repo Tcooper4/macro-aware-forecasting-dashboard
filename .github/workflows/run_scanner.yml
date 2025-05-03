@@ -1,44 +1,38 @@
-name: Daily Trade Scanner
+name: update-trades
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # Runs daily at 9:00 AM EST (13:00 UTC)
-  workflow_dispatch:
+    - cron: "0 13 * * *"  # Runs every day at 9AM EST (13:00 UTC)
+  workflow_dispatch:      # Allow manual trigger
 
 jobs:
-  update-trades:
+  scan-and-commit:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_PAT }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: 3.10
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Trade Scanner
-        env:
-          ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+      - name: Run trade scanner
         run: python run_scanner.py
 
-      - name: Debug File Listing
-        run: ls -R
-
-      - name: Commit and Push Results
+      - name: Commit updated top_trades.csv
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git add data/top_trades.csv
-          git commit -m "Auto-update trade scan results" || echo "No changes to commit"
-          git remote remove origin
-          git remote add origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Tcooper4/macro-aware-forecasting-dashboard.git
-          git push origin main
+          git commit -m "🔄 Auto-update top_trades.csv"
+          git push
+        env:
+          # Provide a token with write access to the repo
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
