@@ -1,87 +1,65 @@
-import pandas as pd
+# models/ensemble.py
 
-from models.arima_model import forecast_arima
-from models.garch_model import forecast_garch
-from models.hmm_model import forecast_hmm
-from models.lstm_model import forecast_lstm
-from models.ml_models import forecast_ml
-from utils.expert import get_expert_settings
+from models.arima import arima_forecast_signal
+from models.garch import garch_forecast_signal
+from models.hmm import hmm_forecast_signal
+from models.lstm import lstm_forecast_signal
+from models.xgboost_model import xgboost_forecast_signal
 
+from collections import Counter
 
+def generate_ensemble_signal(ticker, start_date, end_date, settings=None):
+    """
+    Generate a final trading signal by combining multiple model outputs.
 
-def classify_market_regime(df):
-    """Uses HMM to classify market regime: Bull, Bear, or Volatile"""
-    import numpy as np
-    from hmmlearn.hmm import GaussianHMM
+    Parameters:
+    - ticker (str): Stock ticker.
+    - start_date (str): Start date for historical data.
+    - end_date (str): End date for historical data.
+    - settings (dict): Optional settings for individual models.
 
-    log_returns = np.log(df["Close"] / df["Close"].shift(1)).dropna().values.reshape(-1, 1)
-    if len(log_returns) < 60:
-        return "Neutral"
+    Returns:
+    - dict: Final signal and individual model votes.
+    """
 
-    model = GaussianHMM(n_components=3, covariance_type="diag", n_iter=1000)
-    model.fit(log_returns)
-    hidden_states = model.predict(log_returns)
-    last_state = hidden_states[-1]
+    model_votes = {}
 
-    # Assign regime labels based on state volatility
-    vol_per_state = {
-        state: np.std(log_returns[hidden_states == state])
-        for state in np.unique(hidden_states)
-    }
-    sorted_states = sorted(vol_per_state.items(), key=lambda x: x[1])
-    labels = ["Bull", "Neutral", "Bear"]  # lowest vol → highest vol
+    try:
+        model_votes["ARIMA"] = arima_forecast_signal(ticker, start_date, end_date, settings)
+    except Exception as e:
+        model_votes["ARIMA"] = "ERROR"
 
-    state_map = {state: labels[i] for i, (state, _) in enumerate(sorted_states)}
-    return state_map[last_state]
+    try:
+        model_votes["GARCH"] = garch_forecast_signal(ticker, start_date, end_date, settings)
+    except Exception as e:
+        model_votes["GARCH"] = "ERROR"
 
-def regime_weight(signal, regime):
-    """Adjust signal weighting or override based on regime"""
-    if regime == "Bull" and signal == "BUY":
-        return "BUY"
-    elif regime == "Bear" and signal == "BUY":
-        return "HOLD"
-    elif regime == "Bear" and signal == "HOLD":
-        return "SELL"
+    try:
+        model_votes["HMM"] = hmm_forecast_signal(ticker, start_date, end_date, settings)
+    except Exception as e:
+        model_votes["HMM"] = "ERROR"
+
+    try:
+        model_votes["LSTM"] = lstm_forecast_signal(ticker, start_date, end_date, settings)
+    except Exception as e:
+        model_votes["LSTM"] = "ERROR"
+
+    try:
+        model_votes["XGBoost"] = xgboost_forecast_signal(ticker, start_date, end_date, settings)
+    except Exception as e:
+        model_votes["XGBoost"] = "ERROR"
+
+    # Filter out errored models
+    valid_votes = [v for v in model_votes.values() if v in {"BUY", "HOLD", "SELL"}]
+
+    if valid_votes:
+        vote_counts = Counter(valid_votes)
+        final_signal = vote_counts.most_common(1)[0][0]
     else:
-        return signal
-
-def generate_forecast_ensemble(df, horizon="1 Week"):
-    steps = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
-    results = {}
-
-    # Ensure df has proper Close column
-    if "Close" not in df.columns or df["Close"].dropna().empty:
-        raise ValueError("DataFrame must contain non-empty 'Close' column")
-
-    # Pass entire df to each model (they expect df with 'Close' column)
-    results["ARIMA"] = forecast_arima(df, steps)
-    results["GARCH"] = forecast_garch(df, steps)
-    results["HMM"] = forecast_hmm(df, steps)
-    results["LSTM"] = forecast_lstm(df, steps)
-    results["ML"] = forecast_ml(df, steps)
-
-    forecast_df = pd.DataFrame(results)
-    forecast_df["Average"] = forecast_df.mean(axis=1)
-
-    last_price = df["Close"].iloc[-1]
-    predicted = forecast_df["Average"].iloc[-1]
-    change = (predicted - last_price) / last_price
-
-    if change > 0.01:
-        raw_signal = "BUY"
-    elif change < -0.01:
-        raw_signal = "SELL"
-    else:
-        raw_signal = "HOLD"
-
-    regime = classify_market_regime(df)
-    adjusted_signal = regime_weight(raw_signal, regime)
-
-    forecast_df["Date"] = pd.date_range(start=df.index[-1], periods=steps + 1, freq="B")[1:]
+        final_signal = "HOLD"  # default if all models fail
 
     return {
-        "forecast_table": forecast_df[["Date"] + list(results.keys()) + ["Average"]],
-        "final_signal": adjusted_signal,
-        "rationale": f"Model signal was `{raw_signal}`, but adjusted to `{adjusted_signal}` based on `{regime}` regime.",
-        "regime": regime
+        "ticker": ticker,
+        "final_signal": final_signal,
+        "model_votes": model_votes
     }
