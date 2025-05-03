@@ -9,9 +9,10 @@ from models.garch_model import forecast_garch
 from models.hmm_model import forecast_hmm
 from models.lstm_model import forecast_lstm
 from models.ml_models import forecast_ml
+from models.ensemble import generate_ensemble_signal
 from utils.helpers import fetch_price_data
 from utils.expert import get_expert_settings
-from models.ensemble import generate_ensemble_signal  # Optional: not used below
+
 
 # --- Configuration ---
 TICKERS = [
@@ -19,6 +20,7 @@ TICKERS = [
 ]
 START_DATE = (datetime.today() - timedelta(days=3 * 365)).strftime('%Y-%m-%d')
 END_DATE = datetime.today().strftime('%Y-%m-%d')
+FORECAST_STEPS = 5  # 🔧 Shared forecast horizon
 
 # --- Result Store ---
 results = []
@@ -27,28 +29,21 @@ results = []
 for ticker in tqdm(TICKERS, desc="📈 Scanning tickers"):
     try:
         df = yf.download(ticker, start=START_DATE, end=END_DATE)
-        if df.empty or ('Adj Close' not in df.columns and 'Close' not in df.columns):
-            print(f"⚠️ No valid data for {ticker}. Columns found: {df.columns.tolist()}")
+        if df.empty or 'Adj Close' not in df.columns:
+            print(f"⚠️ No valid data for {ticker}. Skipping.")
             continue
 
-        prices = df['Adj Close'].dropna() if 'Adj Close' in df.columns else df['Close'].dropna()
-        prices = prices.reset_index(drop=True)
+        prices = df['Adj Close'].dropna().reset_index(drop=True)
 
         preds = {
-            "ARIMA": forecast_arima(prices),
-            "GARCH": forecast_garch(prices),
-            "HMM": forecast_hmm(prices),
-            "LSTM": forecast_lstm(prices),
-            "ML": forecast_ml(prices),
+            "ARIMA": forecast_arima(prices, steps=FORECAST_STEPS),
+            "GARCH": forecast_garch(prices, steps=FORECAST_STEPS),
+            "HMM": forecast_hmm(prices, steps=FORECAST_STEPS),
+            "LSTM": forecast_lstm(prices, steps=FORECAST_STEPS),
+            "ML": forecast_ml(prices, steps=FORECAST_STEPS),
         }
 
-        def aggregate_signals(predictions: dict):
-            from collections import Counter
-            votes = [p for p in predictions.values() if p in {"BUY", "HOLD", "SELL"}]
-            return Counter(votes).most_common(1)[0][0] if votes else "HOLD"
-
         final_signal = aggregate_signals(preds)
-        print(f"✅ {ticker} - Predictions: {preds} → Final: {final_signal}")
 
         results.append({
             "Ticker": ticker,
@@ -61,9 +56,7 @@ for ticker in tqdm(TICKERS, desc="📈 Scanning tickers"):
 
 # --- Output Results ---
 os.makedirs("data", exist_ok=True)
-columns = ["Ticker", "ARIMA", "GARCH", "HMM", "LSTM", "ML", "Final Signal"]
-results_df = pd.DataFrame(results, columns=columns)
+results_df = pd.DataFrame(results)
 results_df.to_csv("data/top_trades.csv", index=False)
 
-print(f"🔍 Total successful trades: {len(results)}")
 print("✅ Trade scan complete. Results saved to data/top_trades.csv")
