@@ -3,27 +3,36 @@ import pandas as pd
 import requests
 from datetime import datetime
 
-def fetch_price_data(symbol, start="2020-01-01", end=None):
+def fetch_price_data(symbol):
     api_key = os.getenv("ALPHA_VANTAGE_API_KEY")
     if not api_key:
         raise ValueError("Alpha Vantage API key not found in environment.")
 
-    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&outputsize=full&apikey={api_key}"
-    r = requests.get(url)
-    data = r.json()
+    url = f"https://www.alphavantage.co/query"
+    params = {
+        "function": "TIME_SERIES_DAILY_ADJUSTED",
+        "symbol": symbol,
+        "apikey": api_key,
+        "outputsize": "compact",
+        "datatype": "json"
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()
 
     if "Time Series (Daily)" not in data:
-        raise ValueError(f"Alpha Vantage error: {data.get('Note') or data.get('Error Message') or 'Invalid response'}")
+        raise ValueError(f"Invalid response for {symbol}: {data}")
 
-    df = pd.DataFrame.from_dict(data["Time Series (Daily)"], orient="index")
-    df = df.rename(columns={"5. adjusted close": "Close"})
+    df = pd.DataFrame.from_dict(data["Time Series (Daily)"], orient="index", dtype=float)
     df.index = pd.to_datetime(df.index)
-    df = df.sort_index()
-    df["Close"] = df["Close"].astype(float)
-
-    if end:
-        df = df[(df.index >= start) & (df.index <= end)]
-    else:
-        df = df[df.index >= start]
+    df.sort_index(inplace=True)
+    df.rename(columns={
+        "1. open": "Open",
+        "2. high": "High",
+        "3. low": "Low",
+        "4. close": "Close",
+        "5. adjusted close": "Adj Close",
+        "6. volume": "Volume"
+    }, inplace=True)
 
     return df
