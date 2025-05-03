@@ -1,1 +1,1 @@
-Ticker,Signal,Rationale,Action,Size,Regime,Confidence
+Ticker,ARIMA,GARCH,HMM,LSTM,XGBoost,Final Signal
