@@ -9,7 +9,7 @@ from pages.strategy_settings import get_user_strategy_settings
 def scan_sp500_for_trades(horizon="1 Week", top_n=10):
     os.makedirs("data", exist_ok=True)
 
-    tickers = get_sp500_tickers()[:10]  # Small set for debugging
+    tickers = get_sp500_tickers()[:10]  # Use full list in production
     results = []
 
     for symbol in tickers:
@@ -21,6 +21,11 @@ def scan_sp500_for_trades(horizon="1 Week", top_n=10):
                 print(f"⚠️ No data for {symbol}. Skipping.")
                 continue
 
+            df["Close"] = pd.to_numeric(df["Close"], errors="coerce")
+            if df["Close"].isna().all():
+                print(f"⚠️ 'Close' column is entirely NaN for {symbol}. Skipping.")
+                continue
+
             print(f"✅ Data fetched for {symbol}. Rows: {len(df)}")
 
             forecast = generate_forecast_ensemble(df, horizon)
@@ -29,6 +34,12 @@ def scan_sp500_for_trades(horizon="1 Week", top_n=10):
                 continue
 
             forecast_df = forecast["forecast_table"]
+            forecast_df["Average"] = pd.to_numeric(forecast_df["Average"], errors="coerce")
+
+            if forecast_df["Average"].isna().all():
+                print(f"⚠️ 'Average' column is entirely NaN for {symbol}. Skipping.")
+                continue
+
             signal = forecast["final_signal"]
             rationale = forecast.get("rationale", "No rationale provided")
 
@@ -43,6 +54,12 @@ def scan_sp500_for_trades(horizon="1 Week", top_n=10):
                 strategy = {"action": "HOLD", "position_size": 0}
 
             if signal:
+                try:
+                    confidence = abs(float(forecast_df["Average"].iloc[-1]) / float(df["Close"].iloc[-1]) - 1)
+                except Exception as ce:
+                    print(f"⚠️ Confidence calc failed for {symbol}: {ce}")
+                    confidence = 0.0
+
                 print(f"✅ Adding {symbol} to results")
                 results.append({
                     "Ticker": symbol,
@@ -51,7 +68,7 @@ def scan_sp500_for_trades(horizon="1 Week", top_n=10):
                     "Action": strategy["action"],
                     "Size": strategy["position_size"],
                     "Regime": forecast.get("regime", "Unknown"),
-                    "Confidence": abs(forecast_df["Average"].iloc[-1] / df["Close"].iloc[-1] - 1)
+                    "Confidence": confidence
                 })
 
         except Exception as e:
