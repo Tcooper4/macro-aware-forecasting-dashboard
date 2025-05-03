@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 def fetch_price_data(ticker, start_date=None, end_date=None):
     """
     Fetches historical adjusted close price data for a given ticker.
-    Uses 'Close' as the adjusted close when auto_adjust=True.
+    Ensures 'Close' column is present and adjusted.
     """
     if not start_date:
         start_date = datetime.today() - timedelta(days=365 * 5)
@@ -14,10 +14,13 @@ def fetch_price_data(ticker, start_date=None, end_date=None):
 
     df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
 
-    # Check if data exists
-    if df.empty or "Close" not in df.columns:
-        raise ValueError(f"No valid data returned for {ticker}")
+    # If 'Close' isn't present, fallback to 'Adj Close'
+    if 'Close' not in df.columns:
+        if 'Adj Close' in df.columns:
+            df['Close'] = df['Adj Close']
+        else:
+            raise ValueError(f"'Close' column missing in data for {ticker}")
 
-    df = df[["Close"]].dropna()
-    df.columns = ["Close"]
+    df = df[['Close']].dropna()
+    df.columns = ['Close']
     return df
