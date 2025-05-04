@@ -1,5 +1,4 @@
 import yfinance as yf
-import pandas as pd
 
 def fetch_price_data(ticker, start_date, end_date):
     data = yf.download(ticker, start=start_date, end=end_date)
@@ -10,8 +9,7 @@ def fetch_price_data(ticker, start_date, end_date):
 def preprocess_for_model(data, ticker, column='Close'):
     if column not in data.columns:
         raise ValueError(f"{column} not found in data for {ticker}")
-    series = data[column].dropna()
-    return series
+    return data[column].dropna()
 
 def generate_signal_from_return(return_val, buy_threshold=0.05, sell_threshold=-0.05):
     if return_val > buy_threshold:
