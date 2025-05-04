@@ -1,45 +1,33 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
-from utils.expert import get_expert_settings
-from utils.common import fetch_price_data
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
-def forecast_ml(df, steps):
-    df["Return"] = df["Close"].pct_change()
-    df["Lag1"] = df["Return"].shift(1)
-    df["Lag2"] = df["Return"].shift(2)
+def forecast_ml(df, forecast_days=5):
+    df = df.copy()
+    df['Return'] = df['Close'].pct_change()
+    df['Lag1'] = df['Return'].shift(1)
+    df['Lag2'] = df['Return'].shift(2)
     df.dropna(inplace=True)
 
-    if len(df) < 30:
-        return pd.Series([df["Close"].iloc[-1]] * steps)
+    X = df[['Lag1', 'Lag2']]
+    y = df['Return']
 
-    X = df[["Lag1", "Lag2"]]
-    y = df["Return"]
-    settings = get_expert_settings()
-    ml_type = settings.get("ml", {}).get("type", "Random Forest")
-    estimators = settings.get("ml", {}).get("n_estimators", 100)
-    depth = settings.get("ml", {}).get("max_depth", 3)
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
 
-    model = (
-        RandomForestRegressor(n_estimators=estimators, max_depth=depth)
-        if ml_type == "Random Forest"
-        else XGBRegressor(n_estimators=estimators, max_depth=depth, verbosity=0)
-    )
-    model.fit(X, y)
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, shuffle=False)
 
-    preds, l1, l2 = [], X.iloc[-1, 0], X.iloc[-1, 1]
-    for _ in range(steps):
-        pred = model.predict([[l1, l2]])[0]
-        preds.append(pred)
-        l2, l1 = l1, pred
+    model = XGBRegressor(n_estimators=100, max_depth=3)
+    model.fit(X_train, y_train)
 
-    base = df["Close"].iloc[-1]
-    prices = [base * (1 + preds[0])]
-    for i in range(1, steps):
-        prices.append(prices[-1] * (1 + preds[i]))
-    return pd.Series(prices)
+    latest_features = scaler.transform([X.iloc[-1].values])  # shape: (1, 2)
+    prediction = model.predict(latest_features)[0]  # scalar
+
+    if prediction > 0:
+        return "BUY"
+    elif prediction < 0:
+        return "SELL"
+    else:
+        return "HOLD"
