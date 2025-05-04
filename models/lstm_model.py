@@ -3,7 +3,7 @@ import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
-from utils.helpers import preprocess_for_model, generate_signal_from_return
+from utils.common import preprocess_for_model, generate_signal_from_return
 
 def forecast_lstm(ticker, data, forecast_steps=5):
     try:
