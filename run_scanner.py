@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 from utils.common import fetch_price_data
 from utils.helpers import load_config
-from sp500_tickers import get_sp500_tickers
+from utils.sp500_tickers import get_sp500_tickers
 
 from models.arima_model import forecast_arima
 from models.garch_model import forecast_garch
