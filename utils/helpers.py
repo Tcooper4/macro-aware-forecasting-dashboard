@@ -1,85 +1,79 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import os
 import json
+from models.ensemble import ensemble_signal
 
-def load_config(config_path="forecast_config.json"):
-    """Load forecast configuration from a JSON file."""
-    try:
-        with open(config_path, "r") as f:
-            config = json.load(f)
-        return config
-    except FileNotFoundError:
-        print("❌ Config file not found. Using default settings.")
-        return {
-            "models": {
-                "arima": True,
-                "garch": True,
-                "hmm": True,
-                "lstm": True,
-                "ml": True
-            },
-            "signal_logic": "ensemble",
-            "forecast_days": 5,
-            "thresholds": {
-                "buy": 5.0,
-                "sell": -5.0
-            },
-            "ticker_mode": "sp500"
-        }
-
-def load_tickers(source="sp500"):
-    """Load tickers based on mode: 'sp500' or 'all' from tickers/all_tickers.txt"""
-    if source == "all":
-        try:
-            with open("tickers/all_tickers.txt", "r") as f:
-                tickers = [line.strip().upper() for line in f if line.strip()]
-            return tickers
-        except FileNotFoundError:
-            print("❌ Error: 'tickers/all_tickers.txt' not found.")
-            return []
-    else:
-        try:
-            sp500 = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
-            return sp500["Symbol"].tolist()
-        except Exception as e:
-            print(f"❌ Error loading S&P 500 tickers: {e}")
-            return []
-
-def get_price_data(ticker, period="1y", interval="1d"):
-    """Download price data for a given ticker."""
+def get_price_data(ticker, period="2y", interval="1d"):
     try:
         df = yf.download(ticker, period=period, interval=interval, progress=False)
-        if df.empty:
-            raise ValueError(f"No data for {ticker}")
+        df.dropna(inplace=True)
+        if "Close" not in df.columns:
+            return None
         return df
     except Exception as e:
-        print(f"❌ Error fetching price data for {ticker}: {e}")
+        print(f"❌ Error fetching data for {ticker}: {e}")
         return None
 
-def calculate_signal_from_models(predictions, logic="ensemble", thresholds={"buy": 5.0, "sell": -5.0}):
-    """Combine multiple model predictions into a single signal."""
-    signals = []
+def load_config(path="forecast_config.json"):
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"❌ Error loading config: {e}")
+        return {}
 
-    # Normalize predictions
-    clean_preds = [p for p in predictions if isinstance(p, (float, int, np.float64, np.int64))]
+def load_tickers(mode="sp500"):
+    sp500 = [
+        "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "V", "UNH",
+        "PG", "MA", "DIS", "HD", "PEP", "KO", "WMT", "NFLX", "INTC", "ADBE"
+    ]
+    if mode == "sp500":
+        return sp500
+    elif mode == "all":
+        # You can expand this list or load dynamically from a file or API if needed
+        return sp500  # Placeholder: replace with full ticker list as needed
+    else:
+        return sp500
 
-    if not clean_preds:
+def calculate_signal_from_models(predictions, logic, thresholds):
+    """
+    predictions: dict with model_name -> forecast value
+    logic: 'ensemble', 'average', or 'majority'
+    thresholds: dict with 'buy' and 'sell' levels
+    """
+    # Remove invalid or NaN forecasts
+    valid_preds = {k: v for k, v in predictions.items() if v is not None and not np.isnan(v)}
+
+    if not valid_preds:
         return 0.0, "HOLD"
 
-    if logic == "average":
-        combined = np.mean(clean_preds)
+    if logic == "ensemble":
+        return ensemble_signal(valid_preds, thresholds)
+
+    elif logic == "average":
+        avg = np.mean(list(valid_preds.values()))
+        if avg >= thresholds["buy"]:
+            return avg, "BUY"
+        elif avg <= thresholds["sell"]:
+            return avg, "SELL"
+        else:
+            return avg, "HOLD"
+
     elif logic == "majority":
-        combined = np.median(clean_preds)
-    else:  # ensemble
-        combined = np.average(clean_preds)
+        votes = {"BUY": 0, "SELL": 0, "HOLD": 0}
+        for val in valid_preds.values():
+            if val >= thresholds["buy"]:
+                votes["BUY"] += 1
+            elif val <= thresholds["sell"]:
+                votes["SELL"] += 1
+            else:
+                votes["HOLD"] += 1
+        signal = max(votes, key=votes.get)
+        avg = np.mean(list(valid_preds.values()))
+        return avg, signal
 
-    if combined > thresholds["buy"]:
-        decision = "BUY"
-    elif combined < thresholds["sell"]:
-        decision = "SELL"
     else:
-        decision = "HOLD"
-
-    return round(combined, 2), decision
+        # Default fallback
+        avg = np.mean(list(valid_preds.values()))
+        return avg, "HOLD"
