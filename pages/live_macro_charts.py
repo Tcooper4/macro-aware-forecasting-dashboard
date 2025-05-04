@@ -14,15 +14,11 @@ start_year = st.sidebar.slider("Start Year", 1960, 2023, 2000)
 end_year = st.sidebar.slider("End Year", 1960, 2023, 2023)
 start_date = datetime.datetime(start_year, 1, 1)
 end_date = datetime.datetime(end_year, 12, 31)
-
 refresh = st.sidebar.button("🔄 Refresh")
 
 # --- FRED Series Setup ---
 fred_series = st.sidebar.selectbox("📈 FRED Indicator", [
-    "FEDFUNDS",    # Federal Funds Rate
-    "CPIAUCSL",    # CPI
-    "UNRATE",      # Unemployment
-    "GDPC1"        # Real GDP
+    "FEDFUNDS", "CPIAUCSL", "UNRATE", "GDPC1"
 ])
 fred_label_map = {
     "FEDFUNDS": "Federal Funds Rate",
@@ -36,9 +32,10 @@ indicator_map = {
     "GDP (current US$)": "NY.GDP.MKTP.CD",
     "Inflation (CPI %)": "FP.CPI.TOTL.ZG",
     "Unemployment Rate (%)": "SL.UEM.TOTL.ZS",
-    "CO₂ Emissions (kt)": "EN.ATM.CO2E.KT"
+    "CO₂ Emissions (kt)": "EN.ATM.CO2E.KT",
+    "CO₂ Emissions (metric tons per capita)": "EN.ATM.CO2E.PC",
+    "CO₂ Emissions Growth Rate (%)": "EN.ATM.CO2E.KD.ZG"
 }
-
 indicator_labels = list(indicator_map.keys())
 
 # Get countries (exclude aggregates)
@@ -48,7 +45,7 @@ selected_countries = st.sidebar.multiselect(
     "🌍 Select Countries", options=sorted(country_dict.keys()), default=["United States", "Germany"]
 )
 
-# --- Tabs for Each Macro Indicator ---
+# --- Tabs ---
 tabs = st.tabs(["📊 FRED", "🌍 GDP", "📈 Inflation", "📉 Unemployment", "🌫 CO₂ Emissions"])
 
 # --- FRED Tab ---
@@ -56,12 +53,12 @@ with tabs[0]:
     try:
         st.subheader(f"{fred_label_map[fred_series]} Over Time")
         fred_data = web.DataReader(fred_series, "fred", start_date, end_date)
-
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=fred_data.index, y=fred_data[fred_series], mode='lines'))
 
         fig.add_vrect(x0="2008-09-01", x1="2009-06-30", fillcolor="red", opacity=0.2,
                       annotation_text="2008 Recession", annotation_position="top left")
+
         fig.update_layout(title=fred_label_map[fred_series], xaxis_title="Date", yaxis_title="Value")
         st.plotly_chart(fig, use_container_width=True)
 
@@ -70,7 +67,7 @@ with tabs[0]:
     except Exception as e:
         st.error(f"Failed to load FRED data: {e}")
 
-# --- Helper for World Bank Chart Tabs ---
+# --- Helper Function ---
 def render_world_bank_chart(label):
     try:
         indicator_code = indicator_map[label]
@@ -96,13 +93,32 @@ def render_world_bank_chart(label):
         st.download_button(f"📥 Download {label} CSV", pivot_df.to_csv().encode('utf-8'),
                            file_name=f"{label.replace(' ', '_')}_worldbank.csv")
     except Exception as e:
-        st.error(f"Failed to load World Bank data: {e}")
+        st.error(f"Failed to load World Bank data for {label}: {e}")
 
 # --- GDP Tab ---
 with tabs[1]: render_world_bank_chart("GDP (current US$)")
+
 # --- Inflation Tab ---
 with tabs[2]: render_world_bank_chart("Inflation (CPI %)")
+
 # --- Unemployment Tab ---
 with tabs[3]: render_world_bank_chart("Unemployment Rate (%)")
-# --- CO₂ Emissions Tab ---
-with tabs[4]: render_world_bank_chart("CO₂ Emissions (kt)")
+
+# --- CO₂ Tab with Multi-Select ---
+with tabs[4]:
+    selected_co2_indicators = st.multiselect(
+        "Select CO₂ Indicators",
+        options=[
+            "CO₂ Emissions (kt)",
+            "CO₂ Emissions (metric tons per capita)",
+            "CO₂ Emissions Growth Rate (%)"
+        ],
+        default=[
+            "CO₂ Emissions (kt)",
+            "CO₂ Emissions (metric tons per capita)"
+        ]
+    )
+
+    if selected_co2_indicators:
+        for label in selected_co2_indicators:
+            render_world_bank_chart(label)
