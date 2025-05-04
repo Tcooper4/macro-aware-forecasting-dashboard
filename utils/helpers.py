@@ -5,26 +5,29 @@ from statsmodels.tsa.arima.model import ARIMA
 from datetime import datetime
 
 
-def fetch_price_data(ticker: str, start_date: str = "2020-01-01", end_date: str = None) -> pd.Series:
-    """
-    Fetch historical closing prices for a single ticker using yfinance-style MultiIndex.
-    Returns the Close price series (not Adj Close).
-    """
+def fetch_price_data(ticker, start_date="2020-01-01", end_date=None):
     import yfinance as yf
+    import pandas as pd
+
     if end_date is None:
-        end_date = datetime.today().strftime('%Y-%m-%d')
+        end_date = pd.to_datetime("today").strftime("%Y-%m-%d")
 
-    df = yf.download(ticker, start=start_date, end=end_date, group_by="ticker", progress=False)
+    df = yf.download(ticker, start=start_date, end=end_date, group_by="ticker", auto_adjust=True)
 
-    # yfinance returns MultiIndex columns if group_by="ticker" and multiple tickers requested
-    # For a single ticker, try to pull ('Close', ticker) or fallback to 'Close'
-    try:
-        if isinstance(df.columns, pd.MultiIndex):
-            return df[('Close', ticker)].dropna()
-        else:
-            return df['Close'].dropna()
-    except KeyError:
-        raise KeyError(f"Close price not found in yfinance data for {ticker}")
+    # Handle both MultiIndex and single-index formats
+    if isinstance(df.columns, pd.MultiIndex):
+        try:
+            close_prices = df[ticker]["Close"]
+        except KeyError:
+            raise ValueError(f"Close price not found in yfinance MultiIndex data for {ticker}")
+    else:
+        try:
+            close_prices = df["Close"]
+        except KeyError:
+            raise ValueError(f"Close price not found in yfinance single-index data for {ticker}")
+
+    return close_prices
+
 
 
 def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
