@@ -42,7 +42,7 @@ for ticker in tickers:
             _, predictions["ARIMA"] = forecast_arima(ticker, df, forecast_days)
 
         if enabled_models.get("garch"):
-            preds = forecast_garch(df, forecast_days)
+            predictions["GARCH"] = forecast_garch(df, forecast_days)
             predictions["GARCH"] = "BUY" if preds.iloc[-1] > df["Close"].iloc[-1] else "SELL"
 
         if enabled_models.get("hmm"):
@@ -52,7 +52,7 @@ for ticker in tickers:
             _, predictions["LSTM"] = forecast_lstm(ticker, df, forecast_days)
 
         if enabled_models.get("ml"):
-            preds = forecast_ml(df, forecast_days)
+            predictions["XGBoost"] = forecast_ml(df, forecast_days)
             predictions["XGBoost"] = "BUY" if preds.iloc[-1] > df["Close"].iloc[-1] else "SELL"
 
         vote_counts = Counter(predictions.values())
