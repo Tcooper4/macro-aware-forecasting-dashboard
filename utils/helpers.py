@@ -7,18 +7,24 @@ from datetime import datetime
 
 def fetch_price_data(ticker, start_date="2020-01-01", end_date=None):
     import yfinance as yf
-    import pandas as pd
 
     if end_date is None:
         end_date = pd.to_datetime("today").strftime("%Y-%m-%d")
 
-    df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
+    df = yf.download(ticker, start=start_date, end=end_date, group_by='ticker', auto_adjust=True)
 
-    if df.empty or "Close" not in df.columns:
-        raise ValueError(f"Close price not found in yfinance data for {ticker}")
+    # Handle cases where yfinance returns a MultiIndex even for a single ticker
+    if isinstance(df.columns, pd.MultiIndex):
+        try:
+            close_prices = df[("Close", ticker)]
+        except KeyError:
+            raise ValueError(f"Close price not found in yfinance data for {ticker}")
+    else:
+        if "Close" not in df.columns:
+            raise ValueError(f"Close price not found in yfinance data for {ticker}")
+        close_prices = df["Close"]
 
-    return df["Close"]
-
+    return close_prices
 
 
 def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
@@ -67,10 +73,10 @@ def aggregate_signals(tickers: list[str]) -> pd.DataFrame:
         try:
             prices = fetch_price_data(ticker)
             signal = generate_forecast_signal(prices)
-            forecast_pct = 0.0
-            if len(prices) >= 5:
-                forecast_pct = round(((prices.iloc[-1] - prices.iloc[-5]) / prices.iloc[-5]) * 100, 2)
-
+            forecast_pct = (
+                round(((prices.iloc[-1] - prices.iloc[-5]) / prices.iloc[-5]) * 100, 2)
+                if len(prices) >= 5 else 0.0
+            )
             results.append({
                 "Ticker": ticker,
                 "Date": datetime.today().strftime("%Y-%m-%d"),
