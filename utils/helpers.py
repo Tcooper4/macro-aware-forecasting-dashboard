@@ -1,95 +1,85 @@
+import yfinance as yf
 import pandas as pd
 import numpy as np
 import os
-from statsmodels.tsa.arima.model import ARIMA
-from datetime import datetime
+import json
 
-
-def fetch_price_data(ticker, start_date="2020-01-01", end_date=None):
-    import yfinance as yf
-    import pandas as pd
-
-    if end_date is None:
-        end_date = pd.to_datetime("today").strftime("%Y-%m-%d")
-
-    df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
-
-    # Safely extract the 'Close' column regardless of index type
-    if isinstance(df.columns, pd.MultiIndex):
-        if ('Close', '') in df.columns:
-            close_prices = df[('Close', '')]
-        elif ('Close', ticker) in df.columns:
-            close_prices = df[('Close', ticker)]
-        else:
-            raise ValueError(f"Close price not found in yfinance data for {ticker}")
-    else:
-        if "Close" in df.columns:
-            close_prices = df["Close"]
-        else:
-            raise ValueError(f"Close price not found in yfinance data for {ticker}")
-
-    return close_prices.dropna()
-
-
-
-def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
-    """
-    Fit an ARIMA model and generate a BUY, HOLD, or SELL signal.
-    """
-    if len(prices) < 30:
-        return "HOLD"  # Not enough data
-
+def load_config(config_path="forecast_config.json"):
+    """Load forecast configuration from a JSON file."""
     try:
-        model = ARIMA(prices, order=(5, 1, 0))
-        model_fit = model.fit()
-        forecast = model_fit.forecast(steps=forecast_horizon)
-        future_return = (forecast.iloc[-1] - prices.iloc[-1]) / prices.iloc[-1]
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        return config
+    except FileNotFoundError:
+        print("❌ Config file not found. Using default settings.")
+        return {
+            "models": {
+                "arima": True,
+                "garch": True,
+                "hmm": True,
+                "lstm": True,
+                "ml": True
+            },
+            "signal_logic": "ensemble",
+            "forecast_days": 5,
+            "thresholds": {
+                "buy": 5.0,
+                "sell": -5.0
+            },
+            "ticker_mode": "sp500"
+        }
 
-        if future_return > 0.02:
-            return "BUY"
-        elif future_return < -0.02:
-            return "SELL"
-        else:
-            return "HOLD"
-    except Exception as e:
-        print(f"ARIMA failed for ticker: {e}")
-        return "HOLD"
-
-
-def save_trade_results(trade_data: pd.DataFrame, file_path: str = "data/top_trades.csv"):
-    """
-    Save trade signals to a CSV file. If empty, create file with headers only.
-    """
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-    if trade_data.empty:
-        headers = ["Ticker", "Date", "Forecast", "Signal"]
-        pd.DataFrame(columns=headers).to_csv(file_path, index=False)
-    else:
-        trade_data.to_csv(file_path, index=False)
-
-
-def aggregate_signals(tickers: list[str]) -> pd.DataFrame:
-    """
-    Loop through all tickers, fetch price data, forecast signal, and return trade ideas.
-    """
-    results = []
-    for ticker in tickers:
+def load_tickers(source="sp500"):
+    """Load tickers based on mode: 'sp500' or 'all' from tickers/all_tickers.txt"""
+    if source == "all":
         try:
-            prices = fetch_price_data(ticker)
-            signal = generate_forecast_signal(prices)
-            forecast_pct = (
-                round(((prices.iloc[-1] - prices.iloc[-5]) / prices.iloc[-5]) * 100, 2)
-                if len(prices) >= 5 else 0.0
-            )
-            results.append({
-                "Ticker": ticker,
-                "Date": datetime.today().strftime("%Y-%m-%d"),
-                "Forecast": forecast_pct,
-                "Signal": signal
-            })
+            with open("tickers/all_tickers.txt", "r") as f:
+                tickers = [line.strip().upper() for line in f if line.strip()]
+            return tickers
+        except FileNotFoundError:
+            print("❌ Error: 'tickers/all_tickers.txt' not found.")
+            return []
+    else:
+        try:
+            sp500 = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
+            return sp500["Symbol"].tolist()
         except Exception as e:
-            print(f"❌ Error processing {ticker}: {e}")
-            continue
+            print(f"❌ Error loading S&P 500 tickers: {e}")
+            return []
 
-    return pd.DataFrame(results)
+def get_price_data(ticker, period="1y", interval="1d"):
+    """Download price data for a given ticker."""
+    try:
+        df = yf.download(ticker, period=period, interval=interval, progress=False)
+        if df.empty:
+            raise ValueError(f"No data for {ticker}")
+        return df
+    except Exception as e:
+        print(f"❌ Error fetching price data for {ticker}: {e}")
+        return None
+
+def calculate_signal_from_models(predictions, logic="ensemble", thresholds={"buy": 5.0, "sell": -5.0}):
+    """Combine multiple model predictions into a single signal."""
+    signals = []
+
+    # Normalize predictions
+    clean_preds = [p for p in predictions if isinstance(p, (float, int, np.float64, np.int64))]
+
+    if not clean_preds:
+        return 0.0, "HOLD"
+
+    if logic == "average":
+        combined = np.mean(clean_preds)
+    elif logic == "majority":
+        combined = np.median(clean_preds)
+    else:  # ensemble
+        combined = np.average(clean_preds)
+
+    if combined > thresholds["buy"]:
+        decision = "BUY"
+    elif combined < thresholds["sell"]:
+        decision = "SELL"
+    else:
+        decision = "HOLD"
+
+    return round(combined, 2), decision

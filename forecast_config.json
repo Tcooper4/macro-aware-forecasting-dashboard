@@ -11,6 +11,7 @@
     "thresholds": {
       "buy": 5.0,
       "sell": -5.0
-    }
+    },
+    "ticker_mode": "sp500"
   }
   
