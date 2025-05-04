@@ -1,0 +1,16 @@
+{
+    "models": {
+      "arima": true,
+      "garch": true,
+      "hmm": true,
+      "lstm": true,
+      "ml": true
+    },
+    "signal_logic": "ensemble",  // options: "ensemble", "average", "majority"
+    "forecast_days": 5,
+    "thresholds": {
+      "buy": 5.0,
+      "sell": -5.0
+    }
+  }
+  

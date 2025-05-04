@@ -6,9 +6,6 @@ from sklearn.preprocessing import MinMaxScaler
 from utils.helpers import preprocess_for_model, generate_signal_from_return
 
 def forecast_lstm(ticker, data, forecast_steps=5):
-    """
-    Train an LSTM model on historical data and forecast returns.
-    """
     try:
         series = preprocess_for_model(data, ticker, column='Close')
 
@@ -32,7 +29,6 @@ def forecast_lstm(ticker, data, forecast_steps=5):
         model.compile(optimizer='adam', loss='mean_squared_error')
         model.fit(X, y, epochs=5, batch_size=16, verbose=0)
 
-        # Forecast forward
         last_input = scaled[-window:].reshape(1, window, 1)
         preds = []
         for _ in range(forecast_steps):
