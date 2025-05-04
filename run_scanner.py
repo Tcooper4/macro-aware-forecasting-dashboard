@@ -2,30 +2,28 @@ import os
 import json
 import pandas as pd
 from datetime import datetime
-from utils.helpers import (
-    get_price_data,
-    load_tickers,
-    load_config,
-    calculate_signal_from_models
-)
+from utils.common import fetch_price_data
+from utils.helpers import load_config
+from sp500_tickers import get_sp500_tickers
+
 from models.arima_model import forecast_arima
 from models.garch_model import forecast_garch
 from models.hmm_model import forecast_hmm
 from models.lstm_model import forecast_lstm
 from models.ml_models import forecast_ml
 
-# === Load configuration ===
-with open("forecast_config.json") as f:
-    config = json.load(f)
+from collections import Counter
 
+# === Load configuration ===
+config = load_config()
 enabled_models = config["models"]
-logic = config["signal_logic"]
+logic = config["signal_logic"]  # Currently unused
 forecast_days = config["forecast_days"]
-thresholds = config["thresholds"]
-ticker_mode = config.get("ticker_mode", "sp500")  # "sp500" or "all"
+thresholds = config["thresholds"]  # Currently unused
+ticker_mode = config.get("ticker_mode", "sp500")  # Only supports "sp500"
 
 # === Load tickers ===
-tickers = load_tickers(mode=ticker_mode)
+tickers = get_sp500_tickers()
 
 # === Forecast loop ===
 forecast_results = []
@@ -33,7 +31,7 @@ forecast_results = []
 print("📊 Scanning tickers for forecast signals...")
 for ticker in tickers:
     try:
-        df = get_price_data(ticker)
+        df = fetch_price_data(ticker, start_date="2020-01-01", end_date=datetime.today().strftime("%Y-%m-%d"))
         if df is None or df.empty or "Close" not in df.columns:
             print(f"❌ Error: No valid price data for {ticker}")
             continue
@@ -41,34 +39,40 @@ for ticker in tickers:
         predictions = {}
 
         if enabled_models.get("arima"):
-            predictions["arima"] = forecast_arima(df, forecast_days)
+            _, predictions["ARIMA"] = forecast_arima(ticker, df, forecast_days)
 
         if enabled_models.get("garch"):
-            predictions["garch"] = forecast_garch(df, forecast_days)
+            preds = forecast_garch(df, forecast_days)
+            predictions["GARCH"] = "BUY" if preds.iloc[-1] > df["Close"].iloc[-1] else "SELL"
 
         if enabled_models.get("hmm"):
-            predictions["hmm"] = forecast_hmm(df, forecast_days)
+            _, predictions["HMM"] = forecast_hmm(ticker, df, forecast_days)
 
         if enabled_models.get("lstm"):
-            predictions["lstm"] = forecast_lstm(df, forecast_days)
+            _, predictions["LSTM"] = forecast_lstm(ticker, df, forecast_days)
 
         if enabled_models.get("ml"):
-            predictions["ml"] = forecast_ml(df, forecast_days)
+            preds = forecast_ml(df, forecast_days)
+            predictions["XGBoost"] = "BUY" if preds.iloc[-1] > df["Close"].iloc[-1] else "SELL"
 
-        forecast, signal = calculate_signal_from_models(predictions, logic, thresholds)
+        vote_counts = Counter(predictions.values())
+        final_signal = vote_counts.most_common(1)[0][0]
 
-        forecast_results.append({
+        result = {
             "Ticker": ticker,
             "Date": datetime.today().strftime("%Y-%m-%d"),
-            "Forecast": round(forecast, 2),
-            "Signal": signal
-        })
+            "Final Signal": final_signal
+        }
+        result.update(predictions)
+        forecast_results.append(result)
 
     except Exception as e:
         print(f"❌ Error processing {ticker}: {e}")
 
 # === Save results ===
+os.makedirs("data", exist_ok=True)
 forecast_df = pd.DataFrame(forecast_results)
+forecast_df = forecast_df[forecast_df["Final Signal"] == "BUY"]  # Filter if desired
 forecast_df.to_csv("data/top_trades.csv", index=False)
 
 print("💾 Saved results to data/top_trades.csv")
