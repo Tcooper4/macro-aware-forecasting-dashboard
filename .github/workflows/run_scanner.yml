@@ -1,8 +1,8 @@
-name: Update Top Trades
+name: Run Forecast & Push Results
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # every day at 9 AM EST
+    - cron: '0 12 * * *'  # Runs daily at 12:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -10,10 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Repository
+      - name: 📥 Checkout Repo
         uses: actions/checkout@v3
-        with:
-          persist-credentials: true
 
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
@@ -25,16 +23,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 🚀 Run Scanner
+      - name: 🔮 Run Forecast Scanner
         run: python run_scanner.py
 
-      - name: ⚙️ Commit and Push Forecast Updates
+      - name: 🧹 Commit & Rebase
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git pull --rebase origin main
-          git add data/top_trades.csv
+          git add .
           git commit -m "🔄 Auto-update top_trades.csv" || echo "No changes to commit"
+          git pull origin main --rebase
+
+      - name: 🚀 Push Changes
+        run: |
           git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
