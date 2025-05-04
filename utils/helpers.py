@@ -1,65 +1,85 @@
-import os
-import pandas as pd
 import yfinance as yf
-from datetime import datetime
+import pandas as pd
+from datetime import datetime, timedelta
 
-def fetch_price_data(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
+def fetch_price_data(tickers, start_date="2015-01-01", end_date=None, interval="1d"):
     """
-    Fetch historical adjusted close price data for a given ticker.
-    Logs debug info for each download attempt and handles both MultiIndex and flat structures.
+    Fetch price data using yfinance with MultiIndex columns.
+    Columns: ('Close', 'AAPL'), ('Volume', 'MSFT'), etc.
     """
-    log_dir = "logs"
-    os.makedirs(log_dir, exist_ok=True)
-    log_file = os.path.join(log_dir, "debug_fetch_price_data.log")
-
-    def log_debug(message: str):
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with open(log_file, "a") as f:
-            f.write(f"[{timestamp}] {ticker}: {message}\n")
-
+    if end_date is None:
+        end_date = datetime.today().strftime('%Y-%m-%d')
     try:
-        df = yf.download(ticker, start=start_date, end=end_date, group_by="ticker")
-        log_debug(f"Downloaded columns: {df.columns.tolist()}")
-        log_debug(f"First 5 rows:\n{df.head().to_string()}")
-
-        if df.empty:
-            msg = "⚠️ No data returned"
-            print(f"{msg} for {ticker}")
-            log_debug(msg)
-            return pd.DataFrame()
-
-        # Handle MultiIndex columns
-        if isinstance(df.columns, pd.MultiIndex):
-            if (ticker, 'Adj Close') in df.columns:
-                series = df[(ticker, 'Adj Close')].rename("adj_close")
-            elif (ticker, 'Close') in df.columns:
-                msg = "⚠️ Using 'Close' instead of 'Adj Close'"
-                print(f"{msg} for {ticker}")
-                log_debug(msg)
-                series = df[(ticker, 'Close')].rename("adj_close")
-            else:
-                msg = "❌ Neither 'Adj Close' nor 'Close' in MultiIndex columns"
-                print(f"{msg} for {ticker}")
-                log_debug(msg)
-                return pd.DataFrame()
+        data = yf.download(
+            tickers=tickers,
+            start=start_date,
+            end=end_date,
+            interval=interval,
+            group_by="ticker",
+            auto_adjust=False,
+            threads=True
+        )
+        # Ensure MultiIndex columns
+        if isinstance(data.columns, pd.MultiIndex):
+            return data
         else:
-            if 'Adj Close' in df.columns:
-                series = df['Adj Close'].rename("adj_close")
-            elif 'Close' in df.columns:
-                msg = "⚠️ Using 'Close' instead of 'Adj Close'"
-                print(f"{msg} for {ticker}")
-                log_debug(msg)
-                series = df['Close'].rename("adj_close")
-            else:
-                msg = "❌ Neither 'Adj Close' nor 'Close' in flat columns"
-                print(f"{msg} for {ticker}")
-                log_debug(msg)
-                return pd.DataFrame()
-
-        return pd.DataFrame(series).dropna()
-
+            # Convert single-ticker data to MultiIndex
+            return pd.concat({tickers[0]: data}, axis=1)
     except Exception as e:
-        msg = f"❌ Exception: {e}"
-        print(f"{msg} for {ticker}")
-        log_debug(msg)
+        print(f"❌ Failed to fetch data for {tickers}: {e}")
         return pd.DataFrame()
+
+def preprocess_for_model(data, ticker, column='Close'):
+    """
+    Extracts a single column (e.g., 'Close') for a given ticker from MultiIndex DataFrame.
+    Returns a clean series.
+    """
+    try:
+        ts = data[(column, ticker)].dropna()
+        ts.name = ticker
+        return ts
+    except KeyError:
+        print(f"⚠️ Column ({column}, {ticker}) not found in data.")
+        return pd.Series()
+
+def scale_series(series):
+    """Normalize series between 0 and 1."""
+    return (series - series.min()) / (series.max() - series.min())
+
+def unscale_series(scaled_series, original_series):
+    """Restore original values from scaled series."""
+    return scaled_series * (original_series.max() - original_series.min()) + original_series.min()
+
+def aggregate_signals(signal_dict):
+    """
+    Given a dictionary of {model_name: signal}, return a final ensemble signal.
+    Each signal should be in ['BUY', 'HOLD', 'SELL'].
+    """
+    from collections import Counter
+
+    votes = list(signal_dict.values())
+    vote_count = Counter(votes)
+
+    # Voting logic
+    if vote_count['BUY'] > vote_count['SELL']:
+        return 'BUY'
+    elif vote_count['SELL'] > vote_count['BUY']:
+        return 'SELL'
+    else:
+        return 'HOLD'
+
+def generate_signal_from_return(predicted_return, threshold=0.01):
+    """
+    Convert predicted return into trading signal.
+    """
+    if predicted_return > threshold:
+        return 'BUY'
+    elif predicted_return < -threshold:
+        return 'SELL'
+    else:
+        return 'HOLD'
+
+def train_test_split_series(series, test_size=0.2):
+    """Split a time series into train and test sets."""
+    split_idx = int(len(series) * (1 - test_size))
+    return series[:split_idx], series[split_idx:]

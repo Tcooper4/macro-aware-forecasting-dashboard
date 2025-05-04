@@ -1,26 +1,37 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import numpy as np
-import pandas as pd
 from hmmlearn.hmm import GaussianHMM
-from utils.expert import get_expert_settings
-from utils.helpers import fetch_price_data
+from utils.helpers import preprocess_for_model, generate_signal_from_return
 
-def forecast_hmm(df, steps):
-    returns = np.log(df["Close"] / df["Close"].shift(1)).dropna().values.reshape(-1, 1)
-    if len(returns) < 30:
-        return pd.Series([df["Close"].iloc[-1]] * steps)
-
-    settings = get_expert_settings()
-    n_states = settings.get("hmm_states", 2)
-
+def forecast_hmm(ticker, data, forecast_steps=5):
+    """
+    Fit a Hidden Markov Model to historical returns and forecast future returns.
+    Returns forecasted return and signal.
+    """
     try:
-        model = GaussianHMM(n_components=n_states, covariance_type="diag", n_iter=1000)
+        series = preprocess_for_model(data, ticker, column='Close')
+
+        # Calculate daily returns
+        returns = series.pct_change().dropna().values.reshape(-1, 1)
+
+        if len(returns) < 50:
+            print(f"⚠️ Not enough data to fit HMM for {ticker}.")
+            return None, 'HOLD'
+
+        # Fit HMM model
+        model = GaussianHMM(n_components=3, covariance_type="full", n_iter=100)
         model.fit(returns)
-        simulated, _ = model.sample(steps)
-        base = df["Close"].iloc[-1]
-        return pd.Series([base * np.exp(simulated[:i].sum()) for i in range(1, steps + 1)])
-    except:
-        return pd.Series([df["Close"].iloc[-1]] * steps)
+
+        # Simulate future hidden states
+        last_state = model.predict(returns)[-1]
+        next_means = model.means_.flatten()
+
+        # Use expected return of likely next state
+        expected_return = next_means[last_state] * forecast_steps
+        signal = generate_signal_from_return(expected_return)
+
+        print(f"✅ HMM signal for {ticker}: {signal} (Predicted return: {expected_return:.4f})")
+        return expected_return, signal
+
+    except Exception as e:
+        print(f"❌ HMM failed for {ticker}: {e}")
+        return None, 'HOLD'

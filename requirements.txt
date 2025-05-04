@@ -32,3 +32,5 @@ html5lib
 
 # Browser automation (if needed for scraping)
 webdriver-manager
+
+tqdm
