@@ -7,24 +7,29 @@ from datetime import datetime
 
 def fetch_price_data(ticker, start_date="2020-01-01", end_date=None):
     import yfinance as yf
+    import pandas as pd
 
     if end_date is None:
         end_date = pd.to_datetime("today").strftime("%Y-%m-%d")
 
-    df = yf.download(ticker, start=start_date, end=end_date, group_by='ticker', auto_adjust=True)
+    df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
 
-    # Handle cases where yfinance returns a MultiIndex even for a single ticker
+    # Safely extract the 'Close' column regardless of index type
     if isinstance(df.columns, pd.MultiIndex):
-        try:
-            close_prices = df[("Close", ticker)]
-        except KeyError:
+        if ('Close', '') in df.columns:
+            close_prices = df[('Close', '')]
+        elif ('Close', ticker) in df.columns:
+            close_prices = df[('Close', ticker)]
+        else:
             raise ValueError(f"Close price not found in yfinance data for {ticker}")
     else:
-        if "Close" not in df.columns:
+        if "Close" in df.columns:
+            close_prices = df["Close"]
+        else:
             raise ValueError(f"Close price not found in yfinance data for {ticker}")
-        close_prices = df["Close"]
 
-    return close_prices
+    return close_prices.dropna()
+
 
 
 def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
