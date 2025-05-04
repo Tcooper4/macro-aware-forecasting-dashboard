@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
-from utils.helpers import fetch_price_data, preprocess_for_model, generate_signal_from_return
+from utils.common import fetch_price_data, preprocess_for_model, generate_signal_from_return
 
 def forecast_arima(ticker, data, forecast_steps=5):
     try:

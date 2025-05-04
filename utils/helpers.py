@@ -1,79 +1,88 @@
-import yfinance as yf
-import pandas as pd
-import numpy as np
+import os
 import json
-from models.ensemble import ensemble_signal
+import pandas as pd
+from datetime import datetime
+from models.ensemble import generate_ensemble_signal
+from models.arima_model import forecast_arima
+from models.garch_model import forecast_garch
+from models.hmm_model import forecast_hmm
+from models.lstm_model import forecast_lstm
+from models.ml_models import forecast_ml
+from utils.common import fetch_price_data, generate_signal_from_return
 
-def get_price_data(ticker, period="2y", interval="1d"):
-    try:
-        df = yf.download(ticker, period=period, interval=interval, progress=False)
-        df.dropna(inplace=True)
-        if "Close" not in df.columns:
-            return None
-        return df
-    except Exception as e:
-        print(f"❌ Error fetching data for {ticker}: {e}")
-        return None
+def load_config():
+    config_path = os.path.join("config", "forecast_config.json")
+    with open(config_path, "r") as f:
+        return json.load(f)
 
-def load_config(path="forecast_config.json"):
-    try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"❌ Error loading config: {e}")
-        return {}
+def run_model_forecasts(ticker, start_date, end_date, config):
+    models = config.get("models", {})
+    thresholds = config.get("thresholds", {"buy": 5.0, "sell": -5.0})
+    days = config.get("forecast_days", 5)
 
-def load_tickers(mode="sp500"):
-    sp500 = [
-        "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "V", "UNH",
-        "PG", "MA", "DIS", "HD", "PEP", "KO", "WMT", "NFLX", "INTC", "ADBE"
-    ]
-    if mode == "sp500":
-        return sp500
-    elif mode == "all":
-        # You can expand this list or load dynamically from a file or API if needed
-        return sp500  # Placeholder: replace with full ticker list as needed
-    else:
-        return sp500
+    results = {}
 
-def calculate_signal_from_models(predictions, logic, thresholds):
-    """
-    predictions: dict with model_name -> forecast value
-    logic: 'ensemble', 'average', or 'majority'
-    thresholds: dict with 'buy' and 'sell' levels
-    """
-    # Remove invalid or NaN forecasts
-    valid_preds = {k: v for k, v in predictions.items() if v is not None and not np.isnan(v)}
+    if models.get("arima"):
+        try:
+            results["arima"] = forecast_arima(ticker, start_date, end_date, days, thresholds)
+        except Exception as e:
+            results["arima"] = {"signal": "ERROR", "return": None}
 
-    if not valid_preds:
-        return 0.0, "HOLD"
+    if models.get("garch"):
+        try:
+            results["garch"] = forecast_garch(ticker, start_date, end_date, days, thresholds)
+        except Exception as e:
+            results["garch"] = {"signal": "ERROR", "return": None}
+
+    if models.get("hmm"):
+        try:
+            results["hmm"] = forecast_hmm(ticker, start_date, end_date, days, thresholds)
+        except Exception as e:
+            results["hmm"] = {"signal": "ERROR", "return": None}
+
+    if models.get("lstm"):
+        try:
+            results["lstm"] = forecast_lstm(ticker, start_date, end_date, days, thresholds)
+        except Exception as e:
+            results["lstm"] = {"signal": "ERROR", "return": None}
+
+    if models.get("ml"):
+        try:
+            results["ml"] = forecast_ml(ticker, start_date, end_date, days, thresholds)
+        except Exception as e:
+            results["ml"] = {"signal": "ERROR", "return": None}
+
+    return results
+
+def generate_signal(ticker, start_date, end_date, config):
+    logic = config.get("signal_logic", "ensemble")
 
     if logic == "ensemble":
-        return ensemble_signal(valid_preds, thresholds)
+        signal_data = generate_ensemble_signal(ticker, start_date, end_date, config)
+        return signal_data["final_signal"], signal_data["model_votes"]
+    
+    results = run_model_forecasts(ticker, start_date, end_date, config)
+    signal_counts = {}
+    signal_sum = 0
+    count = 0
 
-    elif logic == "average":
-        avg = np.mean(list(valid_preds.values()))
-        if avg >= thresholds["buy"]:
-            return avg, "BUY"
-        elif avg <= thresholds["sell"]:
-            return avg, "SELL"
-        else:
-            return avg, "HOLD"
+    for model, data in results.items():
+        signal = data.get("signal")
+        model_return = data.get("return")
 
-    elif logic == "majority":
-        votes = {"BUY": 0, "SELL": 0, "HOLD": 0}
-        for val in valid_preds.values():
-            if val >= thresholds["buy"]:
-                votes["BUY"] += 1
-            elif val <= thresholds["sell"]:
-                votes["SELL"] += 1
-            else:
-                votes["HOLD"] += 1
-        signal = max(votes, key=votes.get)
-        avg = np.mean(list(valid_preds.values()))
-        return avg, signal
+        if logic == "majority" and signal in {"BUY", "HOLD", "SELL"}:
+            signal_counts[signal] = signal_counts.get(signal, 0) + 1
 
+        elif logic == "average" and model_return is not None:
+            signal_sum += model_return
+            count += 1
+
+    if logic == "majority" and signal_counts:
+        final_signal = max(signal_counts, key=signal_counts.get)
+    elif logic == "average" and count > 0:
+        avg_return = signal_sum / count
+        final_signal = generate_signal_from_return(avg_return, config.get("thresholds", {}))
     else:
-        # Default fallback
-        avg = np.mean(list(valid_preds.values()))
-        return avg, "HOLD"
+        final_signal = "HOLD"
+
+    return final_signal, results

@@ -1,6 +1,6 @@
 import numpy as np
 from hmmlearn.hmm import GaussianHMM
-from utils.helpers import preprocess_for_model, generate_signal_from_return
+from utils.common import preprocess_for_model, generate_signal_from_return
 
 def forecast_hmm(ticker, data, forecast_steps=5):
     try:

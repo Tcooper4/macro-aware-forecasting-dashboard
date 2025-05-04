@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pandas as pd
 from arch import arch_model
 from utils.expert import get_expert_settings
-from utils.helpers import fetch_price_data
+from utils.common import fetch_price_data
 
 def forecast_garch(df, steps):
     returns = df["Close"].pct_change().dropna() * 100
