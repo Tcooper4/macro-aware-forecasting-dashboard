@@ -1,5 +1,3 @@
-st.set_page_config(page_title="Strategy Settings", layout="wide")
-
 import streamlit as st
 
 st.title("⚙️ Strategy Settings")
