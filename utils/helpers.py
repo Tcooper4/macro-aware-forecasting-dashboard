@@ -1,95 +1,79 @@
-import pandas as pd
-import numpy as np
 import os
-from statsmodels.tsa.arima.model import ARIMA
+import json
+import pandas as pd
+import yfinance as yf
 from datetime import datetime
+from models.arima_model import forecast_arima
+from models.garch_model import forecast_garch
+from models.hmm_model import forecast_hmm
+from models.lstm_model import forecast_lstm
+from models.ml_model import forecast_ml
 
+def load_config(path="forecast_config.json"):
+    with open(path, "r") as f:
+        return json.load(f)
 
-def fetch_price_data(ticker, start_date="2020-01-01", end_date=None):
-    import yfinance as yf
-    import pandas as pd
+def get_ticker_list(source: str) -> list:
+    if source.lower() == "sp500":
+        return [
+            "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM",
+            "V", "UNH", "PG", "MA", "DIS", "HD", "PEP", "KO", "WMT", "NFLX",
+            "INTC", "ADBE"
+        ]
+    else:
+        return [source.upper()]
 
+def fetch_price_data(ticker: str, start_date="2020-01-01", end_date=None):
     if end_date is None:
         end_date = pd.to_datetime("today").strftime("%Y-%m-%d")
-
     df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
+    if "Close" not in df.columns:
+        raise ValueError(f"Close price not found in yfinance data for {ticker}")
+    return df["Close"]
 
-    # Safely extract the 'Close' column regardless of index type
-    if isinstance(df.columns, pd.MultiIndex):
-        if ('Close', '') in df.columns:
-            close_prices = df[('Close', '')]
-        elif ('Close', ticker) in df.columns:
-            close_prices = df[('Close', ticker)]
-        else:
-            raise ValueError(f"Close price not found in yfinance data for {ticker}")
-    else:
-        if "Close" in df.columns:
-            close_prices = df["Close"]
-        else:
-            raise ValueError(f"Close price not found in yfinance data for {ticker}")
+def generate_combined_signal(prices: pd.Series, model_flags: dict, thresholds: dict) -> tuple:
+    forecasts = []
 
-    return close_prices.dropna()
-
-
-
-def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
-    """
-    Fit an ARIMA model and generate a BUY, HOLD, or SELL signal.
-    """
-    if len(prices) < 30:
-        return "HOLD"  # Not enough data
-
-    try:
-        model = ARIMA(prices, order=(5, 1, 0))
-        model_fit = model.fit()
-        forecast = model_fit.forecast(steps=forecast_horizon)
-        future_return = (forecast.iloc[-1] - prices.iloc[-1]) / prices.iloc[-1]
-
-        if future_return > 0.02:
-            return "BUY"
-        elif future_return < -0.02:
-            return "SELL"
-        else:
-            return "HOLD"
-    except Exception as e:
-        print(f"ARIMA failed for ticker: {e}")
-        return "HOLD"
-
-
-def save_trade_results(trade_data: pd.DataFrame, file_path: str = "data/top_trades.csv"):
-    """
-    Save trade signals to a CSV file. If empty, create file with headers only.
-    """
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-    if trade_data.empty:
-        headers = ["Ticker", "Date", "Forecast", "Signal"]
-        pd.DataFrame(columns=headers).to_csv(file_path, index=False)
-    else:
-        trade_data.to_csv(file_path, index=False)
-
-
-def aggregate_signals(tickers: list[str]) -> pd.DataFrame:
-    """
-    Loop through all tickers, fetch price data, forecast signal, and return trade ideas.
-    """
-    results = []
-    for ticker in tickers:
+    if model_flags.get("arima"):
         try:
-            prices = fetch_price_data(ticker)
-            signal = generate_forecast_signal(prices)
-            forecast_pct = (
-                round(((prices.iloc[-1] - prices.iloc[-5]) / prices.iloc[-5]) * 100, 2)
-                if len(prices) >= 5 else 0.0
-            )
-            results.append({
-                "Ticker": ticker,
-                "Date": datetime.today().strftime("%Y-%m-%d"),
-                "Forecast": forecast_pct,
-                "Signal": signal
-            })
+            forecasts.append(forecast_arima(prices))
         except Exception as e:
-            print(f"❌ Error processing {ticker}: {e}")
-            continue
+            print(f"ARIMA failed for {prices.name}: {e}")
+    if model_flags.get("garch"):
+        try:
+            forecasts.append(forecast_garch(prices))
+        except Exception as e:
+            print(f"GARCH failed for {prices.name}: {e}")
+    if model_flags.get("hmm"):
+        try:
+            forecasts.append(forecast_hmm(prices))
+        except Exception as e:
+            print(f"HMM failed for {prices.name}: {e}")
+    if model_flags.get("lstm"):
+        try:
+            forecasts.append(forecast_lstm(prices))
+        except Exception as e:
+            print(f"LSTM failed for {prices.name}: {e}")
+    if model_flags.get("ml"):
+        try:
+            forecasts.append(forecast_ml(prices))
+        except Exception as e:
+            print(f"ML failed for {prices.name}: {e}")
 
-    return pd.DataFrame(results)
+    if not forecasts:
+        return "HOLD", 0.0
+
+    avg_forecast = sum(forecasts) / len(forecasts)
+
+    if avg_forecast > thresholds["buy"]:
+        signal = "BUY"
+    elif avg_forecast < thresholds["sell"]:
+        signal = "SELL"
+    else:
+        signal = "HOLD"
+
+    return signal, round(avg_forecast * 100, 2)
+
+def save_trade_results(df: pd.DataFrame, file_path="data/top_trades.csv"):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    df.to_csv(file_path, index=False)

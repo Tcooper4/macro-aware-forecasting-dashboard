@@ -1,37 +1,12 @@
-import numpy as np
 from hmmlearn.hmm import GaussianHMM
-from utils.helpers import preprocess_for_model, generate_signal_from_return
+import numpy as np
 
-def forecast_hmm(ticker, data, forecast_steps=5):
-    """
-    Fit a Hidden Markov Model to historical returns and forecast future returns.
-    Returns forecasted return and signal.
-    """
-    try:
-        series = preprocess_for_model(data, ticker, column='Close')
-
-        # Calculate daily returns
-        returns = series.pct_change().dropna().values.reshape(-1, 1)
-
-        if len(returns) < 50:
-            print(f"⚠️ Not enough data to fit HMM for {ticker}.")
-            return None, 'HOLD'
-
-        # Fit HMM model
-        model = GaussianHMM(n_components=3, covariance_type="full", n_iter=100)
-        model.fit(returns)
-
-        # Simulate future hidden states
-        last_state = model.predict(returns)[-1]
-        next_means = model.means_.flatten()
-
-        # Use expected return of likely next state
-        expected_return = next_means[last_state] * forecast_steps
-        signal = generate_signal_from_return(expected_return)
-
-        print(f"✅ HMM signal for {ticker}: {signal} (Predicted return: {expected_return:.4f})")
-        return expected_return, signal
-
-    except Exception as e:
-        print(f"❌ HMM failed for {ticker}: {e}")
-        return None, 'HOLD'
+def forecast_hmm(prices, horizon=5):
+    returns = prices.pct_change().dropna().values.reshape(-1, 1)
+    model = GaussianHMM(n_components=2, covariance_type="full", n_iter=100)
+    model.fit(returns)
+    hidden_states = model.predict(returns)
+    current_state = hidden_states[-1]
+    state_returns = returns[hidden_states == current_state]
+    avg_return = np.mean(state_returns) * horizon
+    return float(avg_return)
