@@ -1,6 +1,7 @@
+st.set_page_config(page_title="Strategy Settings", layout="wide")
+
 import streamlit as st
 
-st.set_page_config(page_title="Strategy Settings", layout="wide")
 st.title("⚙️ Strategy Settings")
 
 st.info("Use this page to configure both your high-level trading strategy and low-level model behavior. Ideal for both beginners and expert users.")
