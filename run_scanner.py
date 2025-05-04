@@ -42,21 +42,32 @@ for ticker in tickers:
             _, predictions["ARIMA"] = forecast_arima(ticker, df, forecast_days)
 
         if enabled_models.get("garch"):
-            predictions["GARCH"] = forecast_garch(df, forecast_days)
-            predictions["GARCH"] = "BUY" if preds.iloc[-1] > df["Close"].iloc[-1] else "SELL"
+            try:
+                predictions["GARCH"] = forecast_garch(df, forecast_days)
+            except Exception as e:
+                predictions["GARCH"] = f"ERROR: {e}"
 
         if enabled_models.get("hmm"):
-            _, predictions["HMM"] = forecast_hmm(ticker, df, forecast_days)
+            try:
+                _, predictions["HMM"] = forecast_hmm(ticker, df, forecast_days)
+            except Exception as e:
+                predictions["HMM"] = f"ERROR: {e}"
 
         if enabled_models.get("lstm"):
-            _, predictions["LSTM"] = forecast_lstm(ticker, df, forecast_days)
+            try:
+                _, predictions["LSTM"] = forecast_lstm(ticker, df, forecast_days)
+            except Exception as e:
+                predictions["LSTM"] = f"ERROR: {e}"
 
         if enabled_models.get("ml"):
-            predictions["XGBoost"] = forecast_ml(df, forecast_days)
-            predictions["XGBoost"] = "BUY" if preds.iloc[-1] > df["Close"].iloc[-1] else "SELL"
+            try:
+                predictions["XGBoost"] = forecast_ml(df, forecast_days)
+            except Exception as e:
+                predictions["XGBoost"] = f"ERROR: {e}"
 
-        vote_counts = Counter(predictions.values())
-        final_signal = vote_counts.most_common(1)[0][0]
+        # Count only valid signals (BUY, SELL, HOLD)
+        vote_counts = Counter([v for v in predictions.values() if v in {"BUY", "SELL", "HOLD"}])
+        final_signal = vote_counts.most_common(1)[0][0] if vote_counts else "HOLD"
 
         result = {
             "Ticker": ticker,
