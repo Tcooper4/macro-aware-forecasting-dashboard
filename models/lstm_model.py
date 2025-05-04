@@ -3,46 +3,58 @@ import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
-from utils.common import preprocess_for_model, generate_signal_from_return
 
-def forecast_lstm(ticker, data, forecast_steps=5):
-    try:
-        series = preprocess_for_model(data, ticker, column='Close')
+def forecast_lstm(ticker, df, forecast_days=5, window_size=30):
+    """
+    Forecasts stock price using an LSTM model and returns signal (BUY/SELL/HOLD).
+    """
 
-        if len(series) < 60:
-            print(f"⚠️ Not enough data to fit LSTM for {ticker}.")
-            return None, 'HOLD'
+    if "Close" not in df.columns:
+        raise ValueError("DataFrame must contain 'Close' column")
 
-        scaler = MinMaxScaler()
-        scaled = scaler.fit_transform(series.values.reshape(-1, 1))
+    # === Prepare the data ===
+    data = df["Close"].values.reshape(-1, 1)
+    scaler = MinMaxScaler()
+    data_scaled = scaler.fit_transform(data)
 
-        X, y = [], []
-        window = 10
-        for i in range(len(scaled) - window):
-            X.append(scaled[i:i + window])
-            y.append(scaled[i + window])
-        X, y = np.array(X), np.array(y)
+    X, y = [], []
+    for i in range(window_size, len(data_scaled) - forecast_days):
+        X.append(data_scaled[i - window_size:i])
+        y.append(data_scaled[i + forecast_days - 1])  # Predict price after `forecast_days`
 
-        model = Sequential()
-        model.add(LSTM(units=50, input_shape=(X.shape[1], 1)))
-        model.add(Dense(1))
-        model.compile(optimizer='adam', loss='mean_squared_error')
-        model.fit(X, y, epochs=5, batch_size=16, verbose=0)
+    X = np.array(X)  # shape: (samples, timesteps, features)
+    y = np.array(y).reshape(-1, 1)  # shape: (samples, 1)
 
-        last_input = scaled[-window:].reshape(1, window, 1)
-        preds = []
-        for _ in range(forecast_steps):
-            pred = model.predict(last_input, verbose=0)
-            preds.append(pred[0, 0])
-            last_input = np.append(last_input[:, 1:, :], [[pred]], axis=1)
+    # === Split into train/test ===
+    split = int(len(X) * 0.8)
+    X_train, X_test = X[:split], X[split:]
+    y_train, y_test = y[:split], y[split:]
 
-        preds = scaler.inverse_transform(np.array(preds).reshape(-1, 1))
-        returns = (preds[-1] - series.iloc[-1]) / series.iloc[-1]
-        signal = generate_signal_from_return(returns)
+    # === Build LSTM Model ===
+    model = Sequential()
+    model.add(LSTM(units=50, activation='relu', input_shape=(X.shape[1], X.shape[2])))
+    model.add(Dense(1))
+    model.compile(optimizer='adam', loss='mean_squared_error')
 
-        print(f"✅ LSTM signal for {ticker}: {signal} (Predicted return: {returns:.4f})")
-        return returns, signal
+    # === Train the model ===
+    model.fit(X_train, y_train, epochs=10, batch_size=32, verbose=0)
 
-    except Exception as e:
-        print(f"❌ LSTM failed for {ticker}: {e}")
-        return None, 'HOLD'
+    # === Predict ===
+    last_sequence = data_scaled[-window_size:].reshape(1, window_size, 1)
+    future_price_scaled = model.predict(last_sequence)[0][0]
+    future_price = scaler.inverse_transform([[future_price_scaled]])[0][0]
+
+    current_price = df["Close"].iloc[-1]
+    predicted_return = (future_price - current_price) / current_price
+
+    # === Signal logic ===
+    if predicted_return > 0.02:
+        signal = "BUY"
+    elif predicted_return < -0.02:
+        signal = "SELL"
+    else:
+        signal = "HOLD"
+
+    print(f"✅ LSTM signal for {ticker}: {signal} (Predicted return: {predicted_return:.4f})")
+
+    return predicted_return, signal
