@@ -7,27 +7,28 @@ from datetime import datetime
 
 def fetch_price_data(ticker, start_date="2020-01-01", end_date=None):
     import yfinance as yf
-    import pandas as pd
 
     if end_date is None:
         end_date = pd.to_datetime("today").strftime("%Y-%m-%d")
 
-    df = yf.download(ticker, start=start_date, end=end_date, group_by="ticker", auto_adjust=True)
+    df = yf.download(ticker, start=start_date, end=end_date, group_by='ticker', auto_adjust=True)
 
-    # Handle both MultiIndex and single-index formats
+    # Handle MultiIndex if present
     if isinstance(df.columns, pd.MultiIndex):
         try:
-            close_prices = df[ticker]["Close"]
+            close_prices = df[("Close", ticker)]
         except KeyError:
-            raise ValueError(f"Close price not found in yfinance MultiIndex data for {ticker}")
+            raise ValueError(f"Close price not found in yfinance data for {ticker}")
     else:
-        try:
-            close_prices = df["Close"]
-        except KeyError:
-            raise ValueError(f"Close price not found in yfinance single-index data for {ticker}")
+        if "Close" not in df.columns:
+            raise ValueError(f"Close price not found in yfinance data for {ticker}")
+        close_prices = df["Close"]
+
+    close_prices = close_prices.dropna()
+    close_prices.index = pd.to_datetime(close_prices.index)
+    close_prices = close_prices.asfreq("B")  # Set business day frequency
 
     return close_prices
-
 
 
 def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
@@ -41,7 +42,7 @@ def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> st
         model = ARIMA(prices, order=(5, 1, 0))
         model_fit = model.fit()
         forecast = model_fit.forecast(steps=forecast_horizon)
-        future_return = (forecast[-1] - prices.iloc[-1]) / prices.iloc[-1]
+        future_return = (forecast.iloc[-1] - prices.iloc[-1]) / prices.iloc[-1]
 
         if future_return > 0.02:
             return "BUY"
@@ -76,10 +77,14 @@ def aggregate_signals(tickers: list[str]) -> pd.DataFrame:
         try:
             prices = fetch_price_data(ticker)
             signal = generate_forecast_signal(prices)
+            forecast_pct = 0.0
+            if len(prices) >= 5:
+                forecast_pct = round(((prices.iloc[-1] - prices.iloc[-5]) / prices.iloc[-5]) * 100, 2)
+
             results.append({
                 "Ticker": ticker,
                 "Date": datetime.today().strftime("%Y-%m-%d"),
-                "Forecast": round(((prices[-1] - prices[-5]) / prices[-5]) * 100, 2) if len(prices) >= 5 else 0.0,
+                "Forecast": forecast_pct,
                 "Signal": signal
             })
         except Exception as e:

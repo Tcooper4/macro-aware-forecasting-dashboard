@@ -1,17 +1,21 @@
-from utils.helpers import fetch_price_data, generate_forecast_signal, save_trade_results, aggregate_signals
 import pandas as pd
+from utils.helpers import aggregate_signals, save_trade_results
 
-# Define the list of tickers you want to scan
+# Define the tickers to scan (S&P 500 subset or full list later)
 tickers_to_scan = [
-    "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "V", "UNH",
-    "PG", "MA", "DIS", "HD", "PEP", "KO", "WMT", "NFLX", "INTC", "ADBE"
+    "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA",
+    "JPM", "V", "UNH", "PG", "MA", "DIS", "HD", "PEP", "KO",
+    "WMT", "NFLX", "INTC", "ADBE"
 ]
 
-# Aggregate signals for the defined tickers
-trade_signals_df = aggregate_signals(tickers_to_scan)
+# Step 1: Aggregate forecast signals
+print("📊 Scanning tickers for forecast signals...")
+df_signals = aggregate_signals(tickers_to_scan)
 
-# Display output to console (optional)
-print(trade_signals_df)
+# Step 2: Save results to CSV
+print("💾 Saving results to data/top_trades.csv...")
+save_trade_results(df_signals)
 
-# Save to CSV
-save_trade_results(trade_signals_df, file_path="data/top_trades.csv")
+# Step 3: Print results to console
+print("✅ Forecast Summary:")
+print(df_signals)
