@@ -1,85 +1,86 @@
-import yfinance as yf
 import pandas as pd
-from datetime import datetime, timedelta
+import numpy as np
+import os
+from statsmodels.tsa.arima.model import ARIMA
+from datetime import datetime
 
-def fetch_price_data(tickers, start_date="2015-01-01", end_date=None, interval="1d"):
+
+def fetch_price_data(ticker: str, start_date: str = "2020-01-01", end_date: str = None) -> pd.Series:
     """
-    Fetch price data using yfinance with MultiIndex columns.
-    Columns: ('Close', 'AAPL'), ('Volume', 'MSFT'), etc.
+    Fetch historical closing prices for a single ticker using yfinance-style MultiIndex.
+    Returns the Close price series (not Adj Close).
     """
+    import yfinance as yf
     if end_date is None:
         end_date = datetime.today().strftime('%Y-%m-%d')
+
+    df = yf.download(ticker, start=start_date, end=end_date, group_by="ticker", progress=False)
+
+    # yfinance returns MultiIndex columns if group_by="ticker" and multiple tickers requested
+    # For a single ticker, try to pull ('Close', ticker) or fallback to 'Close'
     try:
-        data = yf.download(
-            tickers=tickers,
-            start=start_date,
-            end=end_date,
-            interval=interval,
-            group_by="ticker",
-            auto_adjust=False,
-            threads=True
-        )
-        # Ensure MultiIndex columns
-        if isinstance(data.columns, pd.MultiIndex):
-            return data
+        if isinstance(df.columns, pd.MultiIndex):
+            return df[('Close', ticker)].dropna()
         else:
-            # Convert single-ticker data to MultiIndex
-            return pd.concat({tickers[0]: data}, axis=1)
-    except Exception as e:
-        print(f"❌ Failed to fetch data for {tickers}: {e}")
-        return pd.DataFrame()
-
-def preprocess_for_model(data, ticker, column='Close'):
-    """
-    Extracts a single column (e.g., 'Close') for a given ticker from MultiIndex DataFrame.
-    Returns a clean series.
-    """
-    try:
-        ts = data[(column, ticker)].dropna()
-        ts.name = ticker
-        return ts
+            return df['Close'].dropna()
     except KeyError:
-        print(f"⚠️ Column ({column}, {ticker}) not found in data.")
-        return pd.Series()
+        raise KeyError(f"Close price not found in yfinance data for {ticker}")
 
-def scale_series(series):
-    """Normalize series between 0 and 1."""
-    return (series - series.min()) / (series.max() - series.min())
 
-def unscale_series(scaled_series, original_series):
-    """Restore original values from scaled series."""
-    return scaled_series * (original_series.max() - original_series.min()) + original_series.min()
-
-def aggregate_signals(signal_dict):
+def generate_forecast_signal(prices: pd.Series, forecast_horizon: int = 5) -> str:
     """
-    Given a dictionary of {model_name: signal}, return a final ensemble signal.
-    Each signal should be in ['BUY', 'HOLD', 'SELL'].
+    Fit an ARIMA model and generate a BUY, HOLD, or SELL signal.
     """
-    from collections import Counter
+    if len(prices) < 30:
+        return "HOLD"  # Not enough data
 
-    votes = list(signal_dict.values())
-    vote_count = Counter(votes)
+    try:
+        model = ARIMA(prices, order=(5, 1, 0))
+        model_fit = model.fit()
+        forecast = model_fit.forecast(steps=forecast_horizon)
+        future_return = (forecast[-1] - prices.iloc[-1]) / prices.iloc[-1]
 
-    # Voting logic
-    if vote_count['BUY'] > vote_count['SELL']:
-        return 'BUY'
-    elif vote_count['SELL'] > vote_count['BUY']:
-        return 'SELL'
+        if future_return > 0.02:
+            return "BUY"
+        elif future_return < -0.02:
+            return "SELL"
+        else:
+            return "HOLD"
+    except Exception as e:
+        print(f"ARIMA failed for ticker: {e}")
+        return "HOLD"
+
+
+def save_trade_results(trade_data: pd.DataFrame, file_path: str = "data/top_trades.csv"):
+    """
+    Save trade signals to a CSV file. If empty, create file with headers only.
+    """
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+    if trade_data.empty:
+        headers = ["Ticker", "Date", "Forecast", "Signal"]
+        pd.DataFrame(columns=headers).to_csv(file_path, index=False)
     else:
-        return 'HOLD'
+        trade_data.to_csv(file_path, index=False)
 
-def generate_signal_from_return(predicted_return, threshold=0.01):
-    """
-    Convert predicted return into trading signal.
-    """
-    if predicted_return > threshold:
-        return 'BUY'
-    elif predicted_return < -threshold:
-        return 'SELL'
-    else:
-        return 'HOLD'
 
-def train_test_split_series(series, test_size=0.2):
-    """Split a time series into train and test sets."""
-    split_idx = int(len(series) * (1 - test_size))
-    return series[:split_idx], series[split_idx:]
+def aggregate_signals(tickers: list[str]) -> pd.DataFrame:
+    """
+    Loop through all tickers, fetch price data, forecast signal, and return trade ideas.
+    """
+    results = []
+    for ticker in tickers:
+        try:
+            prices = fetch_price_data(ticker)
+            signal = generate_forecast_signal(prices)
+            results.append({
+                "Ticker": ticker,
+                "Date": datetime.today().strftime("%Y-%m-%d"),
+                "Forecast": round(((prices[-1] - prices[-5]) / prices[-5]) * 100, 2) if len(prices) >= 5 else 0.0,
+                "Signal": signal
+            })
+        except Exception as e:
+            print(f"❌ Error processing {ticker}: {e}")
+            continue
+
+    return pd.DataFrame(results)
