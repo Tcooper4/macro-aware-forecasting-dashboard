@@ -2,28 +2,21 @@ import yfinance as yf
 import pandas as pd
 
 def fetch_price_data(ticker, start_date, end_date):
-    try:
-        df = yf.download(ticker, start=start_date, end=end_date)
-        if df.empty:
-            raise ValueError(f"No data returned for {ticker}")
-        return df
-    except Exception as e:
-        print(f"❌ Error fetching data for {ticker}: {e}")
-        return pd.DataFrame()
+    data = yf.download(ticker, start=start_date, end=end_date)
+    if data.empty:
+        raise ValueError(f"No data found for {ticker}")
+    return data
 
-def preprocess_for_model(df):
-    df = df.copy()
-    df.dropna(inplace=True)
-    if "Close" not in df.columns:
-        raise ValueError("Missing 'Close' column in price data")
-    return df
+def preprocess_for_model(data, ticker, column='Close'):
+    if column not in data.columns:
+        raise ValueError(f"{column} not found in data for {ticker}")
+    series = data[column].dropna()
+    return series
 
-def generate_signal_from_return(ret, thresholds):
-    if ret is None:
-        return "HOLD"
-    if ret >= thresholds.get("buy", 5.0):
-        return "BUY"
-    elif ret <= thresholds.get("sell", -5.0):
-        return "SELL"
+def generate_signal_from_return(return_val, buy_threshold=0.05, sell_threshold=-0.05):
+    if return_val > buy_threshold:
+        return 'BUY'
+    elif return_val < sell_threshold:
+        return 'SELL'
     else:
-        return "HOLD"
+        return 'HOLD'
