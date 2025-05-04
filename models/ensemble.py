@@ -23,15 +23,21 @@ MODEL_WEIGHTS = {
     "XGBoost": 1.0,
 }
 
-# === Market regime classification (stub) ===
 def classify_market_regime(df):
-    recent_return = df['Close'].pct_change(10).iloc[-1]
+    """
+    Classifies market regime based on recent return over last 20 days.
+    """
+    df = df.copy()
+    df["return"] = df["Close"].pct_change()
+    recent_return = df["return"].iloc[-20:].mean()
+
     if recent_return > 0.05:
         return "Bull"
     elif recent_return < -0.05:
         return "Bear"
     else:
         return "Neutral"
+
 
 # === Final signal generator ===
 def generate_forecast_ensemble(df, horizon="1 Week"):
