@@ -1,30 +1,52 @@
 import numpy as np
-from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout
+import pandas as pd
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
+from utils.helpers import preprocess_for_model, generate_signal_from_return
 
-def forecast_lstm(prices, horizon=5):
-    data = prices.values.reshape(-1, 1)
-    scaler = MinMaxScaler()
-    data_scaled = scaler.fit_transform(data)
+def forecast_lstm(ticker, data, forecast_steps=5):
+    """
+    Train an LSTM model on historical data and forecast returns.
+    """
+    try:
+        series = preprocess_for_model(data, ticker, column='Close')
 
-    X, y = [], []
-    for i in range(60, len(data_scaled)):
-        X.append(data_scaled[i-60:i, 0])
-        y.append(data_scaled[i, 0])
-    X, y = np.array(X), np.array(y)
-    X = X.reshape((X.shape[0], X.shape[1], 1))
+        if len(series) < 60:
+            print(f"⚠️ Not enough data to fit LSTM for {ticker}.")
+            return None, 'HOLD'
 
-    model = Sequential()
-    model.add(LSTM(units=50, return_sequences=True, input_shape=(X.shape[1], 1)))
-    model.add(Dropout(0.2))
-    model.add(LSTM(units=50))
-    model.add(Dropout(0.2))
-    model.add(Dense(1))
-    model.compile(optimizer='adam', loss='mean_squared_error')
-    model.fit(X, y, epochs=3, batch_size=32, verbose=0)
+        scaler = MinMaxScaler()
+        scaled = scaler.fit_transform(series.values.reshape(-1, 1))
 
-    last_input = data_scaled[-60:].reshape(1, 60, 1)
-    prediction = model.predict(last_input)[0][0]
-    predicted_price = scaler.inverse_transform([[prediction]])[0][0]
-    return (predicted_price - prices.iloc[-1]) / prices.iloc[-1]
+        X, y = [], []
+        window = 10
+        for i in range(len(scaled) - window):
+            X.append(scaled[i:i + window])
+            y.append(scaled[i + window])
+        X, y = np.array(X), np.array(y)
+
+        model = Sequential()
+        model.add(LSTM(units=50, input_shape=(X.shape[1], 1)))
+        model.add(Dense(1))
+        model.compile(optimizer='adam', loss='mean_squared_error')
+        model.fit(X, y, epochs=5, batch_size=16, verbose=0)
+
+        # Forecast forward
+        last_input = scaled[-window:].reshape(1, window, 1)
+        preds = []
+        for _ in range(forecast_steps):
+            pred = model.predict(last_input, verbose=0)
+            preds.append(pred[0, 0])
+            last_input = np.append(last_input[:, 1:, :], [[pred]], axis=1)
+
+        preds = scaler.inverse_transform(np.array(preds).reshape(-1, 1))
+        returns = (preds[-1] - series.iloc[-1]) / series.iloc[-1]
+        signal = generate_signal_from_return(returns)
+
+        print(f"✅ LSTM signal for {ticker}: {signal} (Predicted return: {returns:.4f})")
+        return returns, signal
+
+    except Exception as e:
+        print(f"❌ LSTM failed for {ticker}: {e}")
+        return None, 'HOLD'

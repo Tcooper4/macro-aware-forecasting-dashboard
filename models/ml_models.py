@@ -1,38 +1,45 @@
-# models/ml_model.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import pandas as pd
 import numpy as np
-import xgboost as xgb
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
+from utils.expert import get_expert_settings
+from utils.helpers import fetch_price_data
 
-def xgboost_forecast(prices: np.ndarray, forecast_horizon: int = 5) -> float:
-    """
-    Simple XGBoost-based forecaster using lag features.
-    Returns predicted price after the forecast horizon.
-    """
-    if len(prices) < 30:
-        return prices[-1]  # Not enough data to forecast
+def forecast_ml(df, steps):
+    df["Return"] = df["Close"].pct_change()
+    df["Lag1"] = df["Return"].shift(1)
+    df["Lag2"] = df["Return"].shift(2)
+    df.dropna(inplace=True)
 
-    # Prepare lag features
-    X = []
-    y = []
-    lag = 5
-    for i in range(lag, len(prices) - forecast_horizon):
-        X.append(prices[i - lag:i])
-        y.append(prices[i + forecast_horizon])
-    X = np.array(X)
-    y = np.array(y)
+    if len(df) < 30:
+        return pd.Series([df["Close"].iloc[-1]] * steps)
 
-    if len(X) == 0:
-        return prices[-1]
+    X = df[["Lag1", "Lag2"]]
+    y = df["Return"]
+    settings = get_expert_settings()
+    ml_type = settings.get("ml", {}).get("type", "Random Forest")
+    estimators = settings.get("ml", {}).get("n_estimators", 100)
+    depth = settings.get("ml", {}).get("max_depth", 3)
 
-    model = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, max_depth=3)
+    model = (
+        RandomForestRegressor(n_estimators=estimators, max_depth=depth)
+        if ml_type == "Random Forest"
+        else XGBRegressor(n_estimators=estimators, max_depth=depth, verbosity=0)
+    )
     model.fit(X, y)
 
-    latest_input = np.array(prices[-lag:]).reshape(1, -1)
-    forecast = model.predict(latest_input)[0]
+    preds, l1, l2 = [], X.iloc[-1, 0], X.iloc[-1, 1]
+    for _ in range(steps):
+        pred = model.predict([[l1, l2]])[0]
+        preds.append(pred)
+        l2, l1 = l1, pred
 
-    return forecast
-
-
-def forecast_ml(prices, forecast_horizon=5):
-    return xgboost_forecast(prices, forecast_horizon)
+    base = df["Close"].iloc[-1]
+    prices = [base * (1 + preds[0])]
+    for i in range(1, steps):
+        prices.append(prices[-1] * (1 + preds[i]))
+    return pd.Series(prices)
