@@ -39,3 +39,13 @@ def save_signals_to_csv(df, filepath='data/top_trades.csv'):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     df.to_csv(filepath, index=False)
     print(f"💾 Saved results to {filepath}")
+
+def enhance_signal_with_regime(signal, regime):
+    """
+    Optionally adjusts signal based on macro regime (for future use).
+    """
+    if regime == "Bear" and signal == "BUY":
+        return "HOLD"
+    if regime == "Bull" and signal == "SELL":
+        return "HOLD"
+    return signal
