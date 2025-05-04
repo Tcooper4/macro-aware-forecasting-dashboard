@@ -36,8 +36,9 @@ indicator_map = {
     "GDP (current US$)": "NY.GDP.MKTP.CD",
     "Inflation (CPI %)": "FP.CPI.TOTL.ZG",
     "Unemployment Rate (%)": "SL.UEM.TOTL.ZS",
-    "CO₂ Emissions (metric tons per capita)": "EN.ATM.CO2E.PC"
+    "CO₂ Emissions (kt)": "EN.ATM.CO2E.KT"
 }
+
 indicator_labels = list(indicator_map.keys())
 
 # Get countries (exclude aggregates)
@@ -104,4 +105,4 @@ with tabs[2]: render_world_bank_chart("Inflation (CPI %)")
 # --- Unemployment Tab ---
 with tabs[3]: render_world_bank_chart("Unemployment Rate (%)")
 # --- CO₂ Emissions Tab ---
-with tabs[4]: render_world_bank_chart("CO₂ Emissions (metric tons per capita)")
+with tabs[4]: render_world_bank_chart("CO₂ Emissions (kt)")
