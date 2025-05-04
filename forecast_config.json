@@ -6,7 +6,7 @@
       "lstm": true,
       "ml": true
     },
-    "signal_logic": "ensemble",  // options: "ensemble", "average", "majority"
+    "signal_logic": "ensemble",
     "forecast_days": 5,
     "thresholds": {
       "buy": 5.0,
