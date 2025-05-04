@@ -10,41 +10,54 @@ from models.ml_models import forecast_ml
 
 from collections import Counter
 
-def generate_ensemble_signal(ticker, start_date, end_date, settings=None):
+from datetime import datetime
+from utils.common import fetch_price_data
+
+def generate_ensemble_signal(ticker, start_date="2020-01-01", end_date=None, settings=None):
+    if end_date is None:
+        end_date = datetime.today().strftime("%Y-%m-%d")
+
+    forecast_days = settings.get("forecast_days", 5) if settings else 5
+    df = fetch_price_data(ticker, start_date, end_date)
+
+    if df is None or df.empty:
+        return {
+            "ticker": ticker,
+            "final_signal": "HOLD",
+            "model_votes": {model: "ERROR" for model in ["ARIMA", "GARCH", "HMM", "LSTM", "XGBoost"]}
+        }
+
     model_votes = {}
 
     try:
-        model_votes["ARIMA"] = forecast_arima(ticker, start_date, end_date, settings)
-    except Exception as e:
+        _, model_votes["ARIMA"] = forecast_arima(ticker, df, forecast_days)
+    except Exception:
         model_votes["ARIMA"] = "ERROR"
 
     try:
-        model_votes["GARCH"] = forecast_garch(ticker, start_date, end_date, settings)
-    except Exception as e:
+        model_votes["GARCH"] = forecast_garch(df, forecast_days)
+    except Exception:
         model_votes["GARCH"] = "ERROR"
 
     try:
-        model_votes["HMM"] = forecast_hmm(ticker, start_date, end_date, settings)
-    except Exception as e:
+        _, model_votes["HMM"] = forecast_hmm(ticker, df, forecast_days)
+    except Exception:
         model_votes["HMM"] = "ERROR"
 
     try:
-        model_votes["LSTM"] = forecast_lstm(ticker, start_date, end_date, settings)
-    except Exception as e:
+        _, model_votes["LSTM"] = forecast_lstm(ticker, df, forecast_days)
+    except Exception:
         model_votes["LSTM"] = "ERROR"
 
     try:
-        model_votes["XGBoost"] = forecast_ml(ticker, start_date, end_date, settings)
-    except Exception as e:
+        model_votes["XGBoost"] = forecast_ml(df, forecast_days)
+    except Exception:
         model_votes["XGBoost"] = "ERROR"
 
-    valid_votes = [v for v in model_votes.values() if v in {"BUY", "HOLD", "SELL"}]
-
-    if valid_votes:
-        vote_counts = Counter(valid_votes)
-        final_signal = vote_counts.most_common(1)[0][0]
-    else:
-        final_signal = "HOLD"
+    # === Final Signal via Voting ===
+    from collections import Counter
+    valid_votes = [v for v in model_votes.values() if v in {"BUY", "SELL", "HOLD"}]
+    final_signal = Counter(valid_votes).most_common(1)[0][0] if valid_votes else "HOLD"
 
     return {
         "ticker": ticker,
