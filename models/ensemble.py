@@ -1,11 +1,12 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# ensemble.py
 
+import sys, os
 import numpy as np
 import pandas as pd
 from datetime import datetime
 from collections import Counter
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from models.arima_model import forecast_arima
 from models.garch_model import forecast_garch
@@ -15,7 +16,6 @@ from models.ml_models import forecast_ml
 from models.dynamic_tuner import load_model_weights
 from utils.common import fetch_price_data
 
-# === Load dynamic weights ===
 MODEL_WEIGHTS = load_model_weights()
 
 def classify_market_regime(df):
@@ -30,95 +30,86 @@ def classify_market_regime(df):
     else:
         return "Neutral"
 
+def clean_signal(signal):
+    if isinstance(signal, str) and signal in {"BUY", "SELL", "HOLD"}:
+        return signal
+    if isinstance(signal, tuple):
+        for item in signal:
+            if isinstance(item, str) and item in {"BUY", "SELL", "HOLD"}:
+                return item
+    return "ERROR"
+
 def generate_forecast_ensemble(df, horizon="1 Week"):
-    forecast_days = {
-        "1 Day": 1,
-        "1 Week": 5,
-        "1 Month": 21
-    }.get(horizon, 5)
+    forecast_days = {"1 Day": 1, "1 Week": 5, "1 Month": 21}.get(horizon, 5)
 
     model_votes = {}
     confidence_scores = {}
 
-    # === ARIMA ===
+    # ARIMA
     try:
-        pred_val, signal, conf = forecast_arima("TICKER", df, forecast_days)
-        model_votes["ARIMA"] = signal
+        pred, signal, conf = forecast_arima("TICKER", df, forecast_days)
+        model_votes["ARIMA"] = clean_signal(signal)
         confidence_scores["ARIMA"] = conf
     except Exception:
         model_votes["ARIMA"] = "ERROR"
         confidence_scores["ARIMA"] = 0
 
-    # === GARCH ===
+    # GARCH
     try:
         signal = forecast_garch(df, forecast_days)
-        model_votes["GARCH"] = signal
+        model_votes["GARCH"] = clean_signal(signal)
         confidence_scores["GARCH"] = 1
     except Exception:
         model_votes["GARCH"] = "ERROR"
         confidence_scores["GARCH"] = 0
 
-    # === HMM ===
-    # === HMM ===
+    # HMM
     try:
-        pred_val, signal, conf = forecast_hmm("TICKER", df, forecast_days)
-        if not isinstance(signal, str):
-            # Fix if signal is accidentally packed in a tuple
-            if isinstance(signal, tuple) and len(signal) >= 2 and isinstance(signal[1], str):
-                signal = signal[1]
-                conf = float(signal[0]) if isinstance(signal[0], (float, np.floating)) else 0
-            else:
-                raise ValueError("Invalid HMM signal format.")
-        model_votes["HMM"] = signal
-        confidence_scores["HMM"] = conf
+        pred, signal, conf = forecast_hmm("TICKER", df, forecast_days)
+        model_votes["HMM"] = clean_signal(signal)
+        confidence_scores["HMM"] = conf if isinstance(conf, (int, float, np.floating)) else 0
     except Exception:
         model_votes["HMM"] = "ERROR"
         confidence_scores["HMM"] = 0
 
-
-    # === LSTM ===
+    # LSTM
     try:
-        pred_val, signal, conf = forecast_lstm("TICKER", df, forecast_days)
-        model_votes["LSTM"] = signal
+        pred, signal, conf = forecast_lstm("TICKER", df, forecast_days)
+        model_votes["LSTM"] = clean_signal(signal)
         confidence_scores["LSTM"] = conf
-    except Exception as e:
-        model_votes["LSTM"] = f"ERROR: {e}"
+    except Exception:
+        model_votes["LSTM"] = "ERROR"
         confidence_scores["LSTM"] = 0
 
-    # === ML Model (XGBoost) ===
+    # XGBoost
     try:
-        signal = forecast_ml(df, forecast_days)
-        model_votes["XGBoost"] = signal
-        confidence_scores["XGBoost"] = 1
+        pred, signal, conf = forecast_ml(df, forecast_days)
+        model_votes["XGBoost"] = clean_signal(signal)
+        confidence_scores["XGBoost"] = conf
     except Exception:
         model_votes["XGBoost"] = "ERROR"
         confidence_scores["XGBoost"] = 0
 
-    # === Weighted Voting Logic ===
+    # Voting
     votes = {"BUY": 0, "SELL": 0, "HOLD": 0}
     for model, signal in model_votes.items():
         if signal in votes:
-            weight = MODEL_WEIGHTS.get(model, 1.0)
-            confidence = confidence_scores.get(model, 1.0)
-            votes[signal] += weight * confidence
+            w = MODEL_WEIGHTS.get(model, 1.0)
+            c = confidence_scores.get(model, 1.0)
+            votes[signal] += w * c
 
     final_signal = max(votes, key=votes.get) if any(votes.values()) else "HOLD"
 
-    # === Regime Adjustment ===
+    # Regime adjustment
     regime = classify_market_regime(df)
     if regime == "Bull" and final_signal == "HOLD":
         final_signal = "BUY"
     elif regime == "Bear" and final_signal == "HOLD":
         final_signal = "SELL"
 
-    # === Forecast Table ===
     forecast_table = pd.DataFrame([
-        {
-            "Model": model,
-            "Signal": signal,
-            "Confidence": round(confidence_scores.get(model, 0), 4)
-        }
-        for model, signal in model_votes.items()
+        {"Model": model, "Signal": sig, "Confidence": round(confidence_scores.get(model, 0), 4)}
+        for model, sig in model_votes.items()
     ])
 
     rationale = f"Models voted: {dict(Counter(model_votes.values()))}. " \

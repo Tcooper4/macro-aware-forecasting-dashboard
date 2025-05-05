@@ -20,7 +20,7 @@ def forecast_arima(ticker, data, forecast_steps=5):
         signal = generate_signal_from_return(total_forecast_return)
 
         print(f"✅ ARIMA signal for {ticker}: {signal} (Predicted return: {total_forecast_return:.4f})")
-        return total_forecast_return, signal
+        return total_forecast_return, signal, abs(total_forecast_return)
 
     except Exception as e:
         print(f"❌ ARIMA failed for {ticker}: {e}")
