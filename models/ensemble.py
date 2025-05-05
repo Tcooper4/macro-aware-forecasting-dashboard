@@ -59,13 +59,22 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         confidence_scores["GARCH"] = 0
 
     # === HMM ===
+    # === HMM ===
     try:
         pred_val, signal, conf = forecast_hmm("TICKER", df, forecast_days)
+        if not isinstance(signal, str):
+            # Fix if signal is accidentally packed in a tuple
+            if isinstance(signal, tuple) and len(signal) >= 2 and isinstance(signal[1], str):
+                signal = signal[1]
+                conf = float(signal[0]) if isinstance(signal[0], (float, np.floating)) else 0
+            else:
+                raise ValueError("Invalid HMM signal format.")
         model_votes["HMM"] = signal
         confidence_scores["HMM"] = conf
     except Exception:
         model_votes["HMM"] = "ERROR"
         confidence_scores["HMM"] = 0
+
 
     # === LSTM ===
     try:
