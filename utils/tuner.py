@@ -19,32 +19,32 @@ def default_weights():
     }
 
 # Load historical performance log and compute new weights
-def update_model_weights():
+def update_model_weights(forecast_df=None):
+    if forecast_df is not None:
+        # OPTIONAL: Write logic to update performance log from forecast_df
+        pass  # Placeholder for future logging
+
     if not os.path.exists(PERFORMANCE_LOG):
         print("No performance log found. Using default weights.")
         return default_weights()
 
     df = pd.read_csv(PERFORMANCE_LOG)
 
-    # Ensure required columns exist
     required_cols = {"Model", "Accuracy", "Sharpe", "Return"}
     if not required_cols.issubset(set(df.columns)):
         print("Performance log missing required columns. Using default weights.")
         return default_weights()
 
-    # Compute score (customizable formula)
     df["score"] = 0.4 * df["Accuracy"] + 0.3 * df["Sharpe"] + 0.3 * df["Return"]
-
-    # Normalize scores
     total_score = df["score"].sum()
     weights = (df.groupby("Model")["score"].mean() / total_score).to_dict()
 
-    # Save updated weights
     with open(TUNING_CONFIG, "w") as f:
         json.dump(weights, f, indent=4)
 
     print("Updated model weights:", weights)
     return weights
+
 
 # Load weights in other modules
 def load_model_weights():

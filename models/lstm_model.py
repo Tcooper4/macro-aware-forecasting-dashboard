@@ -4,6 +4,7 @@ def forecast_lstm(ticker, df, forecast_days=5):
     from sklearn.preprocessing import MinMaxScaler
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import LSTM, Dense
+    from tensorflow.keras.layers import Input
 
     # Ensure enough data
     if df.shape[0] < 100:
@@ -28,7 +29,8 @@ def forecast_lstm(ticker, df, forecast_days=5):
     X = np.reshape(X, (X.shape[0], X.shape[1], 1))
 
     model = Sequential()
-    model.add(LSTM(units=50, return_sequences=False, input_shape=(X.shape[1], 1)))
+    model.add(Input(shape=(X.shape[1], 1)))
+    model.add(LSTM(units=50, return_sequences=False))
     model.add(Dense(1))
     model.compile(optimizer="adam", loss="mean_squared_error")
     model.fit(X, y, epochs=5, batch_size=32, verbose=0)
