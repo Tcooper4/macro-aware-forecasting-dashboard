@@ -53,7 +53,7 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     try:
         signal = forecast_garch(df, forecast_days)
         model_votes["GARCH"] = signal
-        confidence_scores["GARCH"] = 1  # Static confidence for GARCH
+        confidence_scores["GARCH"] = 1
     except Exception:
         model_votes["GARCH"] = "ERROR"
         confidence_scores["GARCH"] = 0
@@ -68,20 +68,19 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         confidence_scores["HMM"] = 0
 
     # === LSTM ===
-        try:
-            pred_val, signal, conf = forecast_lstm("TICKER", df, forecast_days)
-            model_votes["LSTM"] = signal
-            confidence_scores["LSTM"] = conf
-        except Exception as e:
-            model_votes["LSTM"] = f"ERROR: {e}"
-            confidence_scores["LSTM"] = 0
-
+    try:
+        pred_val, signal, conf = forecast_lstm("TICKER", df, forecast_days)
+        model_votes["LSTM"] = signal
+        confidence_scores["LSTM"] = conf
+    except Exception as e:
+        model_votes["LSTM"] = f"ERROR: {e}"
+        confidence_scores["LSTM"] = 0
 
     # === ML Model (XGBoost) ===
     try:
         signal = forecast_ml(df, forecast_days)
         model_votes["XGBoost"] = signal
-        confidence_scores["XGBoost"] = 1  # Static for now
+        confidence_scores["XGBoost"] = 1
     except Exception:
         model_votes["XGBoost"] = "ERROR"
         confidence_scores["XGBoost"] = 0
@@ -119,5 +118,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     return {
         "forecast_table": forecast_table,
         "final_signal": final_signal,
-        "rationale": rationale
+        "rationale": rationale,
+        "model_confidences": confidence_scores
     }

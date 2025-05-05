@@ -17,20 +17,36 @@ st.title("📈 Forecast & Trade Dashboard")
 
 # --- Sidebar Inputs ---
 ticker = st.sidebar.text_input("Enter Ticker", "AAPL").upper()
-start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2020-01-01"))
-end_date = st.sidebar.date_input("End Date", pd.to_datetime("today"))
+interval = st.sidebar.selectbox("Data Interval", ["1m", "5m", "15m", "30m", "60m", "1d"], index=2)
+period = st.sidebar.selectbox("Lookback Period", ["1d", "5d", "7d", "1mo", "3mo", "6mo", "1y"], index=2)
 forecast_horizon = st.sidebar.selectbox("Forecast Horizon", ["1 Day", "1 Week", "1 Month"], index=1)
 
 user_strategy = get_user_strategy_settings()
 
 # --- Load Data ---
+# --- Load Data ---
 try:
-    df = fetch_price_data(ticker, start=start_date, end=end_date)
-    st.success(f"✅ Loaded {ticker} data successfully.")
+    df = fetch_price_data(ticker, interval=interval, period=period)
+    if df.empty:
+        raise ValueError("No data returned.")
+
+    # Get timestamp of last available data point
+    last_timestamp = df.index[-1]
+    last_time_str = last_timestamp.strftime("%Y-%m-%d %H:%M")
+
+    # Display success + timestamp
+    st.success(f"✅ Loaded {ticker} data successfully. Last updated: `{last_time_str}`")
+    
+    # Warn if data is not fresh (e.g., market closed)
+    if pd.Timestamp.now(tz=last_timestamp.tz) - last_timestamp > pd.Timedelta("1D"):
+        st.warning("⚠️ Data may be outdated. The market may be closed or the API is delayed.")
+
+    # Show chart
     st.line_chart(df["Close"])
 except Exception as e:
     st.error(f"❌ Failed to load data for {ticker}: {e}")
     st.stop()
+
 
 # --- Generate Forecasts ---
 st.subheader("🔮 Forecast Model Ensemble")

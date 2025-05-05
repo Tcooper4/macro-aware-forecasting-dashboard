@@ -9,10 +9,10 @@ def load_config(path="config/config.json"):
     with open(path, "r") as f:
         return json.load(f)
 
-# === Fetch historical price data ===
-def fetch_price_data(ticker, start="2020-01-01", end=None):
+# === Fetch intraday or historical price data ===
+def fetch_price_data(ticker, interval="1d", period="1y"):
     try:
-        df = yf.download(ticker, start=start, end=end)
+        df = yf.download(ticker, interval=interval, period=period)
         if df.empty or "Close" not in df.columns:
             raise ValueError("No valid price data found.")
         df = df[["Open", "High", "Low", "Close", "Volume"]]
