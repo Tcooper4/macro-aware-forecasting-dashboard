@@ -1,319 +1,273 @@
 Ticker,Date,Final Signal,ARIMA,GARCH,HMM,LSTM,XGBoost
-MMM,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AOS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ABT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ABBV,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ACN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ADBE,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AMD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AFL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-APD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ALB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ARE,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ALL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GOOG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AMZN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AEP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AXP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AMT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AWK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AMP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AME,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AMGN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-APH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AON,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-APO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AAPL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-APTV,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ACGL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AJG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AIZ,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ATO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ADSK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ADP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AZO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AVY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-AXON,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BKR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BAC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-BRK-B,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BLK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-BX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-BA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BKNG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BSX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-AVGO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BRO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-BLDR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-BG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CDNS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-COF,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CAH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-KMX,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CARR,2025-05-05,BUY,BUY,BUY,BUY,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CAT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CBOE,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CBRE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-COR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CRL,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SCHW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CHTR,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CVX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CMG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CTAS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CME,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CMS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-KO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CTSH,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CMCSA,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-COP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ED,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CEG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CPRT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CPAY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CSGP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-COST,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CTRA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CRWD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-CVS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DHR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DRI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-DVA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-DELL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DAL,2025-05-05,BUY,SELL,BUY,BUY,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DVN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-DXCM,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FANG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DFS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-DG,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DLTR,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DPZ,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DASH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-DOV,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-DHI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DTE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DUK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ETN,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ECL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-EA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-EMR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ENPH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-EOG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-EQT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-EFX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ERIE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ESS,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-EXC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-EXE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-EXPE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-EXR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-XOM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FFIV,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FDS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FICO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FAST,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FRT,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FIS,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FITB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-FSLR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FTNT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-FTV,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-FOXA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-FCX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-GRMN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-IT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-GE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GEV,2025-05-05,BUY,SELL,BUY,BUY,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GNRC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GPC,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GILD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GDDY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-GS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-HIG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-HAS,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-HCA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-HSY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-HES,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-HLT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-HD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-HON,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-HWM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-HUBB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-HII,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-IBM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-IDXX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ITW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-IR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PODD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ICE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-IFF,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-INTU,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ISRG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-IQV,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-IRM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-JBHT,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-JBL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-JKHY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-J,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-JCI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-JPM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-JNPR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-K,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-KKR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-KLAC,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-KR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-LHX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LW,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LVS,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LDOS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LEN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-LII,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-LLY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LIN,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LYV,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LKQ,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LMT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-LOW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-LULU,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MPC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MAR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MMC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MLM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MAS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MCD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MCK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MDT,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-META,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MET,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MTD,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MRNA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MHK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-MOH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MDLZ,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MCO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MSI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-MSCI,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NDAQ,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NTAP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NFLX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NWS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NSC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NOC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-NRG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NUE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-NVDA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-NVR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ORLY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ODFL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-OKE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ORCL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PCAR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-PKG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PLTR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PANW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PAYX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PAYC,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PYPL,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PSX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PNC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PFG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-PG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PLD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-PRU,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-PEG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-PTC,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PSA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-PHM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-QCOM,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-DGX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-RL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-RJF,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-RTX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-REG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-REGN,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-RSG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-RMD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ROK,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ROP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-ROST,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-RCL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SPGI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-CRM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SBAC,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SLB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-STX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SHW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SPG,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SJM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SNA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SOLV,2025-05-05,BUY,BUY,SELL,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-LUV,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-STLD,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-STE,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SYK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SMCI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-SYF,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-SNPS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TMUS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TTWO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-TPR,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TRGP,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TEL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-TER,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TSLA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-TPL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TXT,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TMO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TJX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TKO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TSCO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-TT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-TDG,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TRMB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TFC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TYL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-TSN,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-UBER,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ULTA,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-UAL,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-URI,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-UNH,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-VLO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-VTR,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-VLTO,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-VRSK,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-VRTX,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-V,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-VST,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-VMC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WRB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-GWW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WAB,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WMT,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-WM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-WEC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WFC,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WELL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-WST,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WSM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WMB,2025-05-05,BUY,SELL,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-WTW,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-WDAY,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-XYL,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",BUY
-YUM,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
-ZTS,2025-05-05,BUY,BUY,BUY,HOLD,"ERROR: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().",SELL
+AOS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0011306213), 'HOLD', np.float32(0.0011306213))"
+ABT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-6.229998e-05), 'HOLD', np.float32(6.229998e-05))"
+ABBV,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0064524193), 'HOLD', np.float32(0.0064524193))"
+ACN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0073725143), 'HOLD', np.float32(0.0073725143))"
+AMD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.002492337), 'HOLD', np.float32(0.002492337))"
+AFL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0016827986), 'HOLD', np.float32(0.0016827986))"
+APD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0036294835), 'HOLD', np.float32(0.0036294835))"
+ALB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.001507422), 'HOLD', np.float32(0.001507422))"
+ALL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003761934), 'HOLD', np.float32(0.003761934))"
+GOOG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00034337275), 'HOLD', np.float32(0.00034337275))"
+MO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0010357716), 'HOLD', np.float32(0.0010357716))"
+AMZN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0097896485), 'HOLD', np.float32(0.0097896485))"
+AEP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0065725674), 'HOLD', np.float32(0.0065725674))"
+AXP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0017286988), 'HOLD', np.float32(0.0017286988))"
+AMT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0005921382), 'HOLD', np.float32(0.0005921382))"
+AWK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0036713937), 'HOLD', np.float32(0.0036713937))"
+AMP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0008804397), 'HOLD', np.float32(0.0008804397))"
+AME,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0038221248), 'HOLD', np.float32(0.0038221248))"
+AMGN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0011582641), 'HOLD', np.float32(0.0011582641))"
+APH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0006595995), 'HOLD', np.float32(0.0006595995))"
+AON,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0043023727), 'HOLD', np.float32(0.0043023727))"
+APO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0028041182), 'HOLD', np.float32(0.0028041182))"
+AAPL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0067383633), 'HOLD', np.float32(0.0067383633))"
+ACGL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.020691669), 'BUY', np.float32(0.020691669))"
+AJG,2025-05-05,BUY,BUY,BUY,BUY,ERROR: too many values to unpack (expected 2),"(np.float32(-0.011921111), 'SELL', np.float32(0.011921111))"
+AIZ,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00431397), 'HOLD', np.float32(0.00431397))"
+ATO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0032320104), 'HOLD', np.float32(0.0032320104))"
+ADSK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0007577532), 'HOLD', np.float32(0.0007577532))"
+ADP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0002804727), 'HOLD', np.float32(0.0002804727))"
+AZO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0044152113), 'HOLD', np.float32(0.0044152113))"
+AVY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00041512202), 'HOLD', np.float32(0.00041512202))"
+AXON,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.005606069), 'HOLD', np.float32(0.005606069))"
+BKR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0012446527), 'HOLD', np.float32(0.0012446527))"
+BAC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0059594507), 'HOLD', np.float32(0.0059594507))"
+BRK-B,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0011771745), 'HOLD', np.float32(0.0011771745))"
+BLK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0006270343), 'HOLD', np.float32(0.0006270343))"
+BX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.008277073), 'HOLD', np.float32(0.008277073))"
+BK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0026266207), 'HOLD', np.float32(0.0026266207))"
+BA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0010759623), 'HOLD', np.float32(0.0010759623))"
+BKNG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.004510288), 'HOLD', np.float32(0.004510288))"
+BSX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0008479447), 'HOLD', np.float32(0.0008479447))"
+AVGO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.014897457), 'BUY', np.float32(0.014897457))"
+BR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0007725286), 'HOLD', np.float32(0.0007725286))"
+BRO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00058308715), 'HOLD', np.float32(0.00058308715))"
+BLDR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00263423), 'HOLD', np.float32(0.00263423))"
+BG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0021630083), 'HOLD', np.float32(0.0021630083))"
+CDNS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.009040343), 'HOLD', np.float32(0.009040343))"
+COF,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0042583873), 'HOLD', np.float32(0.0042583873))"
+CAH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0077827596), 'HOLD', np.float32(0.0077827596))"
+CARR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.03908311), 'BUY', np.float32(0.03908311))"
+CAT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.009053252), 'HOLD', np.float32(0.009053252))"
+CBRE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0029549212), 'HOLD', np.float32(0.0029549212))"
+COR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0017684838), 'HOLD', np.float32(0.0017684838))"
+SCHW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.006287046), 'HOLD', np.float32(0.006287046))"
+CVX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.002380948), 'HOLD', np.float32(0.002380948))"
+CMG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0005802756), 'HOLD', np.float32(0.0005802756))"
+CB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00521006), 'HOLD', np.float32(0.00521006))"
+CI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.000539392), 'HOLD', np.float32(0.000539392))"
+CTAS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0029547187), 'HOLD', np.float32(0.0029547187))"
+CME,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0012169937), 'HOLD', np.float32(0.0012169937))"
+CMS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0039788717), 'HOLD', np.float32(0.0039788717))"
+KO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0004151432), 'HOLD', np.float32(0.0004151432))"
+CL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0012708833), 'HOLD', np.float32(0.0012708833))"
+CAG,2025-05-05,BUY,BUY,SELL,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.009773009), 'HOLD', np.float32(0.009773009))"
+COP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00039589033), 'HOLD', np.float32(0.00039589033))"
+ED,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.001421833), 'HOLD', np.float32(0.001421833))"
+CEG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.014712485), 'SELL', np.float32(0.014712485))"
+CPRT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.005280537), 'HOLD', np.float32(0.005280537))"
+CPAY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0016407351), 'HOLD', np.float32(0.0016407351))"
+CSGP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0048648478), 'HOLD', np.float32(0.0048648478))"
+COST,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0036852402), 'HOLD', np.float32(0.0036852402))"
+CTRA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0026611183), 'HOLD', np.float32(0.0026611183))"
+CRWD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.010527928), 'SELL', np.float32(0.010527928))"
+CVS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.008963217), 'HOLD', np.float32(0.008963217))"
+DHR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0022674205), 'HOLD', np.float32(0.0022674205))"
+DRI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0021259156), 'HOLD', np.float32(0.0021259156))"
+DVA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0020329263), 'HOLD', np.float32(0.0020329263))"
+DE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.007854589), 'HOLD', np.float32(0.007854589))"
+DELL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0014677369), 'HOLD', np.float32(0.0014677369))"
+DAL,2025-05-05,BUY,SELL,BUY,BUY,ERROR: too many values to unpack (expected 2),"(np.float32(0.0034263292), 'HOLD', np.float32(0.0034263292))"
+DVN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0074993423), 'HOLD', np.float32(0.0074993423))"
+FANG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.014991375), 'BUY', np.float32(0.014991375))"
+DFS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0008527628), 'HOLD', np.float32(0.0008527628))"
+DPZ,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0019317038), 'HOLD', np.float32(0.0019317038))"
+DASH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0002813974), 'HOLD', np.float32(0.0002813974))"
+DOV,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0054638195), 'HOLD', np.float32(0.0054638195))"
+DHI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.004675863), 'HOLD', np.float32(0.004675863))"
+DTE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003017159), 'HOLD', np.float32(0.003017159))"
+DUK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0024049813), 'HOLD', np.float32(0.0024049813))"
+ECL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00011725506), 'HOLD', np.float32(0.00011725506))"
+EA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0021752387), 'HOLD', np.float32(0.0021752387))"
+EMR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00038135465), 'HOLD', np.float32(0.00038135465))"
+ENPH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0047809323), 'HOLD', np.float32(0.0047809323))"
+EOG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.026330989), 'BUY', np.float32(0.026330989))"
+EQT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.007058951), 'HOLD', np.float32(0.007058951))"
+EFX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.002314272), 'HOLD', np.float32(0.002314272))"
+ERIE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0023287325), 'HOLD', np.float32(0.0023287325))"
+EXC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0016437826), 'HOLD', np.float32(0.0016437826))"
+EXE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-7.865552e-05), 'HOLD', np.float32(7.865552e-05))"
+EXPE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.011930835), 'BUY', np.float32(0.011930835))"
+EXR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0091605885), 'HOLD', np.float32(0.0091605885))"
+XOM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00086194347), 'HOLD', np.float32(0.00086194347))"
+FFIV,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.001282989), 'HOLD', np.float32(0.001282989))"
+FDS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0008164858), 'HOLD', np.float32(0.0008164858))"
+FICO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0006270665), 'HOLD', np.float32(0.0006270665))"
+FAST,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0025208245), 'HOLD', np.float32(0.0025208245))"
+FITB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0018216642), 'HOLD', np.float32(0.0018216642))"
+FSLR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.018431231), 'BUY', np.float32(0.018431231))"
+FI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0032513414), 'HOLD', np.float32(0.0032513414))"
+FTNT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0026209608), 'HOLD', np.float32(0.0026209608))"
+FTV,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0037075058), 'HOLD', np.float32(0.0037075058))"
+FOXA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0007650842), 'HOLD', np.float32(0.0007650842))"
+FCX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.008135739), 'HOLD', np.float32(0.008135739))"
+GRMN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.009555319), 'HOLD', np.float32(0.009555319))"
+IT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-5.7900997e-05), 'HOLD', np.float32(5.7900997e-05))"
+GE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.010206706), 'BUY', np.float32(0.010206706))"
+GNRC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.004731416), 'HOLD', np.float32(0.004731416))"
+GD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0055995774), 'HOLD', np.float32(0.0055995774))"
+GILD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.027887529), 'BUY', np.float32(0.027887529))"
+GDDY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0072052097), 'HOLD', np.float32(0.0072052097))"
+GS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0015137864), 'HOLD', np.float32(0.0015137864))"
+HIG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0068880627), 'HOLD', np.float32(0.0068880627))"
+HCA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0022488001), 'HOLD', np.float32(0.0022488001))"
+HSY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0012128657), 'HOLD', np.float32(0.0012128657))"
+HES,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0055757156), 'HOLD', np.float32(0.0055757156))"
+HLT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0042107743), 'HOLD', np.float32(0.0042107743))"
+HD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0032695257), 'HOLD', np.float32(0.0032695257))"
+HON,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0036458205), 'HOLD', np.float32(0.0036458205))"
+HWM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00814555), 'HOLD', np.float32(0.00814555))"
+HUBB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0021700594), 'HOLD', np.float32(0.0021700594))"
+HII,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00025140765), 'HOLD', np.float32(0.00025140765))"
+IBM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.009337319), 'HOLD', np.float32(0.009337319))"
+IDXX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.037159134), 'BUY', np.float32(0.037159134))"
+ITW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0039039333), 'HOLD', np.float32(0.0039039333))"
+IR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00062499946), 'HOLD', np.float32(0.00062499946))"
+PODD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.012004531), 'SELL', np.float32(0.012004531))"
+ICE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0061537977), 'HOLD', np.float32(0.0061537977))"
+INTU,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0008724294), 'HOLD', np.float32(0.0008724294))"
+ISRG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0049591046), 'HOLD', np.float32(0.0049591046))"
+IRM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.007218202), 'HOLD', np.float32(0.007218202))"
+JBL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.004252), 'HOLD', np.float32(0.004252))"
+JKHY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0011171025), 'HOLD', np.float32(0.0011171025))"
+JCI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.015656885), 'BUY', np.float32(0.015656885))"
+JPM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0018104535), 'HOLD', np.float32(0.0018104535))"
+JNPR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.002229942), 'HOLD', np.float32(0.002229942))"
+K,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.006326515), 'HOLD', np.float32(0.006326515))"
+KKR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0012755322), 'HOLD', np.float32(0.0012755322))"
+KR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0036391143), 'HOLD', np.float32(0.0036391143))"
+LHX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00071511656), 'HOLD', np.float32(0.00071511656))"
+LH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0040316363), 'HOLD', np.float32(0.0040316363))"
+LDOS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003693723), 'HOLD', np.float32(0.003693723))"
+LEN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0018813632), 'HOLD', np.float32(0.0018813632))"
+LII,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0080510955), 'HOLD', np.float32(0.0080510955))"
+LLY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0092420215), 'HOLD', np.float32(0.0092420215))"
+LIN,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.007805302), 'HOLD', np.float32(0.007805302))"
+LYV,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00966083), 'HOLD', np.float32(0.00966083))"
+LMT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.011133493), 'SELL', np.float32(0.011133493))"
+LOW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0002621082), 'HOLD', np.float32(0.0002621082))"
+LULU,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.008208755), 'HOLD', np.float32(0.008208755))"
+MPC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.004725816), 'HOLD', np.float32(0.004725816))"
+MAR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0088170655), 'HOLD', np.float32(0.0088170655))"
+MMC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003122405), 'HOLD', np.float32(0.003122405))"
+MLM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.013048805), 'BUY', np.float32(0.013048805))"
+MAS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.006047053), 'HOLD', np.float32(0.006047053))"
+MA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0010777147), 'HOLD', np.float32(0.0010777147))"
+MCD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0019845252), 'HOLD', np.float32(0.0019845252))"
+MCK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0008607538), 'HOLD', np.float32(0.0008607538))"
+META,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00018485248), 'HOLD', np.float32(0.00018485248))"
+MET,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0029322978), 'HOLD', np.float32(0.0029322978))"
+MRNA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.026377631), 'SELL', np.float32(0.026377631))"
+MHK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.004444541), 'HOLD', np.float32(0.004444541))"
+MOH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0075310534), 'HOLD', np.float32(0.0075310534))"
+MDLZ,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0031438514), 'HOLD', np.float32(0.0031438514))"
+MCO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0067438222), 'HOLD', np.float32(0.0067438222))"
+MS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0013154311), 'HOLD', np.float32(0.0013154311))"
+MSI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0021021995), 'HOLD', np.float32(0.0021021995))"
+NDAQ,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0028254304), 'HOLD', np.float32(0.0028254304))"
+NTAP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.002344859), 'HOLD', np.float32(0.002344859))"
+NFLX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0059400415), 'HOLD', np.float32(0.0059400415))"
+NWS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0024880657), 'HOLD', np.float32(0.0024880657))"
+NSC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.002823167), 'HOLD', np.float32(0.002823167))"
+NOC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.004108357), 'HOLD', np.float32(0.004108357))"
+NRG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.001218028), 'HOLD', np.float32(0.001218028))"
+NUE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0076563354), 'HOLD', np.float32(0.0076563354))"
+NVDA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0032771653), 'HOLD', np.float32(0.0032771653))"
+NVR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0047684163), 'HOLD', np.float32(0.0047684163))"
+ORLY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0031684053), 'HOLD', np.float32(0.0031684053))"
+ODFL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.005640718), 'HOLD', np.float32(0.005640718))"
+OKE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.02770996), 'BUY', np.float32(0.02770996))"
+ORCL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003507384), 'HOLD', np.float32(0.003507384))"
+PCAR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0035247472), 'HOLD', np.float32(0.0035247472))"
+PKG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0074387277), 'HOLD', np.float32(0.0074387277))"
+PLTR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003314267), 'HOLD', np.float32(0.003314267))"
+PANW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.009681354), 'HOLD', np.float32(0.009681354))"
+PH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0044605057), 'HOLD', np.float32(0.0044605057))"
+PAYX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0038188207), 'HOLD', np.float32(0.0038188207))"
+PM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0021444717), 'HOLD', np.float32(0.0021444717))"
+PSX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.009926141), 'HOLD', np.float32(0.009926141))"
+PNC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0017630951), 'HOLD', np.float32(0.0017630951))"
+PFG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.001031054), 'HOLD', np.float32(0.001031054))"
+PG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00019496802), 'HOLD', np.float32(0.00019496802))"
+PLD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0011737735), 'HOLD', np.float32(0.0011737735))"
+PRU,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0067411885), 'HOLD', np.float32(0.0067411885))"
+PEG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.009649087), 'HOLD', np.float32(0.009649087))"
+PSA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.009187287), 'HOLD', np.float32(0.009187287))"
+PHM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.010510413), 'BUY', np.float32(0.010510413))"
+DGX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00038290807), 'HOLD', np.float32(0.00038290807))"
+RL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.008682125), 'HOLD', np.float32(0.008682125))"
+RJF,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0003068586), 'HOLD', np.float32(0.0003068586))"
+RTX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.001436209), 'HOLD', np.float32(0.001436209))"
+REG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00083520735), 'HOLD', np.float32(0.00083520735))"
+RSG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00086413504), 'HOLD', np.float32(0.00086413504))"
+RMD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0015659212), 'HOLD', np.float32(0.0015659212))"
+ROP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0023519462), 'HOLD', np.float32(0.0023519462))"
+ROST,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.007946877), 'HOLD', np.float32(0.007946877))"
+RCL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00094031845), 'HOLD', np.float32(0.00094031845))"
+SPGI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0007658993), 'HOLD', np.float32(0.0007658993))"
+CRM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.004278182), 'HOLD', np.float32(0.004278182))"
+SLB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0053072176), 'HOLD', np.float32(0.0053072176))"
+STX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0017205942), 'HOLD', np.float32(0.0017205942))"
+SHW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0018059496), 'HOLD', np.float32(0.0018059496))"
+SPG,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00028042376), 'HOLD', np.float32(0.00028042376))"
+SJM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0037278756), 'HOLD', np.float32(0.0037278756))"
+SNA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00046227223), 'HOLD', np.float32(0.00046227223))"
+SOLV,2025-05-05,BUY,BUY,SELL,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.022111526), 'BUY', np.float32(0.022111526))"
+SO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0010057874), 'HOLD', np.float32(0.0010057874))"
+STLD,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.014731547), 'BUY', np.float32(0.014731547))"
+STE,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00906842), 'HOLD', np.float32(0.00906842))"
+SYK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0023185138), 'HOLD', np.float32(0.0023185138))"
+SMCI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.027786026), 'SELL', np.float32(0.027786026))"
+SNPS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(8.756566e-05), 'HOLD', np.float32(8.756566e-05))"
+TMUS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0011922016), 'HOLD', np.float32(0.0011922016))"
+TTWO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.009866074), 'HOLD', np.float32(0.009866074))"
+TPR,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0044057565), 'HOLD', np.float32(0.0044057565))"
+TRGP,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.012614189), 'BUY', np.float32(0.012614189))"
+TEL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0011194845), 'HOLD', np.float32(0.0011194845))"
+TSLA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0070746895), 'HOLD', np.float32(0.0070746895))"
+TPL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00787165), 'HOLD', np.float32(0.00787165))"
+TMO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.00032524022), 'HOLD', np.float32(0.00032524022))"
+TJX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00062551006), 'HOLD', np.float32(0.00062551006))"
+TKO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0052083908), 'HOLD', np.float32(0.0052083908))"
+TSCO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0015374506), 'HOLD', np.float32(0.0015374506))"
+TT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0034834852), 'HOLD', np.float32(0.0034834852))"
+TRMB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0022473817), 'HOLD', np.float32(0.0022473817))"
+TFC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00796014), 'HOLD', np.float32(0.00796014))"
+TYL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0016276343), 'HOLD', np.float32(0.0016276343))"
+UBER,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0026969067), 'HOLD', np.float32(0.0026969067))"
+ULTA,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.015212248), 'SELL', np.float32(0.015212248))"
+URI,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0070727994), 'HOLD', np.float32(0.0070727994))"
+UNH,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0024500133), 'HOLD', np.float32(0.0024500133))"
+VLO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.005337603), 'HOLD', np.float32(0.005337603))"
+VLTO,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00347687), 'HOLD', np.float32(0.00347687))"
+VRSK,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.002398975), 'HOLD', np.float32(0.002398975))"
+VRTX,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0050794375), 'HOLD', np.float32(0.0050794375))"
+V,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0044353902), 'HOLD', np.float32(0.0044353902))"
+VST,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0070569054), 'HOLD', np.float32(0.0070569054))"
+VMC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.013260346), 'BUY', np.float32(0.013260346))"
+WRB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0013790539), 'HOLD', np.float32(0.0013790539))"
+GWW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0015845583), 'HOLD', np.float32(0.0015845583))"
+WAB,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003464754), 'HOLD', np.float32(0.003464754))"
+WMT,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0026375516), 'HOLD', np.float32(0.0026375516))"
+WM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0015948197), 'HOLD', np.float32(0.0015948197))"
+WEC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00033542942), 'HOLD', np.float32(0.00033542942))"
+WFC,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.005887686), 'HOLD', np.float32(0.005887686))"
+WELL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.005634359), 'HOLD', np.float32(0.005634359))"
+WST,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.003839184), 'HOLD', np.float32(0.003839184))"
+WSM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0009119106), 'HOLD', np.float32(0.0009119106))"
+WTW,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.006136473), 'HOLD', np.float32(0.006136473))"
+WDAY,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.00058752333), 'HOLD', np.float32(0.00058752333))"
+XYL,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(0.0042408714), 'HOLD', np.float32(0.0042408714))"
+YUM,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.008947506), 'HOLD', np.float32(0.008947506))"
+ZTS,2025-05-05,BUY,BUY,BUY,HOLD,ERROR: too many values to unpack (expected 2),"(np.float32(-0.0014237496), 'HOLD', np.float32(0.0014237496))"
