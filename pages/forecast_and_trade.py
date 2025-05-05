@@ -80,31 +80,28 @@ strategy_output = apply_strategy_settings(forecast_df, user_strategy)
 
 st.subheader("🛠️ Strategy-Based Trade Recommendation")
 st.write(f"**Suggested Action:** `{strategy_output['action']}`")
-st.write(f"**Position Size:** `{strategy_output['position_size']}%` — Use this percentage of your portfolio.")
-st.write(f"**Trade Frequency:** `{strategy_output['frequency']}` — Re-evaluate or re-enter on this schedule.")
+st.write(f"**Position Size:** `{strategy_output['position_size']}%` — use this % of your capital for this trade.")
+st.write(f"**Trade Frequency:** `{strategy_output['frequency']}` — how often to re-evaluate this type of position.")
 
-# --- Option Trade Details (Basic Calculation) ---
+# --- Option Trade Info ---
 last_price = df["Close"].iloc[-1]
-avg_conf = sum([
-    v for v in confidence_scores.values()
-    if isinstance(v, (int, float)) and v > 0
-]) / max(1, len([v for v in confidence_scores.values() if isinstance(v, (int, float)) and v > 0]))
+valid_confs = [v for v in confidence_scores.values() if isinstance(v, (float, int)) and v > 0]
+avg_conf = sum(valid_confs) / len(valid_confs) if valid_confs else 0
+forecast_price = round(last_price * (1 + avg_conf), 2)
 
-forecast_return = avg_conf
-forecast_price = round(last_price * (1 + forecast_return), 2)
 strike_price = round(forecast_price * 1.01, 2) if signal == "BUY" else round(forecast_price * 0.99, 2)
 option_type = "CALL" if signal == "BUY" else "PUT"
 
 st.subheader("💡 Trade Execution Details")
 st.markdown(f"""
-- **Current Price:** ${last_price:.2f}
-- **Forecast Price:** ${forecast_price:.2f}
-- **Suggested Option Type:** `{option_type}`
-- **Suggested Strike Price:** `${strike_price}`
-- **Estimated Expiration Date:** `{pd.Timestamp.now().normalize() + pd.Timedelta('21D'):%B %d, %Y}`
+- **Current Price:** ${last_price:.2f}  
+- **Forecast Price:** ${forecast_price:.2f}  
+- **Suggested Option Type:** `{option_type}`  
+- **Suggested Strike Price:** `${strike_price}`  
+- **Estimated Expiration:** `{(pd.Timestamp.now().normalize() + pd.Timedelta(days=21)).strftime('%B %d, %Y')}`
 """)
 
-# --- Forecast Chart with Overlay ---
+# --- Forecast Overlay Chart ---
 st.subheader("📈 Price Chart with Forecast Overlay")
 
 forecast_days = {
@@ -117,8 +114,8 @@ price_trace = go.Scatter(x=df.index, y=df["Close"], mode="lines", name="Historic
 
 try:
     if forecast_days > 1:
-        forecast_dates = [df.index[-1] + timedelta(days=i+1) for i in range(forecast_days)]
-        forecast_prices = [forecast_price for _ in forecast_dates]
+        forecast_dates = [df.index[-1] + timedelta(days=i + 1) for i in range(forecast_days)]
+        forecast_prices = [forecast_price] * forecast_days
         forecast_trace = go.Scatter(x=forecast_dates, y=forecast_prices, mode="lines+markers", name="Forecast")
     else:
         forecast_trace = go.Scatter(
@@ -134,13 +131,13 @@ try:
         y=[strike_price] * 2,
         mode="lines",
         line=dict(dash="dash", color="red"),
-        name=f"Strike Price (${strike_price})"
+        name=f"Strike (${strike_price})"
     )
 
     st.plotly_chart(go.Figure(data=[price_trace, forecast_trace, strike_line]), use_container_width=True)
 
 except Exception as e:
-    st.warning(f"⚠️ Could not plot forecast overlay: {e}")
+    st.warning(f"⚠️ Could not plot forecast: {e}")
     st.plotly_chart(go.Figure(data=[price_trace]), use_container_width=True)
 
 # --- CSV Export ---
@@ -155,5 +152,5 @@ with st.expander("📘 What does this regime mean?"):
     - **Bear:** Weak or declining markets. Reduce risk or consider short strategies.
     - **Neutral:** Sideways or uncertain markets. Maintain balanced exposure.
     
-    The final signal above has been adjusted with this regime in mind to improve accuracy.
+    The final signal above has been adjusted based on this regime.
     """)
