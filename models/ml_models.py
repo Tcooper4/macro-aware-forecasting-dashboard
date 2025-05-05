@@ -28,10 +28,10 @@ def forecast_ml(df, forecast_days=5):
     latest_features = scaler.transform([X.iloc[-1].values])
     prediction = model.predict(latest_features)[0]
 
-    signal = "BUY" if prediction > 0.01 else "SELL" if prediction < -0.01 else "HOLD"
-    confidence = abs(prediction)
-
+    signal = "BUY" if prediction > 0 else "SELL"
+    confidence = min(abs(prediction) * 10, 1)
     return prediction, signal, confidence
+
 
 
 def audit_ml_accuracy(df, forecast_days=5, test_size=0.2):

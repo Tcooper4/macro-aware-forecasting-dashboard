@@ -1,5 +1,4 @@
-# ensemble.py
-
+# ensemble.py (patched)
 import sys, os
 import numpy as np
 import pandas as pd
@@ -45,7 +44,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     model_votes = {}
     confidence_scores = {}
 
-    # ARIMA
     try:
         pred, signal, conf = forecast_arima("TICKER", df, forecast_days)
         model_votes["ARIMA"] = clean_signal(signal)
@@ -54,7 +52,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         model_votes["ARIMA"] = "ERROR"
         confidence_scores["ARIMA"] = 0
 
-    # GARCH
     try:
         signal = forecast_garch(df, forecast_days)
         model_votes["GARCH"] = clean_signal(signal)
@@ -63,16 +60,14 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         model_votes["GARCH"] = "ERROR"
         confidence_scores["GARCH"] = 0
 
-    # HMM
     try:
         pred, signal, conf = forecast_hmm("TICKER", df, forecast_days)
         model_votes["HMM"] = clean_signal(signal)
-        confidence_scores["HMM"] = conf if isinstance(conf, (int, float, np.floating)) else 0
+        confidence_scores["HMM"] = conf
     except Exception:
         model_votes["HMM"] = "ERROR"
         confidence_scores["HMM"] = 0
 
-    # LSTM
     try:
         pred, signal, conf = forecast_lstm("TICKER", df, forecast_days)
         model_votes["LSTM"] = clean_signal(signal)
@@ -81,7 +76,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         model_votes["LSTM"] = "ERROR"
         confidence_scores["LSTM"] = 0
 
-    # XGBoost
     try:
         pred, signal, conf = forecast_ml(df, forecast_days)
         model_votes["XGBoost"] = clean_signal(signal)
@@ -90,7 +84,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         model_votes["XGBoost"] = "ERROR"
         confidence_scores["XGBoost"] = 0
 
-    # Voting
     votes = {"BUY": 0, "SELL": 0, "HOLD": 0}
     for model, signal in model_votes.items():
         if signal in votes:
@@ -100,7 +93,6 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
 
     final_signal = max(votes, key=votes.get) if any(votes.values()) else "HOLD"
 
-    # Regime adjustment
     regime = classify_market_regime(df)
     if regime == "Bull" and final_signal == "HOLD":
         final_signal = "BUY"
@@ -112,8 +104,8 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         for model, sig in model_votes.items()
     ])
 
-    rationale = f"Models voted: {dict(Counter(model_votes.values()))}. " \
-                f"Confidence-weighted vote tally: {votes}. Adjusted for `{regime}` regime."
+    rationale = f"Models voted: {dict(Counter([str(sig) for sig in model_votes.values()]))}. " \
+                f"Confidence-weighted vote tally: { {k: round(v, 4) for k, v in votes.items()} }. Adjusted for `{regime}` regime."
 
     return {
         "forecast_table": forecast_table,

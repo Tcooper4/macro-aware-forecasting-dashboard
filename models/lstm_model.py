@@ -43,7 +43,9 @@ def forecast_lstm(ticker, df, forecast_days=5):
     predicted_price = scaler.inverse_transform([[forecast_value]])[0][0]
     last_price = values[-1][0]
     pct_return = (predicted_price - last_price) / last_price
-    signal = "BUY" if pct_return > 0.01 else "SELL" if pct_return < -0.01 else "HOLD"
-    confidence = abs(pct_return)
+    if abs(pct_return) < 0.0005:
+        return 0.0, "HOLD", 0.0
 
+    signal = "BUY" if pct_return > 0 else "SELL"
+    confidence = min(abs(pct_return) * 10, 1)
     return pct_return, signal, confidence
