@@ -12,16 +12,11 @@ from models.garch_model import forecast_garch
 from models.hmm_model import forecast_hmm
 from models.lstm_model import forecast_lstm
 from models.ml_models import forecast_ml
+from models.dynamic_tuner import load_model_weights
 from utils.common import fetch_price_data
 
-# === Optional model weights (customize if desired) ===
-MODEL_WEIGHTS = {
-    "ARIMA": 1.0,
-    "GARCH": 1.0,
-    "HMM": 1.0,
-    "LSTM": 1.0,
-    "XGBoost": 1.0,
-}
+# === Load dynamic weights ===
+MODEL_WEIGHTS = load_model_weights()
 
 def classify_market_regime(df):
     df = df.copy()
@@ -35,7 +30,6 @@ def classify_market_regime(df):
     else:
         return "Neutral"
 
-
 def generate_forecast_ensemble(df, horizon="1 Week"):
     forecast_days = {
         "1 Day": 1,
@@ -46,50 +40,52 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
     model_votes = {}
     confidence_scores = {}
 
+    # === ARIMA ===
     try:
-        pred_val, signal = forecast_arima("TICKER", df, forecast_days)
+        pred_val, signal, conf = forecast_arima("TICKER", df, forecast_days)
         model_votes["ARIMA"] = signal
-        confidence_scores["ARIMA"] = abs(pred_val)
+        confidence_scores["ARIMA"] = conf
     except Exception:
         model_votes["ARIMA"] = "ERROR"
         confidence_scores["ARIMA"] = 0
 
+    # === GARCH ===
     try:
         signal = forecast_garch(df, forecast_days)
         model_votes["GARCH"] = signal
-        confidence_scores["GARCH"] = 1
+        confidence_scores["GARCH"] = 1  # Static confidence for GARCH
     except Exception:
         model_votes["GARCH"] = "ERROR"
         confidence_scores["GARCH"] = 0
 
+    # === HMM ===
     try:
-        pred_val, signal = forecast_hmm("TICKER", df, forecast_days)
+        pred_val, signal, conf = forecast_hmm("TICKER", df, forecast_days)
         model_votes["HMM"] = signal
-        confidence_scores["HMM"] = abs(pred_val)
+        confidence_scores["HMM"] = conf
     except Exception:
         model_votes["HMM"] = "ERROR"
         confidence_scores["HMM"] = 0
 
+    # === LSTM ===
     try:
-        pred_val, signal = forecast_lstm("TICKER", df, forecast_days)
-        if isinstance(pred_val, (float, int)):
-            confidence_scores["LSTM"] = abs(pred_val)
-        else:
-            confidence_scores["LSTM"] = 0
+        pred_val, signal, conf = forecast_lstm("TICKER", df, forecast_days)
         model_votes["LSTM"] = signal
+        confidence_scores["LSTM"] = conf
     except Exception:
         model_votes["LSTM"] = "ERROR"
         confidence_scores["LSTM"] = 0
 
+    # === ML Model (XGBoost) ===
     try:
-        signal, conf = forecast_ml(df, forecast_days)
+        signal = forecast_ml(df, forecast_days)
         model_votes["XGBoost"] = signal
-        confidence_scores["XGBoost"] = float(conf) if isinstance(conf, (float, int)) else 0
+        confidence_scores["XGBoost"] = 1  # Static for now
     except Exception:
         model_votes["XGBoost"] = "ERROR"
         confidence_scores["XGBoost"] = 0
 
-    # === Weighted Voting ===
+    # === Weighted Voting Logic ===
     votes = {"BUY": 0, "SELL": 0, "HOLD": 0}
     for model, signal in model_votes.items():
         if signal in votes:
@@ -99,21 +95,25 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
 
     final_signal = max(votes, key=votes.get) if any(votes.values()) else "HOLD"
 
+    # === Regime Adjustment ===
     regime = classify_market_regime(df)
     if regime == "Bull" and final_signal == "HOLD":
         final_signal = "BUY"
     elif regime == "Bear" and final_signal == "HOLD":
         final_signal = "SELL"
 
-    forecast_table = pd.DataFrame([{
-        "Model": model,
-        "Signal": signal,
-        "Confidence": round(confidence_scores.get(model, 0), 4)
-    } for model, signal in model_votes.items()])
+    # === Forecast Table ===
+    forecast_table = pd.DataFrame([
+        {
+            "Model": model,
+            "Signal": signal,
+            "Confidence": round(confidence_scores.get(model, 0), 4)
+        }
+        for model, signal in model_votes.items()
+    ])
 
     rationale = f"Models voted: {dict(Counter(model_votes.values()))}. " \
-                f"Confidence-weighted vote tally: {votes}. " \
-                f"Adjusted for `{regime}` regime."
+                f"Confidence-weighted vote tally: {votes}. Adjusted for `{regime}` regime."
 
     return {
         "forecast_table": forecast_table,

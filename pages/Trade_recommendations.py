@@ -16,6 +16,11 @@ if not os.path.exists(data_path):
     st.stop()
 
 df = pd.read_csv(data_path)
+
+# --- Dynamic fallback if confidence column is missing ---
+if "Confidence" not in df.columns:
+    df["Confidence"] = 1.0
+
 df = df.sort_values("Confidence", ascending=False)
 
 # --- Controls ---
@@ -41,7 +46,7 @@ st.dataframe(df.style.applymap(highlight_signal, subset=["Signal"]), use_contain
 if "OPENAI_API_KEY" in os.environ or st.secrets.get("OPENAI_API_KEY"):
     openai.api_key = os.environ.get("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"]
 
-    st.subheader("🧠 AI Commentary")
+    st.subheader("🧐 AI Commentary")
     for _, row in df.iterrows():
         prompt = f"""
         You are an expert financial assistant. Interpret the following signal:
@@ -78,7 +83,7 @@ days_held = st.slider("Holding period (days)", 1, 30, 5)
 
 def simulate_trade_return(signal, confidence):
     if signal == "BUY":
-        return 0.02 * confidence * days_held / 5  # Simulate ~2% move over 5 days
+        return 0.02 * confidence * days_held / 5
     elif signal == "SELL":
         return -0.015 * confidence * days_held / 5
     return 0.0

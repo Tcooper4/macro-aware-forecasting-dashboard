@@ -11,6 +11,10 @@ def forecast_ml(df, forecast_days=5):
     df['Lag2'] = df['Return'].shift(2)
     df.dropna(inplace=True)
 
+    from xgboost import XGBRegressor
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import StandardScaler
+
     X = df[['Lag1', 'Lag2']]
     y = df['Return']
 
@@ -18,19 +22,17 @@ def forecast_ml(df, forecast_days=5):
     X_scaled = scaler.fit_transform(X)
 
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, shuffle=False)
-
     model = XGBRegressor(n_estimators=100, max_depth=3)
     model.fit(X_train, y_train)
 
-    latest_features = scaler.transform([X.iloc[-1].values])  # shape: (1, 2)
-    prediction = model.predict(latest_features)[0]  # scalar
+    latest_features = scaler.transform([X.iloc[-1].values])
+    prediction = model.predict(latest_features)[0]
 
-    if prediction > 0:
-        return "BUY"
-    elif prediction < 0:
-        return "SELL"
-    else:
-        return "HOLD"
+    signal = "BUY" if prediction > 0.01 else "SELL" if prediction < -0.01 else "HOLD"
+    confidence = abs(prediction)
+
+    return prediction, signal, confidence
+
 
 def audit_ml_accuracy(df, forecast_days=5, test_size=0.2):
     from sklearn.model_selection import train_test_split
