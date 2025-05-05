@@ -34,3 +34,4 @@ html5lib
 webdriver-manager
 
 tqdm
+openai
