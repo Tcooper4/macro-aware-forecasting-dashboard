@@ -68,13 +68,14 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
         confidence_scores["HMM"] = 0
 
     # === LSTM ===
-    try:
-        pred_val, signal, conf = forecast_lstm("TICKER", df, forecast_days)
-        model_votes["LSTM"] = signal
-        confidence_scores["LSTM"] = conf
-    except Exception:
-        model_votes["LSTM"] = "ERROR"
-        confidence_scores["LSTM"] = 0
+        try:
+            pred_val, signal, conf = forecast_lstm("TICKER", df, forecast_days)
+            model_votes["LSTM"] = signal
+            confidence_scores["LSTM"] = conf
+        except Exception as e:
+            model_votes["LSTM"] = f"ERROR: {e}"
+            confidence_scores["LSTM"] = 0
+
 
     # === ML Model (XGBoost) ===
     try:
