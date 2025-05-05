@@ -24,9 +24,6 @@ MODEL_WEIGHTS = {
 }
 
 def classify_market_regime(df):
-    """
-    Classifies market regime based on recent return over last 20 days.
-    """
     df = df.copy()
     df["return"] = df["Close"].pct_change()
     recent_return = df["return"].iloc[-20:].mean()
@@ -39,7 +36,6 @@ def classify_market_regime(df):
         return "Neutral"
 
 
-# === Final signal generator ===
 def generate_forecast_ensemble(df, horizon="1 Week"):
     forecast_days = {
         "1 Day": 1,
@@ -76,16 +72,19 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
 
     try:
         pred_val, signal = forecast_lstm("TICKER", df, forecast_days)
+        if isinstance(pred_val, (float, int)):
+            confidence_scores["LSTM"] = abs(pred_val)
+        else:
+            confidence_scores["LSTM"] = 0
         model_votes["LSTM"] = signal
-        confidence_scores["LSTM"] = abs(pred_val)
     except Exception:
         model_votes["LSTM"] = "ERROR"
         confidence_scores["LSTM"] = 0
 
     try:
-        signal = forecast_ml(df, forecast_days)
+        signal, conf = forecast_ml(df, forecast_days)
         model_votes["XGBoost"] = signal
-        confidence_scores["XGBoost"] = 1
+        confidence_scores["XGBoost"] = float(conf) if isinstance(conf, (float, int)) else 0
     except Exception:
         model_votes["XGBoost"] = "ERROR"
         confidence_scores["XGBoost"] = 0
@@ -100,21 +99,21 @@ def generate_forecast_ensemble(df, horizon="1 Week"):
 
     final_signal = max(votes, key=votes.get) if any(votes.values()) else "HOLD"
 
-    # === Regime boost ===
     regime = classify_market_regime(df)
     if regime == "Bull" and final_signal == "HOLD":
         final_signal = "BUY"
     elif regime == "Bear" and final_signal == "HOLD":
         final_signal = "SELL"
 
-    # === Table output ===
     forecast_table = pd.DataFrame([{
         "Model": model,
         "Signal": signal,
         "Confidence": round(confidence_scores.get(model, 0), 4)
     } for model, signal in model_votes.items()])
 
-    rationale = f"Models voted: {dict(Counter(model_votes.values()))}. Confidence-weighted vote tally: {votes}. Adjusted for `{regime}` regime."
+    rationale = f"Models voted: {dict(Counter(model_votes.values()))}. " \
+                f"Confidence-weighted vote tally: {votes}. " \
+                f"Adjusted for `{regime}` regime."
 
     return {
         "forecast_table": forecast_table,

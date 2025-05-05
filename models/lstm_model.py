@@ -58,3 +58,40 @@ def forecast_lstm(ticker, df, forecast_days=5, window_size=30):
     print(f"✅ LSTM signal for {ticker}: {signal} (Predicted return: {predicted_return:.4f})")
 
     return predicted_return, signal
+
+def audit_lstm_accuracy(ticker, df, forecast_days=5, test_size=0.2):
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+    prices = df["Close"].values
+    n_test = int(len(prices) * test_size)
+
+    # Create sequences
+    sequence_length = 30
+    X, y = [], []
+    for i in range(sequence_length, len(prices)):
+        X.append(prices[i-sequence_length:i])
+        y.append(prices[i])
+
+    X, y = np.array(X), np.array(y)
+
+    # Reshape for LSTM
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+
+    X_train, X_test = X[:-n_test], X[-n_test:]
+    y_train, y_test = y[:-n_test], y[-n_test:]
+
+    model = build_lstm_model(input_shape=(X.shape[1], 1))
+    model.fit(X_train, y_train, epochs=5, batch_size=16, verbose=0)
+
+    y_pred = model.predict(X_test).flatten()
+
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = mean_squared_error(y_test, y_pred, squared=False)
+    direction_accuracy = np.mean(np.sign(y_pred[1:] - y_pred[:-1]) == np.sign(y_test[1:] - y_test[:-1]))
+
+    return {
+        "mae": round(mae, 4),
+        "rmse": round(rmse, 4),
+        "directional_accuracy": round(direction_accuracy, 4),
+        "ticker": ticker
+    }
